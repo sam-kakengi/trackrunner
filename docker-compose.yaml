@@ -14,15 +14,12 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - frontend:/app/build
       - static:/static
-      - frontend:/var/www/frontend
+      - /usr/share/nginx/html:/var/www/frontend
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
-  
 
 volumes:
   static:
-  frontend:
