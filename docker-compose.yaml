@@ -1,0 +1,25 @@
+services:
+  backend:
+    volumes:
+      - static:/static
+    env_file:
+      - .env
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - static:/static
+      - /usr/share/nginx/html:/var/www/frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  static:
