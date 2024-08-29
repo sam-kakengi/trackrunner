@@ -39,7 +39,6 @@ def login_view(request):
             login(request, user)
             username_message = f'Successfully signed in {user.username}!' if user.username else 'Successfully signed in!'
             messages.success(request, username_message)
-            return redirect('login')
         else:
             messages.error(request, 'Credentials did not match. Try again.')
 
