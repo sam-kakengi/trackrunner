@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+    <link href="//cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+    <title>Registration</title>
+</head>
+<body>
+    
+    <main class="registration--main mui-container-fluid">
+
+        <section class="registration--section mui-container">
+
+            <div class="title--box mui-container">
+
+                <h1 class="mui--text-display3">TrackRunner</h1>
+                <img src="{% static 'images/running-man-small.svg' %}" alt="Running Man Logo">
+
+            </div>
+            
+            <div class="form--container mui-container">
+                    
+                    <form action="{% url 'register' %}" method="post" class="mui-form">
+                        {% csrf_token %}
+            
+                        <div class="mui-textfield {% if errors.email %}input-error{% endif %}">
+                            <input type="text" name="email" value="{{ request.POST.email }}" required>
+                            <label>Email</label>
+                            {% if errors.email %}
+                                <div class="validation-error">{{ errors.email }}</div>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="mui-textfield {% if errors.username %}input-error{% endif %}">
+                            <input type="text" name="username" value="{{ request.POST.username }}" required>
+                            <label>Username</label>
+                            {% if errors.username %}
+                                <div class="validation-error">{{ errors.username }}</div>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="mui-textfield {% if errors.password1 or errors.password2 %}input-error{% endif %}">
+                            <input type="password" name="password1" value="{{ request.POST.password1 }}" required>
+                            <label>Password</label>
+                        </div>
+                    
+                        <div class="mui-textfield {% if errors.password2 %}input-error{% endif %}">
+                            <input type="password" name="password2" value="{{ request.POST.password2 }}" required>
+                            <label>Confirm Password</label>
+                            {% if errors.password2 or errors.password1 %}
+                                <div class="validation-error">{{ errors.password2 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mui-checkbox">
+                            <label>
+                                <input type="checkbox" name="terms" required {% if request.POST.terms %}checked{% endif %}/>
+                                <span>I accept the Terms & Conditions</span>
+                            </label>
+                            {% if errors.terms %}
+                            <div class="validation-error">{{ errors.terms }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="mui-btn mui-btn--raised">Create Account</button>
+                        {% if messages %}
+                            <div class="messages" id="messageContainer">
+                                {% for message in messages %}
+                                    <div class="custom-alert-{{ message.tags }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="register--links">
+                            <a href="">Back to login</a>
+                        </div>
+
+                    </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="//cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
+</body>
+</html>

@@ -28,7 +28,7 @@ def login_view(request):
 
     """
     if request.user.is_authenticated:
-        return "You are already logged in!"
+        logout(request)
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -48,3 +48,48 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+def register_view(request):
+    """
+    Handles user registration. If the user is already authenticated, redirects to the login page.
+    Otherwise, processes POST requests to create a new user account.
+    """
+    if request.user.is_authenticated:
+        return redirect('login')
+
+    if request.method == 'POST':
+        email = request.POST.get('email').strip()
+        username = request.POST.get('username', '').strip()
+        password1 = request.POST.get('password1').strip()
+        password2 = request.POST.get('password2').strip()
+        terms_accepted = request.POST.get('terms')
+
+        errors = {}
+
+        if not terms_accepted:
+            errors['terms'] = 'You must accept the Terms & Conditions to create an account.'
+        
+        if password1 != password2:
+            errors['password2'] = 'Passwords do not match.'
+
+        if User.objects.filter(email=email).exists():
+            errors['email'] = 'An account with this email already exists.'
+        
+        if len(username) < 4 or len(username) > 30:
+            errors['username'] = "Username must be between 4 and 30 characters."
+
+        if errors:
+            return render(request, 'registration.html', {'errors': errors})
+
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        user.save()
+
+        user = authenticate(request, username=username, password=password1)
+        if user is not None:
+            login(request, user)  # Log the user in
+            register_success_msg = f'Welcome {user.username}' if user.username else f'Welcome {user.email}'
+            messages.success(request, register_success_msg)
+            
+
+    return render(request, 'registration.html')
