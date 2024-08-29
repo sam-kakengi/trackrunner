@@ -50,7 +50,7 @@ def test_registration_with_password_mismatch(client):
         'email': 'mismatchuser@test.com',
         'password1': 'password19',
         'password2': 'differentpassword19',
-        'terms': 'on'  # Assuming terms checkbox is checked
+        'terms': 'on'  
     })
     assert response.status_code == 200  
     assert 'Passwords do not match.' in response.content.decode()
