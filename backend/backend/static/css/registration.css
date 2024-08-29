@@ -1,0 +1,257 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #263238;
+    font-family: 'Roboto', sans-serif;
+}
+
+.registration--main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+
+.registration--section {
+    width: 100%;
+    max-width: 40.625rem;
+}
+
+
+.title--box {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    color: #FFD54F;
+    margin-bottom: 3rem;
+}
+
+
+.form--container {
+    background-color: white;
+    padding: 3rem;
+    border-radius: 1rem;
+    width: 100%;
+}
+
+
+.mui-btn {
+    width: 100%;
+    background-color: #FFD54F;
+    font-weight: 500;
+    color: #263238;
+}
+
+.mui-btn:hover {
+    background-color: #263238;
+    color: white;
+}
+
+
+.register--links {
+    display: flex;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+}
+
+.register--links a {
+    color: #263238;
+    margin-left: auto;
+}
+
+
+.messages {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mui-textfield.input-error > input {
+    border-color: red;
+}
+
+.mui-textfield.input-error > label {
+    color: red;
+}
+
+.validation-error {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    
+}
+
+
+/*** Alerts ***/ 
+
+.custom-alert {
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.custom-alert-error {
+    font-weight: 600;
+    color: red;
+    border: 0.0625 solid #f5c6cb;
+}
+
+.custom-alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 0.0625 solid #c3e6cb;
+}
+
+.custom-alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 0.0625 solid #bee5eb;
+}
+
+.custom-alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 0.0625 solid #ffeeba;
+}
+
+
+
+
+/*** Custom MUI Css ***/
+
+.mui-textfield {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+.mui-textfield input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  
+.mui-textfield label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    color: #9e9e9e;
+    pointer-events: none;
+    transition: all 0.2s ease-out;
+    background-color: white;
+    padding: 0 5px;
+  }
+  
+.mui-textfield input:focus + label,
+.mui-textfield input:not(:placeholder-shown) + label {
+    top: 6px;
+    left: 5px;
+    font-size: 12px;
+    width: auto;
+    background-color: white;
+    z-index: 1;
+  }
+
+
+.mui-textfield>input:focus~label, .mui-textfield>textarea:focus~label {
+    color: #9e9e9e;
+} 
+
+.mui-textfield>input {
+    height: 3.5rem;
+    margin-bottom: -1px;
+}
+
+.mui-textfield>input:focus {
+    height: 3.5rem;
+    margin-bottom: -1px;
+}
+
+
+.mui-textfield>input:focus {
+    height: 3.5rem;
+    margin-bottom: -1px;
+}
+
+
+.mui-checkbox {
+    margin-top: 1.7rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/*** MUI Input Validation Boxes ***/
+
+.mui-textfield>input:invalid:not(:focus):not(:required), .mui-textfield>input:invalid:not(:focus):required.mui--is-empty.mui--is-touched, 
+.mui-textfield>input:invalid:not(:focus):required.mui--is-not-empty, 
+.mui-textfield>input:invalid:not(:focus):required:not(:empty):not(.mui--is-empty):not(.mui--is-not-empty), 
+.mui-textfield>input:invalid:not(:focus):required[value]:not([value=""]):not(.mui--is-empty):not(.mui--is-not-empty), 
+.mui-textfield>input:not(:focus).mui--is-invalid:not(:required), .mui-textfield>input:not(:focus).mui--is-invalid:required.mui--is-empty.mui--is-touched, 
+.mui-textfield>input:not(:focus).mui--is-invalid:required.mui--is-not-empty, 
+.mui-textfield>input:not(:focus).mui--is-invalid:required:not(:empty):not(.mui--is-empty):not(.mui--is-not-empty), 
+.mui-textfield>input:not(:focus).mui--is-invalid:required[value]:not([value=""]):not(.mui--is-empty):not(.mui--is-not-empty) {
+    height: 3.5rem;
+    margin-bottom: -1px;
+}
+
+
+
+
+
+
+
+
+/*** Remove Autofill Coloring from browsers ***/
+
+/* Remove the yellow autofill background color in Chrome */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid #ccc; 
+  -webkit-text-fill-color: #000;
+  -webkit-box-shadow: 0 0 0px 1000px white inset; /* Change this color to match your input's background */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Remove the autofill background color in Firefox */
+input:-moz-autofill,
+textarea:-moz-autofill,
+select:-moz-autofill {
+  box-shadow: 0 0 0px 1000px white inset; /* Change this color to match your input's background */
+  -moz-text-fill-color: #000;
+}
+
+/* Remove the autofill background color in Edge */
+input:-ms-autofill,
+textarea:-ms-autofill,
+select:-ms-autofill {
+    box-shadow: 0 0 0px 1000px white inset;
+    -ms-text-fill-color: #000;
+}
