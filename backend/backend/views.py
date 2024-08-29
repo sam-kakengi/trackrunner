@@ -28,7 +28,7 @@ def login_view(request):
 
     """
     if request.user.is_authenticated:
-        return "You are already logged in."
+        return "You are already logged in!"
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -38,7 +38,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             username_message = f'Successfully signed in {user.username}!' if user.username else 'Successfully signed in!'
-            messages.success(request, f'Successfully signed in {username_message}!')
+            messages.success(request, username_message)
         else:
             messages.error(request, 'Credentials did not match. Try again.')
 
