@@ -29,7 +29,7 @@ def test_registration_with_existing_email(client, create_user):
         'terms': 'on'  
     })
     assert response.status_code == 200  
-    assert 'An account with this email already exists.' in response.content.decode()
+    assert 'Registration failed. Please check your details and try again.' in response.content.decode()
 
 @pytest.mark.django_db
 def test_registration_with_missing_fields(client):

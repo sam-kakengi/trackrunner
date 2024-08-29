@@ -74,7 +74,7 @@ def register_view(request):
             errors['password2'] = 'Passwords do not match.'
 
         if User.objects.filter(email=email).exists():
-            errors['email'] = 'An account with this email already exists.'
+            errors['email'] = 'Registration failed. Please check your details and try again.'
         
         if len(username) < 4 or len(username) > 30:
             errors['username'] = "Username must be between 4 and 30 characters."
