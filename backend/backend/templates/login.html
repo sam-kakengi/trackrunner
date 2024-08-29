@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+    <link href="//cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Login</title>
+</head>
+<body>
+    
+    <main class="login--main mui-container-fluid">
+
+        <section class="login--section mui-container">
+
+            <div class="title--box mui-container">
+
+                <h1 class="mui--text-display3">TrackRunner</h1>
+                <img src="{% static 'images/running-man-small.svg' %}" alt="Running Man Logo">
+
+            </div>
+            
+            <div class="form--container mui-container">
+                    
+                    <form action="{% url 'login' %}" method="post" class="mui-form">
+                        {% csrf_token %}
+            
+                        <div class="mui-textfield">
+                            <input type="text" name="email" required>
+                            <label>Email</label>
+                        </div>
+                        <div class="mui-textfield">
+                            <input type="password" name="password" required>
+                            <label>Password</label>
+                        </div>
+                        
+                        <button type="submit" class="mui-btn mui-btn--raised">Sign in</button>
+                        {% if messages %}
+                            <div class="messages" id="messageContainer">
+                                {% for message in messages %}
+                                    <div class="custom-alert-{{ message.tags }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="login--links">
+                            <a href="">Create Account</a>
+                            <a href="">Forgot Password?</a>
+                        </div>
+
+                    </form>
+
+                    
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="//cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}" type="module"></script>
+</body>
+</html>
