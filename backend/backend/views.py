@@ -87,7 +87,7 @@ def register_view(request):
 
         user = authenticate(request, username=username, password=password1)
         if user is not None:
-            login(request, user)  # Log the user in
+            login(request, user)  
             register_success_msg = f'Welcome {user.username}' if user.username else f'Welcome {user.email}'
             messages.success(request, register_success_msg)
             
