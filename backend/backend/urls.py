@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import login_view, logout_view, register_view
 from rest_framework.routers import DefaultRouter
-from running.views import RouteView, RunningView
+from running.views import RouteView, RunningView, MostRecentRunView
 
 router = DefaultRouter()
 router.register(r'routes', RouteView, basename='route')
@@ -30,4 +30,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
+    path('api/run/latest/', MostRecentRunView.as_view(), name='running-latest'),
 ]

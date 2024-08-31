@@ -2,6 +2,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Route, RunActivity
 
+from .utils import format_ordinal_suffix, format_seconds
+
 
 class GetRouteSerializer(ModelSerializer):
     class Meta:
@@ -34,3 +36,22 @@ class CreateUpdateRunningSerializer(ModelSerializer):
     class Meta:
         model = RunActivity
         fields = ['start', 'finished', 'duration', 'route', 'notes']
+
+class MostRecentSerializer(ModelSerializer):
+
+    route = SerializerMethodField(read_only=True)
+    date = SerializerMethodField(read_only=True)
+    duration = SerializerMethodField(read_only=True)
+
+    def get_route(self, obj: RunActivity):
+        return obj.route.name
+    
+    def get_duration(self, obj: RunActivity):
+        return format_seconds(obj.duration)
+    
+    def get_date(self, obj: RunActivity):
+        return format_ordinal_suffix(obj.finished)
+
+    class Meta:
+        model = RunActivity
+        fields = ['id', 'date', 'duration', 'route']

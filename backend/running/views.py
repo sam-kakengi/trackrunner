@@ -1,18 +1,17 @@
 from running.models import RunActivity, Route
-from rest_framework import viewsets
-from rest_framework import status
+from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from running.serializers import (GetRouteSerializer, CreateUpdateRouteSerializer, 
-                                 GetRunningSerializer, CreateUpdateRunningSerializer)
+                                 GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
 
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication] #  TODO: Remove BasicAuthentication during merge
     http_method_names = ['get', 'post', 'patch', 'delete']
-    
+
     def get_serializer_class(self):
         """Return the correct serializer class based on the request method"""
         if self.request.method in ['POST', 'PATCH']:
@@ -62,3 +61,12 @@ class RunningView(viewsets.ModelViewSet):
             return CreateUpdateRunningSerializer
         return GetRunningSerializer
 
+class MostRecentRunView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication] #  TODO: Remove BasicAuthentication during merge
+    serializer_class = MostRecentSerializer
+
+    def get_object(self):
+        """Return the most recent RunActivity for the current user"""
+        latest = RunActivity.objects.filter(user=self.request.user).latest('finished')
+        return latest if latest else None
