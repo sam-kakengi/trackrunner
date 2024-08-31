@@ -1,8 +1,4 @@
 from django.db import models
-
-# Create your models here.
-
-from django.db import models
 from django.contrib.auth.models import User 
 
 class Route(models.Model):
@@ -10,7 +6,7 @@ class Route(models.Model):
     distance = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='routes')
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.distance}km)"
 
 class RunActivity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -23,4 +19,4 @@ class RunActivity(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.username}: Route: {self.route.name} - Duration:  {self.duration}h"
+        return f"{self.user.username}: Route: {self.route.name} - Duration:  {self.duration}s"
