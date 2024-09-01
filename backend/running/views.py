@@ -3,8 +3,9 @@ from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from running.serializers import (GetRouteSerializer, CreateUpdateRouteSerializer, 
+from running.serializers import (GetRouteSerializer, CreateUpdateRouteSerializer, PersonalBestSerializer,
                                  GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
+from django.db.models import F, ExpressionWrapper, FloatField
 
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
@@ -70,3 +71,17 @@ class MostRecentRunView(generics.RetrieveAPIView):
         """Return the most recent RunActivity for the current user"""
         latest = RunActivity.objects.filter(user=self.request.user).latest('finished')
         return latest if latest else None
+
+class PersonalBestView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication] #  TODO: Remove BasicAuthentication during merge
+    serializer_class = PersonalBestSerializer
+    
+    def get_object(self):
+        """Return the personal best RunActivity for the current user"""
+        speed_annotation = ExpressionWrapper(F('route__distance') / F('duration'), output_field=FloatField())
+        best = RunActivity.objects.select_related('route').filter(user=self.request.user, route__distance__isnull=False
+                                                            ).annotate(speed=speed_annotation).order_by('-speed').first()
+        if not best:
+            best = RunActivity.objects.select_related('route').filter(user=self.request.user).order_by('duration').first()
+        return best if best else None

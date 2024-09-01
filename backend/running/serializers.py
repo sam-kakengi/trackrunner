@@ -55,3 +55,22 @@ class MostRecentSerializer(ModelSerializer):
     class Meta:
         model = RunActivity
         fields = ['id', 'date', 'duration', 'route']
+
+class PersonalBestSerializer(ModelSerializer):
+
+    route = SerializerMethodField(read_only=True)
+    duration = SerializerMethodField(read_only=True)
+    date = SerializerMethodField(read_only=True)
+
+    def get_route(self, obj: RunActivity):
+        return obj.route.name
+    
+    def get_duration(self, obj: RunActivity):
+        return format_seconds(obj.duration)
+    
+    def get_date(self, obj: RunActivity):
+        return format_ordinal_suffix(obj.finished, include_year=True)
+    
+    class Meta:
+        model = RunActivity
+        fields = ['id', 'duration', 'route', 'date']

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class Route(models.Model):
     name = models.CharField(max_length=100)
-    distance = models.FloatField()
+    distance = models.FloatField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='routes')
     def __str__(self):
         return f"{self.name} ({self.distance}km)"
