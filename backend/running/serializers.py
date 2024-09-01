@@ -20,13 +20,14 @@ class GetRunningSerializer(ModelSerializer):
     route = SerializerMethodField(read_only=True)
     start = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S')
     finished = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S')
+    updated = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S')
 
     def get_route(self, obj):
         return GetRouteSerializer(obj.route).data
 
     class Meta:
         model = RunActivity
-        fields = ['id', 'start', 'finished', 'duration', 'route', 'notes', 'created', 'updated']
+        fields = ['id', 'start', 'finished', 'duration', 'route', 'notes', 'updated']
 
 class CreateUpdateRunningSerializer(ModelSerializer):
 
@@ -74,3 +75,15 @@ class PersonalBestSerializer(ModelSerializer):
     class Meta:
         model = RunActivity
         fields = ['id', 'duration', 'route', 'date']
+
+class ActivateRunSerializer(ModelSerializer):
+
+    class Meta:
+        model = RunActivity
+        fields = ['route', 'notes']
+
+class DeactivateRunSerializer(ModelSerializer):
+
+    class Meta:
+        model = RunActivity
+        fields = ['notes']
