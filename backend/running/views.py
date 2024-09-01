@@ -120,9 +120,6 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
     
-    def get_serializer(self, *args, **kwargs):
-        return self.get_serializer_class()(*args, **kwargs)
-    
     def post(self, request, *args, **kwargs):
         """Controls the activation of a new run"""
         serializer = self.get_serializer(data=request.data)
@@ -141,7 +138,7 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         finished = datetime.now()
         duration = round(finished.timestamp() - instance.start.timestamp(), 0)
         serializer.save(finished=finished, duration=duration)
-        return Response({"duration": format_seconds(duration)}, status=status.HTTP_200_OK)
+        return Response({"message": "Run complete", "duration": format_seconds(duration)}, status=status.HTTP_200_OK)
     
     def get_serializer_class(self):
         """Return the correct serializer class based on the request method"""
