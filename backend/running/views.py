@@ -71,8 +71,19 @@ class MostRecentRunView(generics.RetrieveAPIView):
 
     def get_object(self):
         """Return the most recent RunActivity for the current user"""
-        latest = RunActivity.objects.filter(user=self.request.user).latest('finished')
+        try:
+            latest = RunActivity.objects.filter(user=self.request.user, duration__isnull=False, finished__isnull=False).latest('finished')
+        except RunActivity.DoesNotExist:
+            latest = None
         return latest
+    
+    def get(self, request, *args, **kwargs):
+        """Return the active run if it exists"""
+        instance = self.get_object()
+        if not instance:
+            return Response({"detail": "No recently finished run."},status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 class PersonalBestView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]

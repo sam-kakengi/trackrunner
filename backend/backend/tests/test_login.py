@@ -1,3 +1,7 @@
+import os
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+django.setup()
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User

@@ -22,7 +22,7 @@ from running.views import RouteView, RunningView, MostRecentRunView, PersonalBes
 
 router = DefaultRouter()
 router.register(r'routes', RouteView, basename='route')
-router.register(r'', RunningView, basename='history')
+router.register(r'', RunningView, basename='runs')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/run', include(router.urls)),
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
-    path('api/run/recent', MostRecentRunView.as_view(), name='latest-run'),
-    path('api/run/best', PersonalBestView.as_view(), name='best-run'),
-    path('api/run/active', ActiveRunView.as_view(), name='active-run'),
+    path('api/run/recent', MostRecentRunView.as_view(), name='recent'),
+    path('api/run/best', PersonalBestView.as_view(), name='best'),
+    path('api/run/active', ActiveRunView.as_view(), name='active'),
 ]
