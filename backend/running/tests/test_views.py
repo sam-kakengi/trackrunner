@@ -180,6 +180,10 @@ def test_pause_active_run(auth_client, start_active_run):
     response = auth_client.get(url)
     assert response.status_code == status.HTTP_200_OK
     assert response.data['paused'] == 120
+    response = auth_client.patch(url, {'paused': 120})
+    assert response.status_code == status.HTTP_200_OK
+    response = auth_client.get(url)
+    assert response.data['paused'] == 240
 
 @pytest.mark.django_db
 def test_end_active_run(auth_client, start_active_run, route: Route):
