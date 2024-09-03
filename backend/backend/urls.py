@@ -27,7 +27,7 @@ router.register(r'', RunningView, basename='runs')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_view, name='login'),
-    path('api/run', include(router.urls)),
+    path('api/run/', include(router.urls)),
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
     path('api/run/recent', MostRecentRunView.as_view(), name='recent'),

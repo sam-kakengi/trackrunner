@@ -63,6 +63,13 @@ class RunningView(viewsets.ModelViewSet):
         if self.request.method in ['POST', 'PATCH']:
             return CreateUpdateRunningSerializer
         return GetRunningSerializer
+    
+    def get_object(self):
+        """Return the specific RunActivity for the current user"""
+        queryset = self.get_queryset()
+        obj = generics.get_object_or_404(queryset, pk=self.kwargs.get('pk'))
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class MostRecentRunView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]

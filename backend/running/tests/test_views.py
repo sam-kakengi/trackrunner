@@ -112,6 +112,21 @@ def test_run_get_object(auth_client, route: Route):
     assert response_get.data['start'] != None
 
 @pytest.mark.django_db
+def test_run_update(auth_client, new_run_finished: RunActivity):
+    url = reverse('runs-detail', args=[new_run_finished.pk])
+    data = {'notes': 'Updated notes'}
+    response = auth_client.patch(url, data)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data['notes'] == 'Updated notes'
+
+@pytest.mark.django_db
+def test_get_object_url(auth_client, new_run_finished: RunActivity):
+    url = reverse('runs-detail', args=[new_run_finished.pk])
+    response = auth_client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data['id'] == new_run_finished.pk
+
+@pytest.mark.django_db
 def test_run_get_list(auth_client, user):
     url = reverse('runs-list')
     response = auth_client.get(url)
