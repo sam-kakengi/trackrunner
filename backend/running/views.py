@@ -141,7 +141,7 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
             else:
                 instance.paused = serializer.validated_data.get('paused')
             instance.save()
-            return Response({"detail": f"Current paused duration  {instance.paused}s"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": f"Current paused duration  {instance.paused}s"}, status=status.HTTP_200_OK)
         finished = datetime.now()
         duration = round((finished.timestamp() - instance.start.timestamp()) - instance.paused, 0)
         serializer.save(finished=finished, duration=duration)
