@@ -4,7 +4,7 @@ from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
-from running.serializers import (ActivateRunSerializer, DeactivateRunSerializer, GetRouteSerializer, CreateUpdateRouteSerializer, PersonalBestSerializer,
+from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, GetRouteSerializer, CreateUpdateRouteSerializer, PersonalBestSerializer,
                                  GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
@@ -135,8 +135,15 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
             return Response({"detail": "No active run currently."},status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        if serializer.validated_data.get('paused'):
+            if instance.paused:
+                instance.paused += serializer.validated_data.get('paused')  
+            else:
+                instance.paused = serializer.validated_data.get('paused')
+            instance.save()
+            return Response({"detail": f"Current paused duration  {instance.paused}s"}, status=status.HTTP_400_BAD_REQUEST)
         finished = datetime.now()
-        duration = round(finished.timestamp() - instance.start.timestamp(), 0)
+        duration = round((finished.timestamp() - instance.start.timestamp()) - instance.paused, 0)
         serializer.save(finished=finished, duration=duration)
         return Response({"message": "Run complete", "duration": format_seconds(duration)}, status=status.HTTP_200_OK)
     
@@ -145,6 +152,6 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         if self.request.method == 'POST':
             return ActivateRunSerializer
         elif self.request.method == 'PATCH':
-            return DeactivateRunSerializer
+            return UpdateRunSerializer
         else:
             return GetRunningSerializer

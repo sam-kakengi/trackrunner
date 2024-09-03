@@ -17,6 +17,7 @@ class RunActivity(models.Model):
     notes = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    paused = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}: Route: {self.route.name} - Duration:  {self.duration}s"

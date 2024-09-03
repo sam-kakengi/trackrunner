@@ -27,7 +27,7 @@ class GetRunningSerializer(ModelSerializer):
 
     class Meta:
         model = RunActivity
-        fields = ['id', 'start', 'finished', 'duration', 'route', 'notes', 'updated']
+        fields = ['id', 'start', 'finished', 'duration', 'route', 'notes', 'updated', 'paused']
 
 class CreateUpdateRunningSerializer(ModelSerializer):
 
@@ -82,8 +82,8 @@ class ActivateRunSerializer(ModelSerializer):
         model = RunActivity
         fields = ['route', 'notes']
 
-class DeactivateRunSerializer(ModelSerializer):
+class UpdateRunSerializer(ModelSerializer):
 
     class Meta:
         model = RunActivity
-        fields = ['notes']
+        fields = ['notes', 'paused']
