@@ -114,7 +114,9 @@ def test_run_get_object(auth_client, route: Route):
 @pytest.mark.django_db
 def test_run_update(auth_client, new_run_finished: RunActivity):
     url = reverse('runs-detail', args=[new_run_finished.pk])
-    data = {'notes': 'Updated notes'}
+    data = {'notes': 'Updated notes', 
+            'start': datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), 
+            'finished': datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}
     response = auth_client.patch(url, data)
     assert response.status_code == status.HTTP_200_OK
     assert response.data['notes'] == 'Updated notes'

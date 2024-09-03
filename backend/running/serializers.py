@@ -31,8 +31,8 @@ class GetRunningSerializer(ModelSerializer):
 
 class CreateUpdateRunningSerializer(ModelSerializer):
 
-    start = serializers.DateTimeField(format='%d-%m-%YT%H:%M:%S', required=False)
-    finished = serializers.DateTimeField(format='%d-%m-%YT%H:%M:%S', required=False)
+    start = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S', required=False)
+    finished = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S', required=False)
 
     class Meta:
         model = RunActivity
