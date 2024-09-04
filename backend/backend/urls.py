@@ -17,10 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import login_view, logout_view, register_view
+from rest_framework.routers import DefaultRouter
+from running.views import RouteView, RunningView, MostRecentRunView, PersonalBestView, ActiveRunView
+
+router = DefaultRouter()
+router.register(r'routes', RouteView, basename='route')
+router.register(r'', RunningView, basename='runs')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_view, name='login'),
+    path('api/run/', include(router.urls)),
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
+    path('api/run/recent', MostRecentRunView.as_view(), name='recent'),
+    path('api/run/best', PersonalBestView.as_view(), name='best'),
+    path('api/run/active', ActiveRunView.as_view(), name='active'),
 ]
