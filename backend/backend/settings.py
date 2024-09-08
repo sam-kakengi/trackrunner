@@ -41,6 +41,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost',
     'http://127.0.0.1',
     'http://0.0.0.0',
+    'http://localhost:3000',
+    'http://localhost:8080',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -57,13 +59,42 @@ INSTALLED_APPS = [
     'corsheaders',
     'running',
     'rest_framework',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount', #This is used for registration
+    'rest_framework.authtoken',
 ]
 
+#allauth settings for changing default username required for login to email
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[RunTracker]'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated', 
+    ],
+}
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 
 
 CORS_ORIGIN_WHITELIST = [
      'http://localhost:3000',  # The default port for create-react-app
+     'http://http://localhost:8080',
 ]
 
 
@@ -76,6 +107,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     
 ]
 
@@ -96,6 +128,9 @@ TEMPLATES = [
         },
     },
 ]
+
+
+
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
