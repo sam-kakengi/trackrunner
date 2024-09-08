@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import LoginComponent from '../../components/auth-components/LoginComp';
+import LoginComponent from '../../components/auth/LoginComp';
 import RunningMan from '../../assets/running-man-small.svg'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

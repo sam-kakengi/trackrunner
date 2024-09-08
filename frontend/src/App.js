@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-
 import LoginPage from './pages/authentication/LoginPage';
 import RegistrationPage from './pages/authentication/RegisterPage';
 import DashboardPage from './pages/core/DashboardPage';
-import ProtectedRoute from './components/auth-components/ProtectedRouteComp';
-import HandleLogout from './components/auth-components/Logout';
-import PublicRoute from './components/auth-components/PublicRouteComp';
+import ProtectedRoute from './components/auth/ProtectedRouteComp';
+import HandleLogout from './components/auth/Logout';
+import PublicRoute from './components/auth/PublicRouteComp';
 
 function App() {
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import RegisterComp from '../../components/auth-components/RegisterComp';
+import RegisterComp from '../../components/auth/RegisterComp';
 import { useState } from 'react';
 import RunningMan from '../../assets/running-man-small.svg'
 

@@ -185,3 +185,7 @@ pytest.ini
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#Frontend
+
+/frontend/src/components/core-components/DashboardComp.js
