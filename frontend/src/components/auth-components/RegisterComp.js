@@ -71,7 +71,7 @@ const RegisterPage = ({ onRegister, formMessage }) => {
           }
     
         if (valid) {
-            // Call the onRegister function with the form data
+            
             onRegister({
                 email,
                 username,
@@ -203,8 +203,8 @@ const RegisterPage = ({ onRegister, formMessage }) => {
                             <Typography
                                 sx={{
                                     fontSize: {
-                                        xs: '0.75rem', // Smaller font size for extra-small screens
-                                        sm: '1rem' // Default font size for small screens and above
+                                        xs: '0.75rem',
+                                        sm: '1rem' 
                                     }
                                 }}
                             >

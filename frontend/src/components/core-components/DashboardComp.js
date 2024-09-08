@@ -21,7 +21,7 @@ const DashboardComponent = () => {
     const [logout, setLogout] = React.useState(false);
 
     const handleLogoutClick = () => {
-        setLogout(true); // This will trigger the HandleLogout component
+        setLogout(true);
     };
 
     

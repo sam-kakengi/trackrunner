@@ -80,7 +80,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # ensure users must be authenticated
+        'rest_framework.permissions.IsAuthenticated', 
     ],
 }
 
