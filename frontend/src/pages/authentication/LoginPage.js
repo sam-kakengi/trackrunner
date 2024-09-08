@@ -13,7 +13,7 @@ import axios from 'axios';
  * @returns {JSX.Element} The rendered LoginPage component.
  */
 
-const LoginPage = () => {
+const LoginPage = ({ setIsAuthenticated }) => {
 
     const navigate = useNavigate();
     const [LoginPageErrorMessage, setLoginPageErrorMessage] = useState('');
@@ -42,7 +42,8 @@ const LoginPage = () => {
             
             setTimeout(() => {
                 setLoading(false);
-                navigate('/dashboard');
+                setIsAuthenticated(true);
+                navigate('/');
             }, 2000);
         } catch (error) {
             if (error.response) {

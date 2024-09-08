@@ -16,17 +16,12 @@ import HandleLogout from '../auth-components/Logout';
  * @returns {JSX.Element} The rendered DashboardComponent
  */
 
-const DashboardComponent = () => {
-    const [message, setMessage] = useState('');
+const DashboardComponent = ({setIsAuthenticated}) => {
     const [logout, setLogout] = React.useState(false);
 
     const handleLogoutClick = () => {
         setLogout(true);
     };
-
-    
-    const navigate = useNavigate();
-    
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
@@ -62,7 +57,7 @@ const DashboardComponent = () => {
                                 title={`Welcome ${userInfo.username ? userInfo.username : userInfo.email}`}
                                 subheader="Your Dashboard"
                             />
-                            {logout && <HandleLogout />}  {/* This will log the user out */}
+                            {logout && <HandleLogout setIsAuthenticated={setIsAuthenticated}/>}  {/* This will log the user out */}
                             <CardContent>
                             </CardContent>
                         </Card>

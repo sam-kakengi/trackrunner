@@ -8,10 +8,10 @@ import DashboardComponent from '../../components/core-components/DashboardComp';
  * @returns {JSX.Element} The rendered Dashboard page.
  */
 
-const DashboardPage = () => {
+const DashboardPage = ({setIsAuthenticated}) => {
     return (
         <Container maxWidth={false} disableGutters sx={{ maxWidth: '100%', paddingLeft: '0', paddingRight: '0' }}>
-            <DashboardComponent />
+            <DashboardComponent setIsAuthenticated={setIsAuthenticated}/>
         </Container>
     );
 };

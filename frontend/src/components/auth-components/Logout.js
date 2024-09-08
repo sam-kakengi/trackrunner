@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
+
 /**
  * Handles the logout functionality.
  * 
@@ -11,18 +12,26 @@ import { useEffect } from 'react';
  * @returns {null} Returns null.
  */
 
-const HandleLogout = () => {
+const HandleLogout = ({ setIsAuthenticated }) => {
     const navigate = useNavigate();
-
+  
     useEffect(() => {
-        
+      const performLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         localStorage.setItem('logoutAlert', 'true');
-        navigate('/');
-    }, [navigate]);
-
+        if (typeof setIsAuthenticated === 'function') {
+          setIsAuthenticated(false);
+        } else {
+          console.error('setIsAuthenticated is not a function');
+        }
+        navigate('/login');
+      };
+  
+      performLogout();
+    }, [navigate, setIsAuthenticated]);
+  
     return null;
-};
-
-export default HandleLogout;
+  };
+  
+  export default HandleLogout;
