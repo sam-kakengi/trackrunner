@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Menu, MenuItem } from '@mui/material'
+import { Button, Menu, MenuItem, Box, ButtonGroup } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { useTheme } from '@mui/material/styles'
 
@@ -7,46 +7,63 @@ const DropdownBtn = () => {
     const [anchorEl, setAnchorEl] = useState(false)
     const open = Boolean(anchorEl)
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget)
-        console.log('Current theme:', theme)
-    }
-
     const theme = useTheme()
 
-    const handleClose = () => {
-        setAnchorEl(null)
-    };
+    const handleClick = () => {
+        
+        console.log("Start Timer clicked");
+      };
+    
+      const handleMenuClick = (event) => {
+        setAnchorEl(event.currentTarget); 
+      };
+    
+      const handleMenuClose = () => {
+        setAnchorEl(null);
+      };
 
     return (
-        <div>
+        <Box>
+      {/* Button Group for Split Button */}
+        <ButtonGroup variant="contained" sx={{ backgroundColor: theme.primary, color: theme.text.secondary }}>
+            {/* Main Action Button */}
             <Button
-                id="dropdown-button"
-                aria-controls={open ? 'dropdown-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-                variant="contained"
-                sx={{ backgroundColor: theme.primary, 
-                    color: theme.text.secondary, 
-                    width: '10rem' }}
+            onClick={handleClick}
+            sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: '8rem' }}
             >
-                Start Timer
-                <ArrowDropDownIcon sx={{ marginLeft: '0.5rem', marginBottom: '0.3rem' }} />
+            Start Timer
             </Button>
-            <Menu
-                id="dropdown-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'dropdown-button',
-                }}
-        
+
+            {/* Dropdown Button */}
+            <Button
+            size="small"
+            onClick={handleMenuClick}
+            sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: {xs: '1rem'} }}
             >
-                <MenuItem onClick={handleClose} sx={{ width: '10rem' }}>Log Run</MenuItem>
-            </Menu>
-        </div>
+            <ArrowDropDownIcon />
+            </Button>
+        </ButtonGroup>
+
+        {/* Dropdown Menu */}
+        <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            MenuListProps={{
+            'aria-labelledby': 'dropdown-button',
+            }}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',  // Changed from 'left' to 'right'
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',  // Changed from 'left' to 'right'
+              }}
+        >
+            <MenuItem onClick={handleMenuClose} sx={{width: '11rem'}}>Log a Run</MenuItem>
+        </Menu>
+    </Box>
     )
 }
 

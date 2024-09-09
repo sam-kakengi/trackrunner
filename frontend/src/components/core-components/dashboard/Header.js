@@ -40,7 +40,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
         {isMobile ? (
           <>
             <IconButton edge="end" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-              <MenuIcon sx={{ color: '#FFD54F' }} />
+              <MenuIcon sx={{ color: '#FFD54F', fontSize: '4rem' }} />
             </IconButton>
             <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} userInfo={userInfo} />
           </>

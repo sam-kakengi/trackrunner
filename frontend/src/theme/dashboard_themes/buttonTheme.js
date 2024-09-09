@@ -35,7 +35,7 @@ const buttonTheme = createTheme({
         
         containedPrimary: {
           backgroundColor: paletteTheme.palette.primary.main,
-          color: paletteTheme.palette.text.primary,
+          color: paletteTheme.palette.text.secondary,
           '&:hover': {
             backgroundColor: paletteTheme.palette.secondary.main,
           },
