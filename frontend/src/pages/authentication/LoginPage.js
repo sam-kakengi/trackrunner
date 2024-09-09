@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Box, Typography, CircularProgress } from '@mui/material';
-import LoginComponent from '../../components/auth/LoginComp';
+import React, { useState } from 'react'
+import { Box, Typography, CircularProgress } from '@mui/material'
+import LoginComponent from '../../components/auth/LoginComp'
 import RunningMan from '../../assets/running-man-small.svg'
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 /**
  * LoginPage component.
@@ -15,9 +15,9 @@ import axios from 'axios';
 
 const LoginPage = ({ setIsAuthenticated }) => {
 
-    const navigate = useNavigate();
-    const [LoginPageErrorMessage, setLoginPageErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
+    const [LoginPageErrorMessage, setLoginPageErrorMessage] = useState('')
+    const [loading, setLoading] = useState(false)
     /**
      * Handles the login process.
      * 
@@ -27,34 +27,34 @@ const LoginPage = ({ setIsAuthenticated }) => {
      * @throws {Error} - If an error occurs during the login process, and depending on the error, a different error message will be displayed.
      */
     const handleLogin = async (email, password) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/login/', { email, password });
+            const response = await axios.post('http://localhost:8000/api/auth/login/', { email, password })
             const userInfoResponse = await axios.get('http://localhost:8000/api/auth/user/', {
                 headers: {
                     'Authorization': `Token ${response.data.key}`,
                 },
             });
 
-            localStorage.setItem('token', response.data.key);
-            localStorage.setItem('userInfo', JSON.stringify(userInfoResponse.data));
-            localStorage.setItem('message', `Welcome ${userInfoResponse.data.username ? userInfoResponse.data.username : userInfoResponse.data.email}`);
+            localStorage.setItem('token', response.data.key)
+            localStorage.setItem('userInfo', JSON.stringify(userInfoResponse.data))
+            localStorage.setItem('message', `Welcome ${userInfoResponse.data.username ? userInfoResponse.data.username : userInfoResponse.data.email}`)
             
             setTimeout(() => {
-                setLoading(false);
-                setIsAuthenticated(true);
-                navigate('/');
+                setLoading(false)
+                setIsAuthenticated(true)
+                navigate('/')
             }, 2000);
         } catch (error) {
             if (error.response) {
                 const errorData = error.response.data;
                 if (errorData.non_field_errors) {
-                    setLoginPageErrorMessage("Incorrect credentials. Please try again.");
+                    setLoginPageErrorMessage("Incorrect credentials. Please try again.")
                 } else {
-                    setLoginPageErrorMessage("An unexpected error occurred. Please try again.");
+                    setLoginPageErrorMessage("An unexpected error occurred. Please try again.")
                 }
             } else {
-                setLoginPageErrorMessage("An unexpected error occurred. Please try again.");
+                setLoginPageErrorMessage("An unexpected error occurred. Please try again.")
             } 
             setLoading(false)
         }
@@ -91,7 +91,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
 
     </Box>
     
-  );
-};
+  )
+}
 
 export default LoginPage;

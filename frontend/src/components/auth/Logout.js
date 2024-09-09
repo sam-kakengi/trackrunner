@@ -1,6 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 
 /**
@@ -13,25 +12,25 @@ import { useEffect } from 'react';
  */
 
 const HandleLogout = ({ setIsAuthenticated }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
   
     useEffect(() => {
       const performLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
-        localStorage.setItem('logoutAlert', 'true');
+        localStorage.removeItem('token')
+        localStorage.removeItem('userInfo')
+        localStorage.setItem('logoutAlert', 'true')
         if (typeof setIsAuthenticated === 'function') {
-          setIsAuthenticated(false);
+          setIsAuthenticated(false)
         } else {
-          console.error('setIsAuthenticated is not a function');
+          console.error('setIsAuthenticated is not a function')
         }
-        navigate('/login');
+        navigate('/login')
       };
   
-      performLogout();
-    }, [navigate, setIsAuthenticated]);
+      performLogout()
+    }, [navigate, setIsAuthenticated])
   
-    return null;
+    return null
   };
   
-  export default HandleLogout;
+  export default HandleLogout

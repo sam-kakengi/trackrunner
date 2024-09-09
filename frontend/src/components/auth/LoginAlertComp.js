@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import { 
     Alert, 
     AlertTitle, 
@@ -6,8 +6,8 @@ import {
     Box, 
     Typography, 
     Zoom 
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 /**
  * LoginAlert component displays a success message when a user successfully signs in.
@@ -16,8 +16,8 @@ import CloseIcon from '@mui/icons-material/Close';
  */
 
 const LoginAlert = () => {
-    const [message, setMessage] = useState('');
-    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState('')
+    const [showMessage, setShowMessage] = useState(false)
     const [open, setOpen] = useState(true); 
 
     const handleClose = () => {
@@ -26,22 +26,22 @@ const LoginAlert = () => {
 
     useEffect(() => {
         
-        const loginMessage = localStorage.getItem('message');
+        const loginMessage = localStorage.getItem('message')
 
         if (loginMessage) {
-            setMessage(loginMessage);
-            setShowMessage(true);
+            setMessage(loginMessage)
+            setShowMessage(true)
 
-            // Clear the message after 3 seconds
+            
             const timer = setTimeout(() => {
-                setShowMessage(false);
-                setOpen(false);
-                localStorage.removeItem('message');
-            }, 3000);
+                setShowMessage(false)
+                setOpen(false)
+                localStorage.removeItem('message')
+            }, 3000)
 
-            return () => clearTimeout(timer); 
+            return () => clearTimeout(timer)
         }
-    }, []);
+    }, [])
 
     return (
         <Zoom in={showMessage && open}>

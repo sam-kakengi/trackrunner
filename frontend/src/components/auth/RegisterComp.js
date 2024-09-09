@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, InputAdornment, Link, Container, Checkbox, FormControlLabel } from '@mui/material';
-import { Email, Person, Lock } from '@mui/icons-material';
-import validateEmail from '../../validations/EmailValidation';
-import validatePassword from '../../validations/PasswordValidation';
+import React, { useState } from 'react'
+import { TextField, Button, Box, Typography, InputAdornment, Link, Container, Checkbox, FormControlLabel } from '@mui/material'
+import { Email, Person, Lock } from '@mui/icons-material'
+import validateEmail from '../../validations/EmailValidation'
+import validatePassword from '../../validations/PasswordValidation'
 
 /**
  * RegisterPage component.
@@ -14,60 +14,60 @@ import validatePassword from '../../validations/PasswordValidation';
  */
 
 const RegisterPage = ({ onRegister, formMessage }) => {
-    const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [password1, setPassword1] = useState('');
-    const [password2, setPassword2] = useState('');
-    const [termsAccepted, setTermsAccepted] = useState(false);
-    const [termsError, setTermsError] = useState('');
+    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
+    const [password1, setPassword1] = useState('')
+    const [password2, setPassword2] = useState('')
+    const [termsAccepted, setTermsAccepted] = useState(false)
+    const [termsError, setTermsError] = useState('')
 
-    const [emailError, setEmailError] = useState('');
-    const [usernameError, setUsernameError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [emailError, setEmailError] = useState('')
+    const [usernameError, setUsernameError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+    const [confirmPasswordError, setConfirmPasswordError] = useState('')
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        setEmailError('');
-        setUsernameError('');
-        setPasswordError('');
-        setConfirmPasswordError('');
+        setEmailError('')
+        setUsernameError('')
+        setPasswordError('')
+        setConfirmPasswordError('')
 
-        let valid = true;
+        let valid = true
 
         if (!email) {
-            setEmailError('Email is required');
-            valid = false;
+            setEmailError('Email is required')
+            valid = false
         } else if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email address');
-            valid = false;
+            setEmailError('Please enter a valid email address')
+            valid = false
         }
     
         if (!username) {
-            setUsernameError('Username is required');
-            valid = false;
+            setUsernameError('Username is required')
+            valid = false
         }
     
         if (!password1) {
-            setPasswordError('Password is required');
-            valid = false;
+            setPasswordError('Password is required')
+            valid = false
         } else if (!validatePassword(password1)) {
-            setPasswordError('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, and a number.');
-            valid = false;
+            setPasswordError('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, and a number.')
+            valid = false
         }
         
         if (!password2) {
-            setConfirmPasswordError('Please confirm your password');
-            valid = false;
+            setConfirmPasswordError('Please confirm your password')
+            valid = false
         } else if (password1 !== password2) {
-            setConfirmPasswordError('Passwords do not match');
-            valid = false;
+            setConfirmPasswordError('Passwords do not match')
+            valid = false
         }
 
         if (!termsAccepted) {
-            setTermsError('You must accept the terms and conditions');
-            valid = false;
+            setTermsError('You must accept the terms and conditions')
+            valid = false
           }
     
         if (valid) {
@@ -193,7 +193,7 @@ const RegisterPage = ({ onRegister, formMessage }) => {
                             onChange={(e) => {
                                 setTermsAccepted(e.target.checked);
                                 if (e.target.checked) {
-                                  setTermsError(''); 
+                                  setTermsError('')
                                 }
                               }}
                             color="primary"
@@ -249,4 +249,4 @@ const RegisterPage = ({ onRegister, formMessage }) => {
     );
 };
 
-export default RegisterPage;
+export default RegisterPage

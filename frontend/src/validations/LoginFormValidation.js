@@ -6,12 +6,12 @@
  */
 const validateEmail = (email) => {
     if (!email) {
-        return "Email is required";
+        return "Email is required"
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-        return "Please enter a valid email address";
+        return "Please enter a valid email address"
     }
-    return '';
-};
+    return ''
+}
 
 /**
  * Validates the password.
@@ -21,9 +21,9 @@ const validateEmail = (email) => {
  */
 const validatePassword = (password) => {
     if (!password) {
-        return "Password is required";
+        return "Password is required"
     }
-    return '';
+    return ''
 };
 
 /**
@@ -41,11 +41,11 @@ const validateLoginForm = (email, password) => {
     let errors = {
         email: validateEmail(email),
         password: validatePassword(password),
-    };
+    }
 
-    let isValid = !errors.email && !errors.password;
+    let isValid = !errors.email && !errors.password
 
-    return { isValid, errors };
-};
+    return { isValid, errors }
+}
 
-export default validateLoginForm;
+export default validateLoginForm

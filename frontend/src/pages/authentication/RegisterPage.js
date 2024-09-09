@@ -1,9 +1,9 @@
-import React from 'react';
-import { Container, Box, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import RegisterComp from '../../components/auth/RegisterComp';
-import { useState } from 'react';
+import React from 'react'
+import { Container, Box, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import RegisterComp from '../../components/auth/RegisterComp'
+import { useState } from 'react'
 import RunningMan from '../../assets/running-man-small.svg'
 
 /**
@@ -16,22 +16,22 @@ import RunningMan from '../../assets/running-man-small.svg'
  */
 
 const RegistrationPage = () => {
-    const navigate = useNavigate();
-    const [message, setMessage] = useState('');
+    const navigate = useNavigate()
+    const [message, setMessage] = useState('')
 
     const handleRegister = async (registrationData) => {
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/registration/', registrationData);
+            const response = await axios.post('http://localhost:8000/api/auth/registration/', registrationData)
             setMessage("Registration successful! Sending you to the login page...");
             setTimeout(() => {
-                navigate('/'); 
+                navigate('/')
             }, 2000);
 
         } catch (error) {
-            setMessage("Registration failed. Please check your inputs.");
-            console.error("There was an error!", error);
+            setMessage("Registration failed. Please check your inputs.")
+            console.error("There was an error!", error)
             if (error.response) {
-                console.error("Response data:", error.response.data);
+                console.error("Response data:", error.response.data)
             }
         }
     };
@@ -55,7 +55,7 @@ const RegistrationPage = () => {
             </Box>
             <RegisterComp onRegister={handleRegister} formMessage={message} />
         </Container>
-    );
-};
+    )
+}
 
 export default RegistrationPage;
