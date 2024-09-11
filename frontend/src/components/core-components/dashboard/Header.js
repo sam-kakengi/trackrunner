@@ -30,7 +30,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
             </Typography>
           )}
           <Typography>
-            <img src={Runner} alt="Man Running" style={{ width: '5rem', height: 'auto' }} />
+            <img src={Runner} alt="Man Running" style={{ width: '2.9rem', height: 'auto' }} />
           </Typography>
         </Box>
 

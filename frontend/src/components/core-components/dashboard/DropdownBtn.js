@@ -25,11 +25,12 @@ const DropdownBtn = () => {
     return (
         <Box>
       {/* Button Group for Split Button */}
-        <ButtonGroup variant="contained" sx={{ backgroundColor: theme.primary, color: theme.text.secondary }}>
+        <ButtonGroup variant="contained" sx={{ backgroundColor: theme.primary, color: theme.text.secondary, height: '2.3rem'  }}
+        >
             {/* Main Action Button */}
             <Button
             onClick={handleClick}
-            sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: '8rem' }}
+            sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: '8rem', height: '100%'  }}
             >
             Start Timer
             </Button>
@@ -38,7 +39,7 @@ const DropdownBtn = () => {
             <Button
             size="small"
             onClick={handleMenuClick}
-            sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: {xs: '1rem'} }}
+            sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: {xs: '1rem'}, height: '100%' }}
             >
             <ArrowDropDownIcon />
             </Button>
