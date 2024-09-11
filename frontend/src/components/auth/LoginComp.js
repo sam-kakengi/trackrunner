@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, InputAdornment, Divider, Link, Alert, Card, CardContent
+import React, { useState, useEffect } from 'react'
+import { TextField, Button, Box, Typography, InputAdornment, Link, Alert, Card, CardContent
 
- } from '@mui/material';
-import { Email, Lock, Check as CheckIcon } from '@mui/icons-material';
-import validateLoginForm from '../../validations/LoginFormValidation';
+ } from '@mui/material'
+import { Email, Lock, Check as CheckIcon } from '@mui/icons-material'
+import validateLoginForm from '../../validations/LoginFormValidation'
 
 
 const LoginComponent = ({ onSubmit, LoginPageErrorMessage }) => {
@@ -138,4 +138,4 @@ const LoginComponent = ({ onSubmit, LoginPageErrorMessage }) => {
     );
 };
 
-export default LoginComponent;
+export default LoginComponent

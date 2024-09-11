@@ -25,7 +25,17 @@ Then install the material-ui icons library by running the command:
 npm install @mui/icons-material
 ```
 
-# Step 4:
+
+## Step 4: 
+
+Next install the react-router-dom library responsible for page navigation by running command:
+
+```bash
+npm install react-router-dom
+```
+
+
+# Step 5:
 
 You can now utilize material-ui components and icons within the project, example:
 
