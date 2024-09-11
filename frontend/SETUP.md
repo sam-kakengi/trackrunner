@@ -10,12 +10,14 @@ cd frontend
 
 ## Step 2: Install Material-UI Core and Emotion Libraries
 
-Run the following command in your terminal to install the core Material-UI package along with its peer dependencies:
+Run the following commands in your terminal to install the core Material-UI package along with its peer dependencies:
 
 ```bash
 npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/x-date-pickers
+npm install dayjs
 ```
-Note: @emotion/react and @emotion/styled are required for styling in MUI. 
+Note: @emotion/react and @emotion/styled are required for styling in MUI and @x-date-pickers alongwith dayjs, allow for time/date fields
 
 
 ## Step 3:
