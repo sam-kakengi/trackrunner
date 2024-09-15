@@ -1,30 +1,55 @@
-import React, { useState } from 'react';
-import { Paper, Box, Grid, Typography, Select, CardActions, Button, Dialog, DialogContent, MenuItem, TextField, useMediaQuery, FormControl, InputLabel } from '@mui/material';
-import { TimePicker, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { ThemeProvider } from '@mui/material/styles';
-import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme';
+import React, { useState, useEffect } from 'react'
+import { Paper, Box, Grid, Typography, Select, CardActions, Button, Dialog, DialogContent, MenuItem, TextField, useMediaQuery, FormControl, InputLabel, Divider } from '@mui/material'
+import { TimePicker, DatePicker } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import AddIcon from '@mui/icons-material/Add'
+import { ThemeProvider } from '@mui/material/styles'
+import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme'
+import axios from 'axios'
+import fetchRoutes from './api_calls/getRoutes'
+import NewRouteModal from './AddNewRoute'
 
 const LogRunModal = ({ open, handleClose }) => {
-  const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
+  const [routesArray, setRoutesArray] = useState([])
+  const [newRouteOpen, setNewRouteOpen] = useState(false)
 
   const [runData, setRunData] = useState({
     runTime: null,
     date: null,
     route: '',
-    routes: ['NewTreeWay', 'RootValley', 'HighlandView'],
     notes: '',
   });
 
-  const handleChange = (field) => (event) => {
-    setRunData({ ...runData, [field]: event.target.value });
+  const formChange = (field) => (event) => {
+    setRunData({ ...runData, [field]: event.target.value || ''})
   };
+
+  const newRouteModalOpen = () => {
+    setNewRouteOpen(true)
+  }
+
+  const newRouteModalClose = () => {
+    setNewRouteOpen(false)
+  }
+
+  useEffect(() => {
+    if(open) {
+      const getRoutes = async () => {
+        const retrievedRoutes = await fetchRoutes()
+        setRoutesArray(retrievedRoutes)
+      }
+      getRoutes()
+    }
+  }, [open])
+
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Form Submitted');
-  };
+    console.log('Form Submitted')
+  }
 
   return (
     <ThemeProvider theme={modalTheme}>
@@ -86,16 +111,26 @@ const LogRunModal = ({ open, handleClose }) => {
                       <InputLabel id="route-label">Route</InputLabel>
                       <Select
                         labelId="route-label"
-                        value={runData.route}
-                        onChange={handleChange('route')}
+                        value={runData.route || ''}
+                        onChange={formChange('route')}
                         label="Route"
                       >
-                        {runData.routes.map((routeName, index) => (
-                          <MenuItem key={index} value={routeName}>
-                            {routeName}
+                        {routesArray.map((route, index) => (
+                          <MenuItem key={index} value={route}>
+                            {route.name}
                           </MenuItem>
                         ))}
+                        {routesArray.length > 0 && <Divider />}
+                        <MenuItem onClick={() => {
+                            
+                            newRouteModalOpen();
+                          }}>
+                          <AddIcon sx={{ mr: 1 }} />
+                          Add New Route
+                        </MenuItem>
+                        
                       </Select>
+                      <NewRouteModal newRouteOpen={newRouteOpen} newRouteClose={newRouteModalClose} />
                     </FormControl>
                   </Grid>
 
@@ -105,7 +140,7 @@ const LogRunModal = ({ open, handleClose }) => {
                       multiline
                       rows={isMobile ? 3 : 5}
                       value={runData.notes}
-                      onChange={handleChange('notes')}
+                      onChange={formChange('notes')}
                       size={isMobile ? 'small' : 'medium'}
                       fullWidth
                     />
