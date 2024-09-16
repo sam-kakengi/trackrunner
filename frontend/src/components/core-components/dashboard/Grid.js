@@ -20,10 +20,9 @@ const getRecentRun = async () => {
         return res.data;
     } catch (err) {
         if (err.response && err.response.status === 404) {
-            return null; // Handle 404 response
+            return null;
         } else {
-            console.error(err);
-            return null; // Handle other errors
+            return null;
         }
     }
 };
