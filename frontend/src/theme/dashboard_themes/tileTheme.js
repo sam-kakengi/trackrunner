@@ -3,7 +3,7 @@ import { blueGrey } from "@mui/material/colors";
 
 const tileTheme = createTheme({
     typography:{
-        h6: {
+        h5: {
             color: blueGrey[900]
         },
         h4:{
