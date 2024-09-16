@@ -21,6 +21,8 @@ from running.views import RouteView, RunningView, MostRecentRunView, PersonalBes
 
 router = DefaultRouter()
 router.register(r'routes', RouteView, basename='route')
+router.register(r'running', RunningView, basename='runlist')
+
 router.register(r'', RunningView, basename='runs')
 
 urlpatterns = [

@@ -2,24 +2,41 @@ import React, { useState } from 'react'
 import { Button, Menu, MenuItem, Box, ButtonGroup } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { useTheme } from '@mui/material/styles'
+import LogRunModal from './LogRun'
 
 const DropdownBtn = () => {
-    const [anchorEl, setAnchorEl] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
 
     const theme = useTheme()
+
+    const [logRunOpen, logRunSetOpen] = useState(false);
+
+    const logRunhandleOpen = () => {
+      logRunSetOpen(true);
+    };
+
+    const logRunhandleClose = () => {
+      logRunSetOpen(false);
+    };
 
     const handleClick = () => {
         
         console.log("Start Timer clicked");
       };
     
-      const handleMenuClick = (event) => {
+    const handleMenuClick = (event) => {
         setAnchorEl(event.currentTarget); 
       };
     
-      const handleMenuClose = () => {
+    const handleMenuClose = () => {
         setAnchorEl(null);
+        
+      };
+
+    const handleLogRunClick = () => {
+        logRunhandleOpen();
+        handleMenuClose();
       };
 
     return (
@@ -52,18 +69,23 @@ const DropdownBtn = () => {
             onClose={handleMenuClose}
             MenuListProps={{
             'aria-labelledby': 'dropdown-button',
+            sx: {paddingTop: '0', paddingBottom: '0'}
             }}
             anchorOrigin={{
                 vertical: 'bottom',
-                horizontal: 'right',  // Changed from 'left' to 'right'
+                horizontal: 'right', 
               }}
               transformOrigin={{
                 vertical: 'top',
-                horizontal: 'right',  // Changed from 'left' to 'right'
+                horizontal: 'right', 
               }}
+            
         >
-            <MenuItem onClick={handleMenuClose} sx={{width: '11rem'}}>Log a Run</MenuItem>
+            <MenuItem onClick={handleLogRunClick} sx={{width: '11rem',}}  >Log a Run</MenuItem>
+            
         </Menu>
+
+        <LogRunModal open={logRunOpen} handleClose={logRunhandleClose}/>
     </Box>
     )
 }

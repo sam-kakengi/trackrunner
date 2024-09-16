@@ -3,7 +3,7 @@ from running.models import RunActivity, Route
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, GetRouteSerializer, CreateUpdateRouteSerializer, PersonalBestSerializer,
                                  GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
 from django.db.models import F, ExpressionWrapper, FloatField
@@ -12,7 +12,7 @@ from .utils import format_seconds
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
@@ -39,7 +39,7 @@ class RouteView(viewsets.ModelViewSet):
 class RunningView(viewsets.ModelViewSet):
     queryset = RunActivity.objects.all()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     http_method_names = ['get', 'post', 'patch']
 
     def get_queryset(self):
@@ -73,7 +73,7 @@ class RunningView(viewsets.ModelViewSet):
 
 class MostRecentRunView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     serializer_class = MostRecentSerializer
 
     def get_object(self):
@@ -94,7 +94,7 @@ class MostRecentRunView(generics.RetrieveAPIView):
 
 class PersonalBestView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     serializer_class = PersonalBestSerializer
     
     def get_object(self):
@@ -108,7 +108,7 @@ class PersonalBestView(generics.RetrieveAPIView):
 
 class ActiveRunView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     http_method_names = ['get', 'post', 'patch']
 
     def get_object(self):

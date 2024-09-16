@@ -21,6 +21,9 @@ const paletteTheme = createTheme({
     },
     secondButton: {
         main: '#EEEEEE',
+    },
+    logRunInputBoxes: {
+      main: '#37474F'
     }
   },
 })
