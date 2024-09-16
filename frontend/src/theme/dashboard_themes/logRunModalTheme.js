@@ -8,6 +8,9 @@ const modalTheme = createTheme({
       secondary: {
         main: '#546E7A',
       },
+      tertiary: {
+        main: '#37474F'
+      }
       
     },
     components: {

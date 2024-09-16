@@ -6,9 +6,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import AddIcon from '@mui/icons-material/Add'
 import { ThemeProvider } from '@mui/material/styles'
 import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme'
-import axios from 'axios'
 import fetchRoutes from './api_calls/getRoutes'
 import NewRouteModal from './AddNewRoute'
+import postRunData from './api_calls/postRun'
+import dayjs from 'dayjs'
 
 const LogRunModal = ({ open, handleClose }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
@@ -16,7 +17,9 @@ const LogRunModal = ({ open, handleClose }) => {
   const [newRouteOpen, setNewRouteOpen] = useState(false)
 
   const [runData, setRunData] = useState({
-    runTime: null,
+    start: null,
+    end: null,
+    duration: null,
     date: null,
     route: '',
     notes: '',
@@ -44,12 +47,40 @@ const LogRunModal = ({ open, handleClose }) => {
     }
   }, [open])
 
-
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('Form Submitted')
+  const addNewRoute = (newRoute) => {
+    console.log(newRoute)
+    setRoutesArray(prevRoutes => [...prevRoutes, newRoute])
+    setRunData(prevRunData => ({ ...prevRunData, route: newRoute.name })) 
+    newRouteModalClose()
   }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      
+      const formattedData = {
+        start: runData.start,
+        finished: runData.end,
+        duration: runData.duration,
+        date: runData.date,
+        route: runData.route,
+        notes: runData.notes,
+      }
+  
+      
+      const response = await postRunData(formattedData)
+      console.log('Run data submitted successfully')
+  
+      
+      handleClose()
+  
+      
+    } catch (error) {
+      console.error('Error submitting run data')
+    }
+  }
+
+  
 
   return (
     <ThemeProvider theme={modalTheme}>
@@ -67,20 +98,36 @@ const LogRunModal = ({ open, handleClose }) => {
 
                   <Grid item xs={12} sm={6}>
                     <TimePicker
-                      label="Run Time"
-                      sx={{ width: isMobile ? '100%' : '75%' }}
-                      value={runData.runTime}
-                      onChange={(newTime) => setRunData({ ...runData, runTime: newTime })}
+                      label="Start"
+                      sx={{ width: '100%' }}
+                      value={runData.start}
+                      onChange={(newStart) => {
+                        const newEnd = runData.end;
+                        const duration = newEnd && newStart ? newEnd.diff(newStart, 'minutes') : null;
+                        setRunData({ ...runData, start: newStart, duration });
+                      }}
                       slots={{
                         textField: (params) => (
                           <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth />
                         ),
-                        actionBar: (props) => (
-                            <Box {...props} sx={{marginLeft: 'auto', marginTop: '2.5rem', marginBottom: '1rem'}}>
-                              <Button onClick={props.onCancel} sx={{ color: 'black', fontSize:'0.8rem', fontWeight: '600' }}>Cancel</Button>
-                              <Button onClick={props.onAccept} sx={{ color: 'black', fontSize: '0.8rem', fontWeight: '600'  }}>OK</Button>
-                            </Box>
-                          ),
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TimePicker
+                      label="Finish"
+                      sx={{ width: '100%' }}
+                      value={runData.end}
+                      onChange={(newFinish) => {
+                        const newStart = runData.start;
+                        const duration = newStart && newFinish ? newFinish.diff(newStart, 'minutes') : null;
+                        setRunData({ ...runData, end: newFinish, duration });
+                      }}
+                      slots={{
+                        textField: (params) => (
+                          <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth />
+                        ),
                       }}
                     />
                   </Grid>
@@ -88,19 +135,14 @@ const LogRunModal = ({ open, handleClose }) => {
                   <Grid item xs={12} sm={6}>
                     <DatePicker
                       label="Date"
-                      sx={{ width: isMobile ? '100%' : '75%' }}
+                      sx={{ width: '100%' }}
                       value={runData.date}
                       onChange={(newDate) => setRunData({ ...runData, date: newDate })}
                       slots={{
                         textField: (params) => (
                           <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth />
                         ),
-                        actionBar: (props) => (
-                            <Box {...props} sx={{marginLeft: 'auto', marginTop: '2.5rem', marginBottom: '1rem'}}>
-                              <Button onClick={props.onCancel} sx={{ color: 'black', fontSize:'0.8rem', fontWeight: '600' }}>Cancel</Button>
-                              <Button onClick={props.onAccept} sx={{ color: 'black', fontSize: '0.8rem', fontWeight: '600'  }}>OK</Button>
-                            </Box>
-                          ),
+                        
                       }}
                         
                     />
@@ -112,16 +154,41 @@ const LogRunModal = ({ open, handleClose }) => {
                       <Select
                         labelId="route-label"
                         value={runData.route || ''}
-                        onChange={formChange('route')}
+                        
+                        onChange={(e) => { 
+                          
+                          setRunData({ ...runData, route: e.target.value }) 
+                        }}
                         label="Route"
+
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              maxHeight: '12rem',
+                              overflowY: 'auto',   
+                            },
+                          },
+                        }}
                       >
-                        {routesArray.map((route, index) => (
-                          <MenuItem key={index} value={route}>
-                            {route.name}
-                          </MenuItem>
-                        ))}
-                        {routesArray.length > 0 && <Divider />}
-                        <MenuItem onClick={() => {
+
+                        
+                          {routesArray.map((route, index) => (
+                            <MenuItem 
+                              key={index} 
+                              value={route.id} 
+                              sx={{ height: 'auto', maxHeight: '3rem', overflow: 'auto' }}
+                            >
+                              {route.name}
+                            </MenuItem>
+                          ))}
+                        
+                        
+                        <MenuItem sx={{position: 'sticky',
+                        bottom: 0,
+                        backgroundColor: modalTheme.palette.tertiary.main,
+                        borderTop: '1px solid white',
+                        zIndex: 1,}} 
+                        onClick={() => {
                             
                             newRouteModalOpen();
                           }}>
@@ -130,7 +197,6 @@ const LogRunModal = ({ open, handleClose }) => {
                         </MenuItem>
                         
                       </Select>
-                      <NewRouteModal newRouteOpen={newRouteOpen} newRouteClose={newRouteModalClose} />
                     </FormControl>
                   </Grid>
 
@@ -150,7 +216,7 @@ const LogRunModal = ({ open, handleClose }) => {
                     <CardActions
                         sx={{
                         display: 'flex',
-                        justifyContent: isMobile ? 'center' : 'flex-end',
+                        justifyContent: isMobile ? 'center' : 'flex-start',
                         flexDirection: isMobile ? 'column' : 'row',
                         gap: isMobile ? 2 : 1,
                         width: '100%',
@@ -162,7 +228,7 @@ const LogRunModal = ({ open, handleClose }) => {
                         <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
                         Submit
                         </Button>
-                        <Button size={isMobile ? 'small' : 'medium'} variant="outlined" fullWidth={isMobile} onClick={handleClose}>
+                        <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleClose}>
                         Cancel
                         </Button>
                     </CardActions>
@@ -174,8 +240,10 @@ const LogRunModal = ({ open, handleClose }) => {
           </DialogContent>
         </Dialog>
       </LocalizationProvider>
+      <NewRouteModal postNewRoute={addNewRoute} newRouteOpen={newRouteOpen} newRouteClose={newRouteModalClose} />
     </ThemeProvider>
-  );
-};
+    
+  )
+}
 
 export default LogRunModal;
