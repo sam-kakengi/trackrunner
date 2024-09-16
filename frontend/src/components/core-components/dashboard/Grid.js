@@ -1,15 +1,33 @@
 import React from 'react';
-import { Grid, Box } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { Grid, Box, Typography } from '@mui/material'
+import { ThemeProvider, useTheme } from '@mui/material/styles'
+import { CenterFocusStrong } from '@mui/icons-material';
+import tileTheme from '../../../theme/dashboard_themes/tileTheme';
+import axios from 'axios'
 
 /**
  * DashboardGrid component handles the layout of cards and the table in the dashboard.
  * @returns {JSX.Element} The grid layout component
  */
+const getRecentRun = async() => {
+    const token = localStorage.getItem('token')
+    const recentRun = await axios.get('http://localhost:8000/api/runs/recent/',
+    {
+        headers: {'Authorization': `Token ${token}`}
+    })
+    
+    return recentRun
+}
 
 const DashboardGrid = () => {
 
     const theme = useTheme()
+    
+    const recentRun = getRecentRun();
+
+    const tileBaseStyle = {textAlign: 'center', padding: '0.5rem'};
+    const gridBoxStyle = {flex: 1, backgroundColor: '#e0e0e0', height: {lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem'}, 
+    width: {xs: '14rem'}, borderRadius: '2rem', backgroundColor: theme.secondary.main, justifyContent: 'center', padding: '1rem', paddingTop: '2rem'};
 
     return(
     <Grid container spacing={2} sx={{marginBottom: '1rem'}}>
@@ -19,10 +37,15 @@ const DashboardGrid = () => {
                         {/* Two medium containers side by side */}
                         <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'row' }, 
                         gap: {lg: '2rem', xs: '0.5rem'}, width: {md: '100%'}, marginTop: '1.5rem' }}>
-                            <Box sx={{ flex: 1, backgroundColor: '#e0e0e0', height: {lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem'}, 
-                            width: {xs: '14rem'}, borderRadius: '2rem', backgroundColor: theme.secondary.main }}></Box>
-                            <Box sx={{ flex: 1, backgroundColor: '#e0e0e0', height: {lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem'}, 
-                            width: {xs: '14rem'}, borderRadius: '2rem', backgroundColor: theme.secondary.main }}></Box>
+                            <Box sx={gridBoxStyle}></Box>
+                            <Box sx={gridBoxStyle}>
+                            <ThemeProvider theme={tileTheme}>
+                                <Typography sx={tileBaseStyle} variant='h6'>31:42</Typography>
+                                <Typography sx={tileBaseStyle} variant='h2'>20th Aug</Typography>
+                                <Typography sx={tileBaseStyle} variant='h4'>Last Run</Typography>
+                                <Typography sx={tileBaseStyle} variant='h6'>The Lock</Typography>
+                            </ThemeProvider>
+                            </Box>
                         </Box>
 
 
