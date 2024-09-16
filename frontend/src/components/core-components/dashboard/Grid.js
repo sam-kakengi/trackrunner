@@ -62,9 +62,9 @@ const DashboardGrid = () => {
                         <Skeleton variant="square" width='100%' height='100%'/>
                     ) : recentRun ? (
                         <>
-                        <Typography sx={tileBaseStyle} variant='h5'>{recentRun.duration}</Typography>
+                        <Typography sx={tileBaseStyle} variant='h5'>Previous Run</Typography>
                         <Typography sx={tileBaseStyle} variant='h2'>{recentRun.date}</Typography>
-                        <Typography sx={tileBaseStyle} variant='h4'>Last Run</Typography>
+                        <Typography sx={tileBaseStyle} variant='h4'>{recentRun.duration}</Typography>
                         <Typography sx={tileBaseStyle} variant='h5'>{recentRun.route}</Typography>
                         </>
                     ) : (
