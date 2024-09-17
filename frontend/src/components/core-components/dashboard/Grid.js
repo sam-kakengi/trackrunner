@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Box} from '@mui/material'
+import { Grid, Box, useMediaQuery} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import RecentRunTile from './RecentRunTile';
 
@@ -12,11 +12,14 @@ import RecentRunTile from './RecentRunTile';
 const DashboardGrid = () => {
 
     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const tileBaseStyle = {textAlign: 'center', padding: '0.5rem'};
-    const gridBoxStyle = {flex: 1, height: {lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem'}, 
-    width: {xs: '14rem'}, borderRadius: '2rem', backgroundColor: theme.secondary.main, justifyContent: 'center', padding: '1rem', 
-    paddingTop: '2rem', flexDirection: 'column', display: 'flex'};
+    const tileBaseStyle = {textAlign: 'center', padding: isMobile ? '0.3rem' : 'inherit'};
+    const gridBoxStyle = {
+        flex: 1, height: {lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem'}, 
+        width: {xs: '14rem'}, borderRadius: '2rem', backgroundColor: theme.secondary.main, justifyContent: 'center', 
+        padding: '1rem' , flexDirection: 'column', display: 'flex'
+    };
 
     return(
     <Grid container spacing={2} sx={{marginBottom: '1rem'}}>
@@ -27,14 +30,12 @@ const DashboardGrid = () => {
             <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'row' }, 
             gap: {lg: '2rem', xs: '0.5rem'}, width: {md: '100%'}, marginTop: '1.5rem' }}>
                 <Box sx={gridBoxStyle}></Box>
-                <RecentRunTile gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
+                <RecentRunTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
             </Box>
 
             {/* Large Table container underneath */}
             <Box sx={{ marginTop: '2rem', backgroundColor: '#f5f5f5', height: { xs: '18.75rem', md: '25rem', lg: '25rem' }, 
             width: {xs: '21.9375'}, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
-                
-
             </Box>
         </Grid>
 

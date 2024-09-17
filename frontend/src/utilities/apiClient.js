@@ -17,7 +17,7 @@ class RunningAPI {
 
     constructor() {
         this.token = localStorage.getItem('token');
-        this.base_url = 'http://localhost:8000/api';
+        this.base_url = 'http://127.0.0.1:8000/api';
     }
 
     async getData(endpoint) {
