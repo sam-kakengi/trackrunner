@@ -3,6 +3,7 @@ import { ThemeProvider} from '@mui/material/styles';
 import tileTheme from '../../../theme/dashboard_themes/tileTheme';
 import { useState, useEffect } from 'react';
 import RunningAPI from '../../../utilities/apiClient';
+import { blueGrey } from '@mui/material/colors';
 
 const getRecentRun = async () => {
     const api = new RunningAPI();
@@ -33,7 +34,7 @@ const RecentRunTile = ({theme, gridBoxStyle, tileBaseStyle}) => {
                 ) : recentRun ? (
                     <>
                     <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Previous Run</Typography>
-                    <Typography sx={tileBaseStyle} variant={isMobile ? 'h3' : 'h2'}>{recentRun.date}</Typography>
+                    <Typography sx={tileBaseStyle} variant={isMobile ? 'h4' : 'h2'} color={blueGrey[50]}>{recentRun.date}</Typography>
                     <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>{recentRun.duration}</Typography>
                     <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>{recentRun.route}</Typography>
                     </>
