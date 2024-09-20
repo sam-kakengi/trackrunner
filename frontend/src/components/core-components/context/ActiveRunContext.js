@@ -30,6 +30,8 @@ export const ActiveRunProvider = ({ children }) => {
         body: JSON.stringify({ route: routeId, notes })
       })
 
+      console.log(response.data)
+
       if (response.ok) {
         setActiveRun({
           isRunning: true,
@@ -55,32 +57,44 @@ export const ActiveRunProvider = ({ children }) => {
     const id = setInterval(() => {
       setActiveRun(prev => {
         if (prev.isPaused) return prev
-        const now = Date.now()
-        const elapsedTime = Math.floor((now - prev.startTime) / 1000)
-        return { ...prev, duration: elapsedTime - prev.pausedDuration }
+        return { ...prev, duration: prev.duration + 1 }
       })
     }, 1000)
     setIntervalId(id)
   }
 
-  const startPauseCounter = () => {
-    const id = setInterval(() => {
-      setActiveRun(prev => {
-        if (!prev.isPaused) return prev
-        const pausedTime = Math.floor((Date.now() - prev.pauseStartTime) / 1000)
-        return { ...prev, pausedDuration: pausedTime }
-      })
-    }, 1000)
-    setIntervalId(id)
+  const pauseRun = () => {
+    setActiveRun(prev => ({
+      ...prev,
+      isPaused: true,
+      pauseStartTime: Date.now()
+    }))
+  }
+
+  const resumeRun = () => {
+    setActiveRun(prev => {
+      const additionalPausedDuration = prev.pauseStartTime ? Math.floor((Date.now() - prev.pauseStartTime) / 1000) : 0
+      return {
+        ...prev,
+        isPaused: false,
+        pausedDuration: prev.pausedDuration + additionalPausedDuration,
+        pauseStartTime: null
+      }
+    })
   }
 
   const endRun = async (notes) => {
     const token = localStorage.getItem('token')
     const payload = {
-      finished: true,
       route: activeRun.routeId,
       notes,
-      paused: activeRun.pausedDuration
+      paused: activeRun.pausedDuration,
+      duration: activeRun.duration,
+    }
+
+
+    if (activeRun.isPaused) {
+      payload.paused += Math.floor((Date.now() - activeRun.pauseStartTime) / 1000)
     }
 
     console.log("Payload Before Sending:", payload)
@@ -114,30 +128,6 @@ export const ActiveRunProvider = ({ children }) => {
     } catch (error) {
       console.error('Error ending the run:', error)
     }
-  }
-
-  const pauseRun = () => {
-    clearInterval(intervalId) 
-    setActiveRun(prev => ({
-      ...prev,
-      isPaused: true,
-      pauseStartTime: Date.now() 
-    }))
-    startPauseCounter() 
-  }
-
-  const resumeRun = () => {
-    clearInterval(intervalId) 
-    setActiveRun(prev => {
-      const additionalPausedDuration = Math.floor((Date.now() - prev.pauseStartTime) / 1000)
-      return {
-        ...prev,
-        isPaused: false,
-        pausedDuration: prev.pausedDuration + additionalPausedDuration,
-        pauseStartTime: null
-      }
-    })
-    startDurationCounter() 
   }
 
   useEffect(() => {
