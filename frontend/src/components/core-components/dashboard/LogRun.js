@@ -9,7 +9,7 @@ import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme'
 import fetchRoutes from './api_calls/getRoutes'
 import NewRouteModal from './AddNewRoute'
 import postRunData from './api_calls/postRun'
-import dayjs from 'dayjs'
+
 
 const LogRunModal = ({ open, handleClose }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))

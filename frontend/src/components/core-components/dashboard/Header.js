@@ -7,27 +7,48 @@ import Runner from '../../../assets/running-man-small.svg'
 import buttonTheme from '../../../theme/dashboard_themes/buttonTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import LogRunModal from './LogRun'
+import StartRunModal from './startRunComponents/startRunModal'
+import { useActiveRun } from '../context/ActiveRunContext'
+import EndRunModal from './EndRunModal'
 
-/**
- * Header component for the dashboard, handling mobile and desktop layouts.
- * @param {Object} props 
- * @param {boolean} props.isMobile - Whether the current view is mobile or not.
- * @param {Object} props.userInfo - The current user's info.
- * @param {Function} props.toggleDrawer - Function to open/close the drawer.
- * @param {boolean} props.drawerOpen - Whether the drawer is open or not.
- * @returns {JSX.Element} Header component
- */
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   const [open, setOpen] = useState(false);
-  
+  const [startRunModalOpen, setStartRunModalOpen] = useState(false)
+  const [endRunModalOpen, setEndRunModalOpen] = useState(false)
+
+  const { activeRun, startRun, endRun, pauseRun, resumeRun } = useActiveRun(); // Get activeRun and context functions
+
+  const handleStartRunOpen = () => {
+    setStartRunModalOpen(true)
+  }
+
+  const handleStartRunClose = () => {
+    setStartRunModalOpen(false)
+  }
+
+  const handleEndRunOpen = () => {
+    setEndRunModalOpen(true)
+  }
+
+  const handleEndRunClose = () => { 
+    setEndRunModalOpen(false)
+  }
 
   const handleOpen = () => {
     setOpen(true);
-  };
+  }
 
   const handleClose = () => {
     setOpen(false);
-  };
+  }
+
+  const togglePauseResume = () => {
+    if (activeRun.isPaused) {
+      resumeRun()
+    } else {
+      pauseRun()
+    }
+  }
 
   return (
     <ThemeProvider theme={buttonTheme}>
@@ -59,14 +80,33 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
         ) : (
           <Box sx={{ display: 'flex', gap: '2rem', width: { xs: '100%', sm: '100%', md: '100%', lg: '55%' }, 
           flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'center', sm: 'flex-start' }, justifyContent: 'center' }}>
-            <Button variant="contained" color="primary">Start Timer</Button>
-            <Button variant="contained" color="secondary" onClick={handleOpen}>Log Run</Button>
-            <LogRunModal open={open} handleClose={handleClose}/>
+            {activeRun.isRunning ? (
+              <>
+                <Button variant="contained" color="secondary" onClick={handleEndRunOpen}>
+                  End Run
+                </Button>
+                <Button variant="outlined" onClick={togglePauseResume}>
+                  {activeRun.isPaused ? 'Resume' : 'Pause'}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="contained" color="primary" onClick={handleStartRunOpen}>Start Timer</Button>
+                <StartRunModal 
+                  open={startRunModalOpen} 
+                  handleClose={handleStartRunClose} 
+                  onStartRun={startRun}
+                />
+                <Button variant="contained" color="secondary" onClick={handleOpen}>Log Run</Button>
+                <LogRunModal open={open} handleClose={handleClose} />
+              </>
+            )}
             <Button variant="outlined" onClick={toggleDrawer(true)}>{userInfo.username}</Button>
             <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} userInfo={userInfo} />
           </Box>
         )}
       </Box>
+      <EndRunModal open={endRunModalOpen} handleClose={handleEndRunClose} />
     </ThemeProvider>
   )
 }
