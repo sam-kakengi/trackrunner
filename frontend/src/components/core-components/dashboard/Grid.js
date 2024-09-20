@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Box, useMediaQuery} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import RecentRunTile from './RecentRunTile';
+import PersonalBestTile from './PersonalBestTile';
 
 /**
  * DashboardGrid component handles the layout of cards and the table in the dashboard.
@@ -29,7 +30,7 @@ const DashboardGrid = () => {
             {/* Two medium containers side by side */}
             <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'row' }, 
             gap: {lg: '2rem', xs: '0.5rem'}, width: {md: '100%'}, marginTop: '1.5rem' }}>
-                <Box sx={gridBoxStyle}></Box>
+                <PersonalBestTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
                 <RecentRunTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
             </Box>
 
