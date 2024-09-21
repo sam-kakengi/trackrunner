@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import { Paper, Grid, Typography, Select, CardActions, Button, Dialog, DialogContent, MenuItem, TextField, useMediaQuery, FormControl, InputLabel } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme'
-import fetchRoutes from './api_calls/getRoutes'
-import NewRouteModal from './AddNewRoute'
+import modalTheme from '../../../../theme/dashboard_themes/logRunModalTheme'
+import fetchRoutes from '../api_calls/getRoutes'
+import NewRouteModal from '../AddNewRoute'
 import AddIcon from '@mui/icons-material/Add'
-import { useActiveRun } from '../context/ActiveRunV2'
-// import { useActiveRun } from '../context/ActiveRunContext'
+import { useActiveRun } from '../../context/ActiveRunV2'
 
-const EndRunModal = ({ open, handleClose }) => {
+const StartRunModal = ({ open, handleClose }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
   const [routesArray, setRoutesArray] = useState([])
   const [newRouteOpen, setNewRouteOpen] = useState(false)
 
   const [runData, setRunData] = useState({
-    route: '',
+    routeId: '',
+    routeName: '',
     notes: '',
   })
 
-  const { activeRun, endRun } = useActiveRun()
+  const { startRun } = useActiveRun() 
+
+  const formChange = (field) => (event) => {
+    setRunData({ ...runData, [field]: event.target.value || '' })
+  }
+
+  const handleStartRun = async (event) => {
+    event.preventDefault()
+    await startRun(runData.routeId, runData.notes)
+    handleClose() 
+  }
 
   useEffect(() => {
     if (open) {
@@ -27,23 +37,8 @@ const EndRunModal = ({ open, handleClose }) => {
         setRoutesArray(retrievedRoutes)
       }
       getRoutes()
-      // Prepopulate with the active run's data
-      setRunData({
-        route: activeRun.routeId,
-        notes: activeRun.notes,
-      })
     }
-  }, [open, activeRun])
-
-  const formChange = (field) => (event) => {
-    setRunData({ ...runData, [field]: event.target.value || '' })
-  }
-
-  const handleEndRun = async (event) => {
-    event.preventDefault()
-    await endRun(runData.notes) // Only send notes
-    handleClose() 
-  }
+  }, [open])
 
   const newRouteModalOpen = () => {
     setNewRouteOpen(true)
@@ -55,7 +50,7 @@ const EndRunModal = ({ open, handleClose }) => {
 
   const addNewRoute = (newRoute) => {
     setRoutesArray(prevRoutes => [...prevRoutes, newRoute])
-    setRunData(prevRunData => ({ ...prevRunData, route: newRoute.id }))
+    setRunData(prevRunData => ({ ...prevRunData, routeId: newRoute.id, routeName: newRoute.name })) 
     newRouteModalClose()
   }
 
@@ -64,11 +59,11 @@ const EndRunModal = ({ open, handleClose }) => {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
         <DialogContent sx={{ backgroundColor: modalTheme.palette.secondary.main }}>
           <Paper elevation={0} sx={{ padding: { xs: 2, sm: 3, md: 4 }, margin: 'auto', backgroundColor: modalTheme.palette.secondary.main }}>
-            <form onSubmit={handleEndRun}>
+            <form onSubmit={handleStartRun}>
               <Grid container spacing={isMobile ? 2 : 3}>
                 <Grid item xs={12}>
                   <Typography variant={isMobile ? 'h6' : 'h5'} sx={{ color: modalTheme.palette.primary.main }} gutterBottom>
-                    End Your Run
+                    Start Your Run
                   </Typography>
                 </Grid>
 
@@ -77,16 +72,27 @@ const EndRunModal = ({ open, handleClose }) => {
                     <InputLabel id="route-label">Route</InputLabel>
                     <Select
                       labelId="route-label"
-                      value={runData.route || ''}
-                      onChange={(e) => setRunData({ ...runData, route: e.target.value })}
+                      value={runData.routeId || ''}
+                      onChange={(e) => {
+                        if (e.target.value === 'add_new_route') {
+                          newRouteModalOpen()
+                        } else {
+                          const selectedRoute = routesArray.find(route => route.id === e.target.value)
+                          if (selectedRoute) {
+                            setRunData({ ...runData, routeId: selectedRoute.id, routeName: selectedRoute.name })
+                          }
+                        }
+                      }}
                       label="Route"
                     >
-                      {routesArray.map((route, index) => (
-                        <MenuItem key={index} value={route.id}>
+                      {routesArray.map((route) => (
+                        <MenuItem key={route.id} value={route.id}>
                           {route.name}
                         </MenuItem>
                       ))}
+                      
                       <MenuItem
+                        value="add_new_route"
                         sx={{
                           position: 'sticky',
                           bottom: 0,
@@ -94,7 +100,6 @@ const EndRunModal = ({ open, handleClose }) => {
                           borderTop: '1px solid white',
                           zIndex: 1,
                         }}
-                        onClick={newRouteModalOpen}
                       >
                         <AddIcon sx={{ mr: 1 }} />
                         Add New Route
@@ -126,7 +131,7 @@ const EndRunModal = ({ open, handleClose }) => {
                     }}
                   >
                     <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
-                      Confirm End Run
+                      Start Run
                     </Button>
                     <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleClose}>
                       Cancel
@@ -143,4 +148,4 @@ const EndRunModal = ({ open, handleClose }) => {
   )
 }
 
-export default EndRunModal
+export default StartRunModal

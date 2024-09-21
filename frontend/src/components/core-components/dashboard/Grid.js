@@ -4,7 +4,8 @@ import { useTheme } from '@mui/material/styles'
 import RecentRunTile from './RecentRunTile'
 import PersonalBestTile from './PersonalBestTile'
 import ActiveRunTile from './startRunComponents/activeRunTile'
-import { useActiveRun } from '../context/ActiveRunContext'
+// import { useActiveRun } from '../context/ActiveRunContext'
+import { useActiveRun } from '../context/ActiveRunV2'
 
 /**
  * DashboardGrid component handles the layout of cards and the table in the dashboard.

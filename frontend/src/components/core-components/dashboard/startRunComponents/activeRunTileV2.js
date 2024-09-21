@@ -1,13 +1,12 @@
 import { Box, Typography, useMediaQuery } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import tileTheme from '../../../../theme/dashboard_themes/tileTheme';
-// import { useActiveRun } from '../../context/ActiveRunContext' #v1
 import { useActiveRun } from '../../context/ActiveRunV2'
 import { blueGrey } from '@mui/material/colors';
 
 const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
     const { activeRun } = useActiveRun(); // Get activeRun from context
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));  
 
     const formatDuration = (duration) => {
         const hours = Math.floor(duration / 3600)
@@ -16,6 +15,7 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
       
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
       }
+ 
       
 
     return (

@@ -37,7 +37,7 @@ class RunningAPI {
      * @param {JSON} data The data to send with the request
      * @returns {JSON} The data from the API
      **/
-    async sendRequest(method, endpoint, data = null) {
+    async sendRequest(method, endpoint, raw = false , data = null) {
         endpoint = removePrefixSlash(endpoint);
         endpoint = removeSuffixSlash(endpoint);
         try {
@@ -47,6 +47,9 @@ class RunningAPI {
                 headers: { 'Authorization': `Token ${this.token}` },
                 data: data
             });
+            if (raw) {
+                return response;
+            }
             if (response.status >= 200 && response.status < 300) {
                 return response.data;
             } else {
@@ -63,6 +66,26 @@ class RunningAPI {
      */
     async getData(endpoint) {
         return this.sendRequest('GET', endpoint);
+    }
+
+    /**
+     * postData sends data to the API
+     * @param {string} endpoint The endpoint to send data to
+     * @param {JSON} data The data to send
+     * @returns {JSON} The data from the API
+     */
+    async postData(endpoint, data) {
+        return this.sendRequest('POST', endpoint, data);
+    }
+
+    /**
+     * patchData updates data in the API
+     * @param {string} endpoint The endpoint to patch data with
+     * @param {JSON} data The data to update
+     * @returns {JSON} The data from the API
+     */
+    async patchData(endpoint, data) {
+        return this.sendRequest('PATCH', endpoint, data);
     }
 
 }

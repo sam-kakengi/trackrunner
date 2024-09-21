@@ -8,7 +8,8 @@ import buttonTheme from '../../../theme/dashboard_themes/buttonTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import LogRunModal from './LogRun'
 import StartRunModal from './startRunComponents/startRunModal'
-import { useActiveRun } from '../context/ActiveRunContext'
+import { useActiveRun } from '../context/ActiveRunV2'
+// import { useActiveRun } from '../context/ActiveRunContext'
 import EndRunModal from './EndRunModal'
 
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
@@ -16,7 +17,14 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   const [startRunModalOpen, setStartRunModalOpen] = useState(false)
   const [endRunModalOpen, setEndRunModalOpen] = useState(false)
 
-  const { activeRun, startRun, endRun, pauseRun, resumeRun } = useActiveRun(); // Get activeRun and context functions
+  const { activeRun, startRun, endRun, pausedRun, resumeRun } = useActiveRun(); // Get activeRun and context functions v1 (Sam)
+
+  
+  const startPauseTimer = () => {
+      setInterval(() => { 
+          pausedRun.pausedDuration += 1;
+      }, 1000);
+  }
 
   const handleStartRunOpen = () => {
     setStartRunModalOpen(true)
@@ -44,9 +52,10 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
 
   const togglePauseResume = () => {
     if (activeRun.isPaused) {
-      resumeRun()
+      resumeRun(pausedRun.pausedDuration)
     } else {
-      pauseRun()
+      // pauseRun()
+      startPauseTimer()
     }
   }
 
