@@ -133,7 +133,6 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         current_run = self.get_object()
-        print(current_run)
         if current_run:
             return Response({"detail": "An active run already exists."}, status=status.HTTP_409_CONFLICT)
         aware_time = timezone.make_aware(datetime.now())
