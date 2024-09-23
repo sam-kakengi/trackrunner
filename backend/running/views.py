@@ -8,6 +8,7 @@ from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, Get
                                  GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
+from django.utils import timezone
 
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
@@ -114,7 +115,7 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         """Returns an active (start has begun, but not complete) run for the current user"""
         try:
-            active = RunActivity.objects.filter(user=1, finished__isnull=True, duration__isnull=True, start__lte=datetime.now()).latest('created')
+            active = RunActivity.objects.filter(user=self.request.user, finished__isnull=True, duration__isnull=True, start__lte=datetime.now()).latest('created')
             return active
         except RunActivity.DoesNotExist:
             return None
@@ -131,9 +132,12 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         """Controls the activation of a new run"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if self.get_object():
-            return Response({"detail": "An active run already exists."}, status=status.HTTP_400_BAD_REQUEST) 
-        serializer.save(user=request.user, start=datetime.now())
+        current_run = self.get_object()
+        print(current_run)
+        if current_run:
+            return Response({"detail": "An active run already exists."}, status=status.HTTP_409_CONFLICT)
+        aware_time = timezone.make_aware(datetime.now())
+        serializer.save(user=request.user, start=aware_time)
         response_serializer = ActivateRunSerializer(serializer.instance)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
     
@@ -151,8 +155,9 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
                 instance.paused = serializer.validated_data.get('paused')
             instance.save()
             return Response({"detail": f"Current paused duration  {instance.paused}s"}, status=status.HTTP_200_OK)
-        finished = datetime.now()
-        duration = round((finished.timestamp() - instance.start.timestamp()) - instance.paused, 0)
+        finished = timezone.make_aware(datetime.now())
+        paused = instance.paused if instance.paused else 0
+        duration = abs(round((finished.timestamp() - instance.start.timestamp()) - paused, 0))
         serializer.save(finished=finished, duration=duration)
         return Response({"message": "Run complete", "duration": format_seconds(duration), "id": instance.pk}, status=status.HTTP_200_OK)
     

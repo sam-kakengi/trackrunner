@@ -9,6 +9,7 @@ from rest_framework import status
 from running.models import RunActivity, Route
 from datetime import datetime
 from typing import Tuple
+from running.utils import format_ordinal_suffix
 
 @pytest.fixture
 def api_client():
@@ -160,7 +161,8 @@ def test_recent_run(auth_client, new_run_finished: RunActivity):
     assert response.status_code == status.HTTP_200_OK
     assert response.data['id'] == new_run_finished.pk
     assert response.data['duration'] == "01:00:00"
-    assert response.data['date'] == "1st Sep"
+    finished = datetime.fromisoformat(new_run_finished.finished)
+    assert response.data['date'] == format_ordinal_suffix(finished, include_year=False)
 
 @pytest.mark.django_db
 def test_personal_best(auth_client, new_run_finished: RunActivity, new_run_quick: RunActivity):
@@ -169,7 +171,8 @@ def test_personal_best(auth_client, new_run_finished: RunActivity, new_run_quick
     assert response.status_code == status.HTTP_200_OK
     assert response.data['id'] == new_run_quick.pk
     assert response.data['duration'] == "20:00"
-    assert response.data['date'] == "1st Sep 24"
+    finished = datetime.fromisoformat(new_run_quick.finished)
+    assert response.data['date'] == format_ordinal_suffix(finished, include_year=True)
 
 @pytest.mark.django_db
 def test_get_inactive_run(auth_client):
@@ -188,6 +191,12 @@ def test_start_active_run(auth_client, start_active_run, route: Route):
     assert response.data['route']['id'] == route.pk
     assert response.data['notes'] == data['notes']
     assert response.data['start'] != None
+
+@pytest.mark.django_db
+def test_existing_active_run(auth_client: APIClient, start_active_run):
+    response, data, url = start_active_run
+    response = auth_client.post(url, data)
+    assert response.status_code == status.HTTP_409_CONFLICT
 
 @pytest.mark.django
 def test_pause_active_run(auth_client, start_active_run):
