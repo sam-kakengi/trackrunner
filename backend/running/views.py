@@ -131,6 +131,8 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         """Controls the activation of a new run"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if self.get_object():
+            return Response({"detail": "An active run already exists."}, status=status.HTTP_400_BAD_REQUEST) 
         serializer.save(user=request.user, start=datetime.now())
         response_serializer = ActivateRunSerializer(serializer.instance)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
@@ -152,7 +154,7 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         finished = datetime.now()
         duration = round((finished.timestamp() - instance.start.timestamp()) - instance.paused, 0)
         serializer.save(finished=finished, duration=duration)
-        return Response({"message": "Run complete", "duration": format_seconds(duration)}, status=status.HTTP_200_OK)
+        return Response({"message": "Run complete", "duration": format_seconds(duration), "id": instance.pk}, status=status.HTTP_200_OK)
     
     def get_serializer_class(self):
         """Return the correct serializer class based on the request method"""
