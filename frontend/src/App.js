@@ -9,7 +9,6 @@ import PublicRoute from './components/auth/PublicRouteComp'
 import { ActiveRunProvider } from './components/core-components/context/ActiveRunV2'
 
 function App() {
-
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
@@ -20,7 +19,6 @@ function App() {
   }, [])
 
   return (
-    
     <ActiveRunProvider>
       <Router>
         <Routes>
@@ -50,8 +48,6 @@ function App() {
         </Routes>
       </Router>
     </ActiveRunProvider>
- 
-   
   )
 }
 

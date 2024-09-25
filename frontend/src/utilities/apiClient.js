@@ -7,10 +7,11 @@ import axios from 'axios';
  * */
 const removeSuffixSlash = (endpoint) => {
     if (endpoint.endsWith('/')){
-        endpoint = endpoint.slice(-1);
+        endpoint = endpoint.slice(0, -1);
     }
     return endpoint;
 }
+
 
 /**
  * removePrefixSlash removes the prefix slash from the endpoint
@@ -37,7 +38,7 @@ class RunningAPI {
      * @param {JSON} data The data to send with the request
      * @returns {JSON} The data from the API
      **/
-    async sendRequest(method, endpoint, data = null) {
+    async sendRequest(method, endpoint, data = null, raw = false) {
         endpoint = removePrefixSlash(endpoint);
         endpoint = removeSuffixSlash(endpoint);
         try {
@@ -47,6 +48,9 @@ class RunningAPI {
                 headers: { 'Authorization': `Token ${this.token}` },
                 data: data
             });
+            if (raw) {
+                return response;
+            }
             if (response.status >= 200 && response.status < 300) {
                 return response.data;
             } else {
@@ -65,15 +69,51 @@ class RunningAPI {
         return this.sendRequest('GET', endpoint);
     }
 
-     /**
+    /**
      * postData sends data to the API
      * @param {string} endpoint The endpoint to send data to
      * @param {JSON} data The data to send
      * @returns {JSON} The data from the API
      */
-     async postData(endpoint, data) {
+    async postData(endpoint, data) {
         return this.sendRequest('POST', endpoint, data);
     }
+
+
+     /**
+     * ensureSuffixSlash adds a trailing slash to the endpoint if it doesn't already have one
+     * @param {string} endpoint The endpoint to ensure has a trailing slash
+     * @returns {string} The endpoint with a guaranteed trailing slash
+     */
+     ensureSuffixSlash(endpoint) {
+        return endpoint.endsWith('/') ? endpoint : endpoint + '/'
+    }
+
+    /**
+     * sendDjangoRequest sends a request to a Django endpoint, ensuring a trailing slash
+     * @param {string} method The HTTP method for the request
+     * @param {string} endpoint The endpoint for the request (will have trailing slash added if missing)
+     * @param {object} data The data to send with the request (optional)
+     * @param {boolean} raw Whether to return the raw response (optional)
+     * @returns {Promise<object>} The response data from the API
+     */
+    async sendDjangoRequest(method, endpoint, data = null, raw = false) {
+        endpoint = removePrefixSlash(endpoint)
+        endpoint = this.ensureSuffixSlash(endpoint)
+        return this.sendRequest(method, endpoint, data, raw)
+    }
+
+    /**
+     * patchDjangoData updates data in the API, ensuring a trailing slash for Django
+     * @param {string} endpoint The endpoint to patch data with
+     * @param {object} data The data to update
+     * @returns {Promise<object>} The data from the API
+     */
+    async patchDjangoData(endpoint, data) {
+        return this.sendDjangoRequest('PATCH', endpoint, data);
+    }
+
+
 
     /**
      * patchData updates data in the API

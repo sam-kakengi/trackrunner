@@ -72,6 +72,8 @@ export const ActiveRunProvider = ({ children }) => {
   }
 
   const resumeRun = () => {
+    // This method should be used to upate the total amount of time spent paused with a PATCH /run/active
+    // You only need to send the amount of time spent paused since the last pause.
     setActiveRun(prev => {
       const additionalPausedDuration = prev.pauseStartTime ? Math.floor((Date.now() - prev.pauseStartTime) / 1000) : 0
       return {
@@ -106,7 +108,7 @@ export const ActiveRunProvider = ({ children }) => {
           'Authorization': `Token ${token}`
         },
         body: JSON.stringify(payload)
-      })
+      }) 
 
       if (response.ok) {
         console.log('Run ended successfully')
