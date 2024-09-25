@@ -6,43 +6,72 @@ import fetchRoutes from './api_calls/getRoutes'
 import NewRouteModal from './AddNewRoute'
 import AddIcon from '@mui/icons-material/Add'
 import { useActiveRun } from '../context/ActiveRunV2'
-// import { useActiveRun } from '../context/ActiveRunContext'
+import RunningAPI from '../../../utilities/apiClient'
+
+const getRecentRun = async () => {
+  const api = new RunningAPI()
+  const data = await api.getData('run/recent')
+  return data
+}
 
 const EndRunModal = ({ open, handleClose }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
   const [routesArray, setRoutesArray] = useState([])
   const [newRouteOpen, setNewRouteOpen] = useState(false)
-
+  const [recentRun, setRecentRun] = useState(null)
   const [runData, setRunData] = useState({
-    route: '',
+    routeID: '',
+    routeName: '',
     notes: '',
   })
 
-  const { activeRun, endRun } = useActiveRun()
+  const { endRun, setEndRunModalOpen } = useActiveRun()
 
   useEffect(() => {
     if (open) {
-      const getRoutes = async () => {
-        const retrievedRoutes = await fetchRoutes()
-        setRoutesArray(retrievedRoutes)
+      const fetchData = async () => {
+        try {
+          const [retrievedRoutes, recentRunData] = await Promise.all([
+            fetchRoutes(),
+            getRecentRun()
+          ])
+          setRoutesArray(retrievedRoutes)
+          setRecentRun(recentRunData)
+          
+          
+          const matchingRoute = retrievedRoutes.find(route => route.name === recentRunData.route)
+          setRunData({
+            routeID: matchingRoute ? matchingRoute.id : '',
+            routeName: recentRunData.route,
+            notes: recentRunData.notes || '',
+          })
+        } catch (error) {
+          console.error('Error fetching data:', error)
+        }
       }
-      getRoutes()
-      // Prepopulate with the active run's data
-      setRunData({
-        route: activeRun.routeId,
-        notes: activeRun.notes,
-      })
+      fetchData()
     }
-  }, [open, activeRun])
+  }, [open, setEndRunModalOpen])
 
   const formChange = (field) => (event) => {
-    setRunData({ ...runData, [field]: event.target.value || '' })
+    setRunData(prevData => {
+      const newData = { ...prevData, [field]: event.target.value || '' }
+      return newData
+    })
   }
 
   const handleEndRun = async (event) => {
     event.preventDefault()
-    await endRun(runData.notes) // Only send notes
-    handleClose() 
+    if (recentRun) {
+      await endRun(recentRun.id, runData.routeID, runData.notes)
+      handleClose()
+    } else {
+      console.error('No recent run data available')
+    }
+  }
+
+  const handleCancel = () => {
+    handleClose()
   }
 
   const newRouteModalOpen = () => {
@@ -55,13 +84,13 @@ const EndRunModal = ({ open, handleClose }) => {
 
   const addNewRoute = (newRoute) => {
     setRoutesArray(prevRoutes => [...prevRoutes, newRoute])
-    setRunData(prevRunData => ({ ...prevRunData, route: newRoute.id }))
+    setRunData(prevRunData => ({ ...prevRunData, routeID: newRoute.id, routeName: newRoute.name }))
     newRouteModalClose()
   }
 
   return (
     <ThemeProvider theme={modalTheme}>
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+      <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="md">
         <DialogContent sx={{ backgroundColor: modalTheme.palette.secondary.main }}>
           <Paper elevation={0} sx={{ padding: { xs: 2, sm: 3, md: 4 }, margin: 'auto', backgroundColor: modalTheme.palette.secondary.main }}>
             <form onSubmit={handleEndRun}>
@@ -77,12 +106,19 @@ const EndRunModal = ({ open, handleClose }) => {
                     <InputLabel id="route-label">Route</InputLabel>
                     <Select
                       labelId="route-label"
-                      value={runData.route || ''}
-                      onChange={(e) => setRunData({ ...runData, route: e.target.value })}
+                      value={runData.routeID || ''}
+                      onChange={(e) => {
+                        const selectedRoute = routesArray.find(route => route.id === e.target.value)
+                        setRunData({ 
+                          ...runData, 
+                          routeID: e.target.value,
+                          routeName: selectedRoute ? selectedRoute.name : ''
+                        })
+                      }}
                       label="Route"
                     >
-                      {routesArray.map((route, index) => (
-                        <MenuItem key={index} value={route.id}>
+                      {routesArray.map((route) => (
+                        <MenuItem key={route.id} value={route.id}>
                           {route.name}
                         </MenuItem>
                       ))}
@@ -128,7 +164,7 @@ const EndRunModal = ({ open, handleClose }) => {
                     <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
                       Confirm End Run
                     </Button>
-                    <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleClose}>
+                    <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleCancel}>
                       Cancel
                     </Button>
                   </CardActions>

@@ -43,6 +43,7 @@ class MostRecentSerializer(ModelSerializer):
     route = SerializerMethodField(read_only=True)
     date = SerializerMethodField(read_only=True)
     duration = SerializerMethodField(read_only=True)
+    notes = SerializerMethodField(read_only=True)
 
     def get_route(self, obj: RunActivity):
         return obj.route.name
@@ -52,10 +53,13 @@ class MostRecentSerializer(ModelSerializer):
     
     def get_date(self, obj: RunActivity):
         return format_ordinal_suffix(obj.finished)
+    
+    def get_notes(self, obj: RunActivity):
+        return obj.notes
 
     class Meta:
         model = RunActivity
-        fields = ['id', 'date', 'duration', 'route']
+        fields = ['id', 'date', 'duration', 'route', 'notes']
 
 class PersonalBestSerializer(ModelSerializer):
 
