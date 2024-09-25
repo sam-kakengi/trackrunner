@@ -65,6 +65,26 @@ class RunningAPI {
         return this.sendRequest('GET', endpoint);
     }
 
+     /**
+     * postData sends data to the API
+     * @param {string} endpoint The endpoint to send data to
+     * @param {JSON} data The data to send
+     * @returns {JSON} The data from the API
+     */
+     async postData(endpoint, data) {
+        return this.sendRequest('POST', endpoint, data);
+    }
+
+    /**
+     * patchData updates data in the API
+     * @param {string} endpoint The endpoint to patch data with
+     * @param {JSON} data The data to update
+     * @returns {JSON} The data from the API
+     */
+    async patchData(endpoint, data) {
+        return this.sendRequest('PATCH', endpoint, data);
+    }
+
 }
 
 export default RunningAPI;

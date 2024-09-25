@@ -6,7 +6,7 @@ import DashboardPage from './pages/core/DashboardPage'
 import ProtectedRoute from './components/auth/ProtectedRouteComp'
 import HandleLogout from './components/auth/Logout'
 import PublicRoute from './components/auth/PublicRouteComp'
-import { ActiveRunProvider } from './components/core-components/context/ActiveRunContext'
+import { ActiveRunProvider } from './components/core-components/context/ActiveRunV2'
 
 function App() {
 
