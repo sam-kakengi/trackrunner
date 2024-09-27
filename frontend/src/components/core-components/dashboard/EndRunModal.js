@@ -70,10 +70,6 @@ const EndRunModal = ({ open, handleClose }) => {
     }
   }
 
-  // const handleCancel = () => {
-  //   handleClose()
-  // }
-
   const newRouteModalOpen = () => {
     setNewRouteOpen(true)
   }
@@ -162,11 +158,8 @@ const EndRunModal = ({ open, handleClose }) => {
                     }}
                   >
                     <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
-                      Confirm End Run
+                     End Run
                     </Button>
-                    {/* <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleCancel}>
-                      Cancel
-                    </Button> */}
                   </CardActions>
                 </Grid>
               </Grid>

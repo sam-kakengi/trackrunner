@@ -6,10 +6,18 @@ const ActiveRunContext = createContext()
 export const ActiveRunProvider = ({ children }) => {
     const api = new RunningAPI()
     const [activeRun, setActiveRun] = useState(null)
-    const [pausedRun, setPausedRun] = useState({
-        isPaused: false,
-        pausedDuration: 0,
+    const [pausedRun, setPausedRun] = useState(() => {
+        const savedPausedRun = localStorage.getItem('pausedRun')
+        const parsedPausedRun = savedPausedRun ? JSON.parse(savedPausedRun) : { isPaused: false, pausedDuration: 0 }
+        return parsedPausedRun
     })
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        localStorage.setItem('pausedRun', JSON.stringify(pausedRun))
+    }, [pausedRun])
+
+
     const [endRunModalOpen, setEndRunModalOpen] = useState(false)
     const [preEndRunModalOpen, setPreEndRunModalOpen] = useState(false)
 
@@ -17,28 +25,42 @@ export const ActiveRunProvider = ({ children }) => {
         return await api.getData('run/active')
     }
 
+    
+
     useEffect(() => {
         const fetchActiveRun = async () => {
-            const running = await getActiveRunData()
-            if (running) {
-                const startTime = localStorage.getItem('runStartTime')
-                setActiveRun({
-                    isRunning: true,
-                    routeID: running.route.id,
-                    routeName: running.route.name,
-                    notes: running.notes,
-                    startTime: startTime ? new Date(parseInt(startTime)) : new Date(),
-                })
-                if (!startTime) {
-                    localStorage.setItem('runStartTime', new Date().getTime().toString())
+            setIsLoading(true)
+            try {
+                const running = await getActiveRunData()
+                if (running) {
+                    const startTime = localStorage.getItem('runStartTime')
+                    setActiveRun({
+                        isRunning: true,
+                        routeID: running.route.id,
+                        routeName: running.route.name,
+                        notes: running.notes,
+                        startTime: startTime ? new Date(parseInt(startTime)) : new Date(),
+                    })
+                    if (!startTime) {
+                        localStorage.setItem('runStartTime', new Date().getTime().toString())
+                    }
+                } else {
+                    setActiveRun({
+                        isRunning: false,
+                        route: '',
+                        notes: '',
+                    })
+                    localStorage.removeItem('runStartTime')
                 }
-            } else {
+            } catch (error) {
+                console.error('Error fetching active run:', error)
                 setActiveRun({
                     isRunning: false,
                     route: '',
                     notes: '',
                 })
-                localStorage.removeItem('runStartTime')
+            } finally {
+                setIsLoading(false)
             }
         }
         fetchActiveRun()
@@ -118,7 +140,7 @@ export const ActiveRunProvider = ({ children }) => {
             }
     
             console.log('Run ended successfully:', response)
-    
+            localStorage.setItem('elapsedTime', '0')
             setActiveRun({
                 isRunning: false
             })
@@ -139,7 +161,7 @@ export const ActiveRunProvider = ({ children }) => {
 
     return (
         <ActiveRunContext.Provider value={{ activeRun, startRun, endRun, pausedRun, setPausedRun, resumeRun,
-            endRunPatch, endRunModalOpen, setEndRunModalOpen, preEndRunModalOpen, setPreEndRunModalOpen
+            endRunPatch, endRunModalOpen, setEndRunModalOpen, preEndRunModalOpen, setPreEndRunModalOpen, isLoading,
          }}>
             {children}
         </ActiveRunContext.Provider>

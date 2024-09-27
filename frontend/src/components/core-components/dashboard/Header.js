@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Box, Typography, IconButton, Button } from '@mui/material'
+import { Box, Typography, IconButton, Button, CircularProgress } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import DropdownBtn from './DropdownBtn'
 import UserDrawer from './UserDrawer'
@@ -15,11 +15,10 @@ import PreEndRunModal from './PreEndRunModal'
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   const [logRunModalOpen, setLogRunModalOpen] = useState(false)
   const [startRunModalOpen, setStartRunModalOpen] = useState(false)
-
+  
   const { 
     activeRun, 
-    startRun, 
-    pauseRun, 
+    startRun,  
     resumeRun, 
     pausedRun, 
     setPausedRun,
@@ -27,6 +26,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
     setEndRunModalOpen,
     preEndRunModalOpen,
     setPreEndRunModalOpen,
+    isLoading,
   } = useActiveRun()
   
   const pauseTimerRef = useRef(null)
@@ -34,7 +34,11 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   useEffect(() => {
     const storedPausedRun = localStorage.getItem('pausedRun')
     if (storedPausedRun) {
-      setPausedRun(JSON.parse(storedPausedRun))
+      const parsedPausedRun = JSON.parse(storedPausedRun)
+      setPausedRun(parsedPausedRun)
+      if (parsedPausedRun.isPaused) {
+        startPauseTimer(parsedPausedRun.pausedDuration)
+      }
     }
   }, [])
 
@@ -43,36 +47,38 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   }, [pausedRun])
 
   useEffect(() => {
-    if (!activeRun?.isRunning) {
-      stopPauseTimer()
-      setPausedRun({ isPaused: false, pausedDuration: 0 })
-      localStorage.removeItem('pausedRun')
+    if (!isLoading) { 
+      if (activeRun?.isRunning === false) {
+        stopPauseTimer()
+        setPausedRun({ isPaused: false, pausedDuration: 0 })
+        localStorage.removeItem('pausedRun')
+      } else if (activeRun?.isRunning === true && !pausedRun.isPaused) {
+        stopPauseTimer()
+      } else if (activeRun?.isRunning === true && pausedRun.isPaused) {
+        startPauseTimer(pausedRun.pausedDuration)
+      }
     }
-  }, [activeRun?.isRunning])
+  }, [isLoading, activeRun?.isRunning, pausedRun.isPaused])
 
   const handleStartRunOpen = () => setStartRunModalOpen(true)
   const handleStartRunClose = () => setStartRunModalOpen(false)
-
   const handleEndRunClick = () => setPreEndRunModalOpen(true)
-
   const handlePreEndRunCancel = () => setPreEndRunModalOpen(false)
-
   const handleEndRunModalClose = () => setEndRunModalOpen(false)
-
   const handleLogRunOpen = () => setLogRunModalOpen(true)
   const handleLogRunClose = () => setLogRunModalOpen(false)
 
-  const startPauseTimer = () => {
+  const startPauseTimer = (initialDuration = 0) => {
     if (pauseTimerRef.current) clearInterval(pauseTimerRef.current)
+    
+    const startTime = Date.now() - initialDuration * 1000
+    
     pauseTimerRef.current = setInterval(() => {
-      setPausedRun(prev => {
-        const newPausedRun = {
-          ...prev,
-          pausedDuration: prev.pausedDuration + 1
-        }
-        localStorage.setItem('pausedRun', JSON.stringify(newPausedRun))
-        return newPausedRun
-      })
+      const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000)
+      setPausedRun(prev => ({
+        ...prev,
+        pausedDuration: elapsedSeconds
+      }))
     }, 1000)
   }
 
@@ -83,29 +89,32 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
     }
   }
 
-  const togglePauseResume = () => {
+  const togglePauseResume = async () => {
     if (pausedRun.isPaused) {
       stopPauseTimer()
-      resumeRun(pausedRun.pausedDuration)
-      setPausedRun(prev => {
-        const newPausedRun = { ...prev, isPaused: false }
-        localStorage.setItem('pausedRun', JSON.stringify(newPausedRun))
-        return newPausedRun
-      })
+      try {
+        await resumeRun(pausedRun.pausedDuration)
+        setPausedRun(prev => ({
+          ...prev,
+          isPaused: false,
+          pausedDuration: 0
+        }))
+      } catch (error) {
+        console.error('Failed to resume run:', error)
+        startPauseTimer(pausedRun.pausedDuration)
+      }
     } else {
       startPauseTimer()
-      setPausedRun(prev => {
-        const newPausedRun = { ...prev, isPaused: true }
-        localStorage.setItem('pausedRun', JSON.stringify(newPausedRun))
-        return newPausedRun
-      })
+      setPausedRun(prev => ({
+        ...prev,
+        isPaused: true
+      }))
     }
   }
 
   useEffect(() => {
     return () => {
       stopPauseTimer()
-      localStorage.removeItem('pausedRun')
     }
   }, [])
 
@@ -124,7 +133,15 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
           </Typography>
         </Box>
 
-        {isMobile && <DropdownBtn />}
+        {isMobile && <DropdownBtn 
+          handleStartRunOpen={handleStartRunOpen} 
+          handleLogRunOpen={handleLogRunOpen}
+          handleEndRunClick={handleEndRunClick}
+          togglePauseResume={togglePauseResume}
+          activeRun={activeRun}
+          pausedRun={pausedRun}
+          isLoading={isLoading}
+        />}
 
         {isMobile ? (
           <>
@@ -136,7 +153,9 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
         ) : (
           <Box sx={{ display: 'flex', gap: '2rem', width: { xs: '100%', sm: '100%', md: '100%', lg: '55%' }, 
           flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'center', sm: 'flex-start' }, justifyContent: 'center' }}>
-            {activeRun?.isRunning ? (
+            {isLoading ? (
+              <CircularProgress />
+            ) : activeRun?.isRunning ? (
               <>
                 <Button variant="contained" color="secondary" onClick={handleEndRunClick}>
                   End Run

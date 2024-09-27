@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 /**
  * removeSuffixSlash removes the suffix slash from the endpoint
@@ -7,9 +7,9 @@ import axios from 'axios';
  * */
 const removeSuffixSlash = (endpoint) => {
     if (endpoint.endsWith('/')){
-        endpoint = endpoint.slice(0, -1);
+        endpoint = endpoint.slice(0, -1)
     }
-    return endpoint;
+    return endpoint
 }
 
 
@@ -20,17 +20,17 @@ const removeSuffixSlash = (endpoint) => {
  **/
 const removePrefixSlash = (endpoint) => {
     if (endpoint.startsWith('/')){
-        endpoint = endpoint.slice(1);
+        endpoint = endpoint.slice(1)
     }
-    return endpoint;
+    return endpoint
 }
 
 
 class RunningAPI {
 
     constructor() {
-        this.token = localStorage.getItem('token');
-        this.base_url = 'http://127.0.0.1:8000/api';
+        this.token = localStorage.getItem('token')
+        this.base_url = 'http://127.0.0.1:8000/api'
     }
 
     /**
@@ -39,7 +39,7 @@ class RunningAPI {
      * @returns {string} The endpoint with a guaranteed trailing slash
      */
     ensureSuffixSlash(endpoint) {
-        return endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+        return endpoint.endsWith('/') ? endpoint : `${endpoint}/`
     }
 
     /**
@@ -50,8 +50,8 @@ class RunningAPI {
      * @returns {JSON} The data from the API
      **/
     async sendRequest(method, endpoint, data = null, raw = false) {
-        endpoint = removePrefixSlash(endpoint);
-        endpoint = removeSuffixSlash(endpoint);
+        endpoint = removePrefixSlash(endpoint)
+        endpoint = removeSuffixSlash(endpoint)
         try {
             const response = await axios({
                 method: method,
@@ -60,15 +60,15 @@ class RunningAPI {
                 data: data
             });
             if (raw) {
-                return response;
+                return response
             }
             if (response.status >= 200 && response.status < 300) {
                 return response.data;
             } else {
-                return null;
+                return null
             }
         } catch (error) {
-            return null;
+            return null
         }
     }
 
@@ -108,7 +108,7 @@ class RunningAPI {
      * @returns {JSON} The data from the API
      */
     async getData(endpoint) {
-        return this.sendRequest('GET', endpoint);
+        return this.sendRequest('GET', endpoint)
     }
 
     /**
@@ -118,7 +118,7 @@ class RunningAPI {
      * @returns {JSON} The data from the API
      */
     async postData(endpoint, data) {
-        return this.sendRequest('POST', endpoint, data);
+        return this.sendRequest('POST', endpoint, data)
     }
 
     /**
@@ -156,9 +156,9 @@ class RunningAPI {
      * @returns {JSON} The data from the API
      */
     async patchData(endpoint, data) {
-        return this.sendRequest('PATCH', endpoint, data);
+        return this.sendRequest('PATCH', endpoint, data)
     }
 
 }
 
-export default RunningAPI;
+export default RunningAPI

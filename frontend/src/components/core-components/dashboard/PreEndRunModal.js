@@ -6,11 +6,14 @@ import { useActiveRun } from '../context/ActiveRun'
 import { useMediaQuery } from '@mui/material'
 
 const PreEndRunModal = ({ open, onCancel }) => {
-  const { endRunPatch, setEndRunModalOpen, setPreEndRunModalOpen } = useActiveRun()
+  const { endRunPatch, setEndRunModalOpen, setPreEndRunModalOpen, resumeRun, pausedRun } = useActiveRun()
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
 
   const handleConfirm = async () => {
     try {
+      if (pausedRun.isPaused) {
+        await resumeRun()
+      }
       await endRunPatch()
       setPreEndRunModalOpen(false)
       setEndRunModalOpen(true)

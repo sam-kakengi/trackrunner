@@ -9,25 +9,20 @@ import { formatDuration } from '../../../../utilities/timeUtil'
 const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
     const { activeRun, pausedRun, endRunModalOpen, preEndRunModalOpen } = useActiveRun()
     const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-    const [elapsedTime, setElapsedTime] = useState(0)
+    const [elapsedTime, setElapsedTime] = useState(() => {
+        return parseInt(localStorage.getItem('elapsedTime') || '0')
+    })
     const timerRef = useRef(null)
 
     useEffect(() => {
         if (activeRun?.isRunning && !pausedRun.isPaused && !endRunModalOpen && !preEndRunModalOpen) {
-            const startTime = localStorage.getItem('runStartTime')
-            const storedPausedDuration = localStorage.getItem('pausedDuration')
-            
-            if (startTime) {
-                const updateElapsedTime = () => {
-                    const now = new Date().getTime()
-                    const totalElapsed = Math.floor((now - parseInt(startTime)) / 1000)
-                    const pausedDuration = storedPausedDuration ? parseInt(storedPausedDuration) : 0
-                    setElapsedTime(totalElapsed - pausedDuration)
-                }
-
-                updateElapsedTime()
-                timerRef.current = setInterval(updateElapsedTime, 1000)
-            }
+            timerRef.current = setInterval(() => {
+                setElapsedTime(prevTime => {
+                    const newTime = prevTime + 1
+                    localStorage.setItem('elapsedTime', newTime.toString())
+                    return newTime
+                })
+            }, 1000)
         } else {
             clearInterval(timerRef.current)
         }
@@ -35,16 +30,11 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
         return () => clearInterval(timerRef.current)
     }, [activeRun?.isRunning, pausedRun.isPaused, endRunModalOpen, preEndRunModalOpen])
 
-    useEffect(() => {
-        if (pausedRun.isPaused) {
-            localStorage.setItem('pausedDuration', pausedRun.pausedDuration.toString())
-        }
-    }, [pausedRun.isPaused, pausedRun.pausedDuration])
+   
 
     return (
         <ThemeProvider theme={activeRunTileTheme}>
             <Box sx={{ ...gridBoxStyle, backgroundColor: activeRunTileTheme.palette.primary.main }}>
-            
                 {activeRun?.isRunning ? (
                     <>
                         <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Active</Typography>
@@ -67,9 +57,8 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
                 ) : (
                     <Typography sx={{ ...tileBaseStyle, textAlign: 'center' }} variant='h4'>No active run</Typography>
                 )}
-                </Box>
-            </ThemeProvider>
-        
+            </Box>
+        </ThemeProvider>
     )
 }
 
