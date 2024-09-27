@@ -5,7 +5,7 @@ import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme'
 import fetchRoutes from './api_calls/getRoutes'
 import NewRouteModal from './AddNewRoute'
 import AddIcon from '@mui/icons-material/Add'
-import { useActiveRun } from '../context/ActiveRunV2'
+import { useActiveRun } from '../context/ActiveRun'
 import RunningAPI from '../../../utilities/apiClient'
 
 const getRecentRun = async () => {
@@ -46,7 +46,7 @@ const EndRunModal = ({ open, handleClose }) => {
             notes: recentRunData.notes || '',
           })
         } catch (error) {
-          console.error('Error fetching data:', error)
+          console.error('Error fetching data')
         }
       }
       fetchData()
@@ -70,9 +70,9 @@ const EndRunModal = ({ open, handleClose }) => {
     }
   }
 
-  const handleCancel = () => {
-    handleClose()
-  }
+  // const handleCancel = () => {
+  //   handleClose()
+  // }
 
   const newRouteModalOpen = () => {
     setNewRouteOpen(true)
@@ -90,7 +90,7 @@ const EndRunModal = ({ open, handleClose }) => {
 
   return (
     <ThemeProvider theme={modalTheme}>
-      <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="md">
+      <Dialog open={open}  fullWidth maxWidth="md">
         <DialogContent sx={{ backgroundColor: modalTheme.palette.secondary.main }}>
           <Paper elevation={0} sx={{ padding: { xs: 2, sm: 3, md: 4 }, margin: 'auto', backgroundColor: modalTheme.palette.secondary.main }}>
             <form onSubmit={handleEndRun}>
@@ -164,9 +164,9 @@ const EndRunModal = ({ open, handleClose }) => {
                     <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
                       Confirm End Run
                     </Button>
-                    <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleCancel}>
+                    {/* <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleCancel}>
                       Cancel
-                    </Button>
+                    </Button> */}
                   </CardActions>
                 </Grid>
               </Grid>

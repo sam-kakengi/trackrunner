@@ -24,11 +24,22 @@ const removePrefixSlash = (endpoint) => {
     }
     return endpoint;
 }
+
+
 class RunningAPI {
 
     constructor() {
         this.token = localStorage.getItem('token');
         this.base_url = 'http://127.0.0.1:8000/api';
+    }
+
+    /**
+     * ensureSuffixSlash adds a trailing slash to the endpoint if it doesn't already have one
+     * @param {string} endpoint The endpoint to ensure has a trailing slash
+     * @returns {string} The endpoint with a guaranteed trailing slash
+     */
+    ensureSuffixSlash(endpoint) {
+        return endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
     }
 
     /**
@@ -60,6 +71,37 @@ class RunningAPI {
             return null;
         }
     }
+
+    async sendPatchRequest(method, endpoint, data = null, raw = false) {
+        endpoint = removePrefixSlash(endpoint)
+        endpoint = this.ensureSuffixSlash(endpoint) 
+        try {
+            const response = await axios({
+                method: method,
+                url: `${this.base_url}/${endpoint}`,
+                headers: { 
+                    'Authorization': `Token ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            })
+            console.log(`${method} request to ${this.base_url}/${endpoint}`, response)
+            if (raw) {
+                return response
+            }
+            if (response.status >= 200 && response.status < 300) {
+                return response.data
+            } else {
+                console.warn(`Request failed with status: ${response.status}`)
+                return null
+            }
+            } catch (error) {
+                console.error('An error occurred during the API request')
+                throw new Error('Failed to complete the request. Please try again later.')
+            }
+    }
+    
+    
     /**
      * getData fetches data from the API
      * @param {string} endpoint The endpoint to fetch data from
@@ -77,16 +119,6 @@ class RunningAPI {
      */
     async postData(endpoint, data) {
         return this.sendRequest('POST', endpoint, data);
-    }
-
-
-     /**
-     * ensureSuffixSlash adds a trailing slash to the endpoint if it doesn't already have one
-     * @param {string} endpoint The endpoint to ensure has a trailing slash
-     * @returns {string} The endpoint with a guaranteed trailing slash
-     */
-     ensureSuffixSlash(endpoint) {
-        return endpoint.endsWith('/') ? endpoint : endpoint + '/'
     }
 
     /**
@@ -110,8 +142,10 @@ class RunningAPI {
      * @returns {Promise<object>} The data from the API
      */
     async patchDjangoData(endpoint, data) {
-        return this.sendDjangoRequest('PATCH', endpoint, data);
+        endpoint = this.ensureSuffixSlash(endpoint)
+        return this.sendPatchRequest('PATCH', endpoint, data)
     }
+
 
 
 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import tileTheme from '../../../../theme/dashboard_themes/tileTheme'
-import { useActiveRun } from '../../context/ActiveRunV2'
+import activeRunTileTheme from '../../../../theme/dashboard_themes/activeRunTileTheme'
+import { useActiveRun } from '../../context/ActiveRun'
 import { blueGrey } from '@mui/material/colors'
+import { formatDuration } from '../../../../utilities/timeUtil'
 
 const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
     const { activeRun, pausedRun, endRunModalOpen, preEndRunModalOpen } = useActiveRun()
@@ -40,21 +41,14 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
         }
     }, [pausedRun.isPaused, pausedRun.pausedDuration])
 
-    const formatDuration = (duration) => {
-        const hours = Math.floor(duration / 3600)
-        const minutes = Math.floor((duration % 3600) / 60)
-        const seconds = duration % 60
-      
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-    }
-
     return (
-        <Box sx={gridBoxStyle}>
-            <ThemeProvider theme={tileTheme}>
+        <ThemeProvider theme={activeRunTileTheme}>
+            <Box sx={{ ...gridBoxStyle, backgroundColor: activeRunTileTheme.palette.primary.main }}>
+            
                 {activeRun?.isRunning ? (
                     <>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Active Run</Typography>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>
+                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Active</Typography>
+                        <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h2'}>
                             {formatDuration(elapsedTime)}
                         </Typography>
                         {pausedRun.isPaused || endRunModalOpen || preEndRunModalOpen ? ( 
@@ -73,8 +67,9 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
                 ) : (
                     <Typography sx={{ ...tileBaseStyle, textAlign: 'center' }} variant='h4'>No active run</Typography>
                 )}
+                </Box>
             </ThemeProvider>
-        </Box>
+        
     )
 }
 

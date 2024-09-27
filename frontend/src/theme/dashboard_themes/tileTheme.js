@@ -20,8 +20,11 @@ let tileTheme = createTheme({
         },
         body1:{
             color: blueGrey[900]
-        }
-    }
+        },
+
+        
+    },
+    
 });
 tileTheme = responsiveFontSizes(tileTheme);
 export default tileTheme;

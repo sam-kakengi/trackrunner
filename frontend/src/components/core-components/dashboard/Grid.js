@@ -3,8 +3,8 @@ import { Grid, Box, useMediaQuery } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import RecentRunTile from './RecentRunTile'
 import PersonalBestTile from './PersonalBestTile'
-import ActiveRunTile from './startRunComponents/activeRunTileV2'
-import { useActiveRun } from '../context/ActiveRunV2'
+import ActiveRunTile from './startRunComponents/activeRunTile'
+import { useActiveRun } from '../context/ActiveRun'
 
 /**
  * DashboardGrid component handles the layout of cards and the table in the dashboard.

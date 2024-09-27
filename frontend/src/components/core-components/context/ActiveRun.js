@@ -47,7 +47,7 @@ export const ActiveRunProvider = ({ children }) => {
     const startRun = async (route, notes) => {
         try {
             const response = await api.postData('run/active', { route, notes })
-            console.log('API response:', response)
+            
             
             if (response && response.route) {
                 const running = await api.getData('run/active')
@@ -64,13 +64,13 @@ export const ActiveRunProvider = ({ children }) => {
                 
                 try {
                     const routeDetails = await api.getData(`run/routes/${response.route}`)
-                    // Update the active run with the route name
+                    
                     setActiveRun(prevRun => ({
                         ...prevRun,
                         routeName: routeDetails.name
                     }))
                 } catch (routeError) {
-                    console.error('Error fetching route details:', routeError)
+                    console.error('Error fetching route details')
                     
                     setActiveRun(prevRun => ({
                         ...prevRun,
@@ -78,7 +78,7 @@ export const ActiveRunProvider = ({ children }) => {
                     }))
                 }
             } else {
-                console.error('Error starting the run: Invalid response', response)
+                console.error('Error starting the run: Invalid response')
             }
         } catch (error) {
             console.error('Error starting the run')
@@ -103,40 +103,36 @@ export const ActiveRunProvider = ({ children }) => {
 
     const endRun = async (runId, routeID, notes) => {
         try {
-            const token = localStorage.getItem('token')
-            const response = await fetch(`http://127.0.0.1:8000/api/run/${runId}/`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`
-                },
-                body: JSON.stringify({
-                    route: routeID,
-                    notes: notes
-                })
-            })
-      
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+            const runningAPI = new RunningAPI()
+            const endpoint = `run/${runId}`
+            const data = {
+                route: routeID,
+                notes: notes
             }
-      
-            const data = await response.json()
-            console.log('Run ended successfully:', data)
-      
+    
+            console.log('Attempting to end run:', { runId, routeID, notes })
+            const response = await runningAPI.patchDjangoData(endpoint, data)
+    
+            if (!response) {
+                throw new Error('Failed to end run: No response from server')
+            }
+    
+            console.log('Run ended successfully:', response)
+    
             setActiveRun({
                 isRunning: false
             })
             setEndRunModalOpen(false)
             setPausedRun({ isPaused: false, pausedDuration: 0 })
     
-            
             localStorage.removeItem('runStartTime')
             localStorage.removeItem('pausedDuration')
             localStorage.removeItem('pausedRun')
     
-            return data
+            return response
         } catch (error) {
             console.error('Error ending the run')
+            
             throw error
         }
     }

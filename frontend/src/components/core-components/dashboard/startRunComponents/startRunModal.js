@@ -5,7 +5,7 @@ import modalTheme from '../../../../theme/dashboard_themes/logRunModalTheme'
 import fetchRoutes from '../api_calls/getRoutes'
 import NewRouteModal from '../AddNewRoute'
 import AddIcon from '@mui/icons-material/Add'
-import { useActiveRun } from '../../context/ActiveRunV2'
+import { useActiveRun } from '../../context/ActiveRun'
 
 const StartRunModal = ({ open, handleClose }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
