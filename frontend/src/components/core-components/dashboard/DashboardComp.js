@@ -43,4 +43,4 @@ const DashboardComponent = ({setIsAuthenticated}) => {
     )
 }
 
-export default DashboardComponent;
+export default DashboardComponent

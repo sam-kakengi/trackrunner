@@ -1,5 +1,5 @@
-import { React, useState } from 'react'
-import { Box, Typography, IconButton, Button } from '@mui/material'
+import React, { useState, useRef, useEffect } from 'react'
+import { Box, Typography, IconButton, Button, CircularProgress } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import DropdownBtn from './DropdownBtn'
 import UserDrawer from './UserDrawer'
@@ -7,34 +7,121 @@ import Runner from '../../../assets/running-man-small.svg'
 import buttonTheme from '../../../theme/dashboard_themes/buttonTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import LogRunModal from './LogRun'
+import StartRunModal from './startRunComponents/startRunModal'
+import { useActiveRun } from '../context/ActiveRun'
+import EndRunModal from './EndRunModal'
+import PreEndRunModal from './PreEndRunModal'
 
-/**
- * Header component for the dashboard, handling mobile and desktop layouts.
- * @param {Object} props 
- * @param {boolean} props.isMobile - Whether the current view is mobile or not.
- * @param {Object} props.userInfo - The current user's info.
- * @param {Function} props.toggleDrawer - Function to open/close the drawer.
- * @param {boolean} props.drawerOpen - Whether the drawer is open or not.
- * @returns {JSX.Element} Header component
- */
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
-  const [open, setOpen] = useState(false);
+  const [logRunModalOpen, setLogRunModalOpen] = useState(false)
+  const [startRunModalOpen, setStartRunModalOpen] = useState(false)
   
+  const { 
+    activeRun, 
+    startRun,  
+    resumeRun, 
+    pausedRun, 
+    setPausedRun,
+    endRunModalOpen, 
+    setEndRunModalOpen,
+    preEndRunModalOpen,
+    setPreEndRunModalOpen,
+    isLoading,
+  } = useActiveRun()
+  
+  const pauseTimerRef = useRef(null)
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  useEffect(() => {
+    const storedPausedRun = localStorage.getItem('pausedRun')
+    if (storedPausedRun) {
+      const parsedPausedRun = JSON.parse(storedPausedRun)
+      setPausedRun(parsedPausedRun)
+      if (parsedPausedRun.isPaused) {
+        startPauseTimer(parsedPausedRun.pausedDuration)
+      }
+    }
+  }, [])
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  useEffect(() => {
+    localStorage.setItem('pausedRun', JSON.stringify(pausedRun))
+  }, [pausedRun])
+
+  useEffect(() => {
+    if (!isLoading) { 
+      if (activeRun?.isRunning === false) {
+        stopPauseTimer()
+        setPausedRun({ isPaused: false, pausedDuration: 0 })
+        localStorage.removeItem('pausedRun')
+      } else if (activeRun?.isRunning === true && !pausedRun.isPaused) {
+        stopPauseTimer()
+      } else if (activeRun?.isRunning === true && pausedRun.isPaused) {
+        startPauseTimer(pausedRun.pausedDuration)
+      }
+    }
+  }, [isLoading, activeRun?.isRunning, pausedRun.isPaused])
+
+  const handleStartRunOpen = () => setStartRunModalOpen(true)
+  const handleStartRunClose = () => setStartRunModalOpen(false)
+  const handleEndRunClick = () => setPreEndRunModalOpen(true)
+  const handlePreEndRunCancel = () => setPreEndRunModalOpen(false)
+  const handleEndRunModalClose = () => setEndRunModalOpen(false)
+  const handleLogRunOpen = () => setLogRunModalOpen(true)
+  const handleLogRunClose = () => setLogRunModalOpen(false)
+
+  const startPauseTimer = (initialDuration = 0) => {
+    if (pauseTimerRef.current) clearInterval(pauseTimerRef.current)
+    
+    const startTime = Date.now() - initialDuration * 1000
+    
+    pauseTimerRef.current = setInterval(() => {
+      const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000)
+      setPausedRun(prev => ({
+        ...prev,
+        pausedDuration: elapsedSeconds
+      }))
+    }, 1000)
+  }
+
+  const stopPauseTimer = () => {
+    if (pauseTimerRef.current) {
+      clearInterval(pauseTimerRef.current)
+      pauseTimerRef.current = null
+    }
+  }
+
+  const togglePauseResume = async () => {
+    if (pausedRun.isPaused) {
+      stopPauseTimer()
+      try {
+        await resumeRun(pausedRun.pausedDuration)
+        setPausedRun(prev => ({
+          ...prev,
+          isPaused: false,
+          pausedDuration: 0
+        }))
+      } catch (error) {
+        console.error('Failed to resume run:', error)
+        startPauseTimer(pausedRun.pausedDuration)
+      }
+    } else {
+      startPauseTimer()
+      setPausedRun(prev => ({
+        ...prev,
+        isPaused: true
+      }))
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      stopPauseTimer()
+    }
+  }, [])
 
   return (
     <ThemeProvider theme={buttonTheme}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: { xs: 'row', sm: 'column', md: 'column', lg: 'row' }, 
       width: '100%', marginTop: '1rem' }}>
-        
-        {/* Left side (TrackRunner {img}) */}
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'center' }}>
           {!isMobile && (
             <Typography sx={{ fontSize: { xs: '2rem', sm: '3rem', md: '4rem' }, fontStyle: 'italic', color: '#FFD54F' }}>
@@ -46,9 +133,16 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
           </Typography>
         </Box>
 
-        {isMobile && <DropdownBtn />}
+        {isMobile && <DropdownBtn 
+          handleStartRunOpen={handleStartRunOpen} 
+          handleLogRunOpen={handleLogRunOpen}
+          handleEndRunClick={handleEndRunClick}
+          togglePauseResume={togglePauseResume}
+          activeRun={activeRun}
+          pausedRun={pausedRun}
+          isLoading={isLoading}
+        />}
 
-        {/* Right side (buttons/drawer menu) */}
         {isMobile ? (
           <>
             <IconButton edge="end" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
@@ -59,14 +153,45 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
         ) : (
           <Box sx={{ display: 'flex', gap: '2rem', width: { xs: '100%', sm: '100%', md: '100%', lg: '55%' }, 
           flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'center', sm: 'flex-start' }, justifyContent: 'center' }}>
-            <Button variant="contained" color="primary">Start Timer</Button>
-            <Button variant="contained" color="secondary" onClick={handleOpen}>Log Run</Button>
-            <LogRunModal open={open} handleClose={handleClose}/>
+            {isLoading ? (
+              <CircularProgress />
+            ) : activeRun?.isRunning ? (
+              <>
+                <Button variant="contained" color="secondary" onClick={handleEndRunClick}>
+                  End Run
+                </Button>
+                <Button variant="outlined" onClick={togglePauseResume}>
+                  {pausedRun.isPaused ? 'Resume' : 'Pause'}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="contained" color="primary" onClick={handleStartRunOpen}>Start Timer</Button>
+                <Button variant="contained" color="secondary" onClick={handleLogRunOpen}>Log Run</Button>
+              </>
+            )}
             <Button variant="outlined" onClick={toggleDrawer(true)}>{userInfo.username}</Button>
             <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} userInfo={userInfo} />
           </Box>
         )}
       </Box>
+      <PreEndRunModal 
+        open={preEndRunModalOpen}
+        onCancel={handlePreEndRunCancel}
+      />
+      <EndRunModal 
+        open={endRunModalOpen}
+        handleClose={handleEndRunModalClose}
+      />
+      <LogRunModal 
+        open={logRunModalOpen} 
+        handleClose={handleLogRunClose} 
+      />
+      <StartRunModal 
+        open={startRunModalOpen} 
+        handleClose={handleStartRunClose} 
+        onStartRun={startRun}
+      />
     </ThemeProvider>
   )
 }

@@ -10,6 +10,9 @@ const modalTheme = createTheme({
       },
       tertiary: {
         main: '#37474F'
+      },
+      quaternary: {
+        main: '#FFFFFF'
       }
       
     },
