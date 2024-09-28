@@ -32,5 +32,5 @@ export const formatDate = (dateString) => {
         }
     }
     
-    return `${day}${nth(day)} of ${month}`
+    return `${day}${nth(day)} ${month}`
 }

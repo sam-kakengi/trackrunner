@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { TableCell, IconButton, Dialog, DialogContent, Typography, Box } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
 
-const MobileNoteCell = ({ note }) => {
-  const [openModal, setOpenModal] = useState(false)
-  const truncatedNote = note.length > 15 ? `${note.slice(0, 15)}...` : note
+const TabletNoteView = ({ note }) => {
+    const [openModal, setOpenModal] = useState(false)
+    const truncatedNote = note.length > 15 ? `${note.slice(0, 15)}...` : note
+  
 
   return (
     <>
@@ -40,4 +41,4 @@ const MobileNoteCell = ({ note }) => {
   )
 }
 
-export default MobileNoteCell
+export default TabletNoteView
