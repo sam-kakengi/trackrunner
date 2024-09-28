@@ -21,7 +21,7 @@ const MainTable = () => {
    
 
     const getFontSize = () => {
-        
+        if (isMobile) return '0.85rem'
         if (isTablet) return '0.875rem'
         return '1rem'
     }
@@ -65,7 +65,7 @@ const MainTable = () => {
                     backgroundColor: tableTheme.palette.background.main, 
                     boxShadow: 'none', 
                     height: '100%',
-                    paddingTop: { xs: 0, sm: '1.25rem', md: '1.75rem', lg: '2rem' }
+                    paddingTop: { xs: '1rem', sm: '1.25rem', md: '1.75rem', lg: '2rem' }
                 }}>
                     <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="recent runs table">
                         <TableHead>
