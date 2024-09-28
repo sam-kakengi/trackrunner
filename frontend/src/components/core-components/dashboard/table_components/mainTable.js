@@ -23,7 +23,7 @@ const MainTable = () => {
     const getFontSize = () => {
         
         if (isTablet) return '0.875rem'
-        return '1rem';
+        return '1rem'
     }
 
     useEffect(() => {
