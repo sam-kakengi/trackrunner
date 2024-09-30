@@ -21,20 +21,3 @@ def format_seconds(seconds: float) -> str:
     else:
         return f"{minutes:02d}:{seconds:02d}"
 
-def get_duration_formatted(self, obj):
-            total_seconds = int(obj.duration)
-            minutes = total_seconds // 60
-            seconds = total_seconds % 60
-            return f"{int(minutes):02d}:{int(seconds):02d}"
-
-def get_date_formatted(self, obj):
-            date = obj.finished
-            day = date.day
-            month = date.strftime('%b')
-            
-            if 4 <= day <= 20 or 24 <= day <= 30:
-                suffix = "th"
-            else:
-                suffix = ["st", "nd", "rd"][day % 10 - 1]
-            
-            return f"{day}{suffix} {month}"
