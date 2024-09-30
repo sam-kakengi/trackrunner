@@ -20,3 +20,4 @@ def format_seconds(seconds: float) -> str:
         return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
     else:
         return f"{minutes:02d}:{seconds:02d}"
+

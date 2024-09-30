@@ -21,13 +21,21 @@ class GetRunningSerializer(ModelSerializer):
     start = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S')
     finished = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S')
     updated = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S')
+    duration_formatted = serializers.SerializerMethodField()
+    date_formatted = serializers.SerializerMethodField()
 
     def get_route(self, obj):
         return GetRouteSerializer(obj.route).data
 
+    def get_duration_formatted(self, obj):
+        return format_seconds(obj.duration)
+
+    def get_date_formatted(self, obj):
+        return format_ordinal_suffix(obj.finished)
+
     class Meta:
         model = RunActivity
-        fields = ['id', 'start', 'finished', 'duration', 'route', 'notes', 'updated', 'paused']
+        fields = ['id', 'start', 'finished', 'duration', 'route', 'notes', 'updated', 'paused', 'duration_formatted', 'date_formatted']
 
 class CreateUpdateRunningSerializer(ModelSerializer):
 
