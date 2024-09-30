@@ -21,9 +21,6 @@ const MobileNoteCell = ({ note }) => {
                 marginLeft: '0.5rem',
                 padding: '0.25rem',
                 flexShrink: 0,
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
               }}
             >
               <InfoIcon fontSize="small" sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />

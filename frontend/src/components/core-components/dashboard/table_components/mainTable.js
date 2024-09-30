@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress,
-    Box, useMediaQuery, useTheme, Typography, Tooltip
+    Box, useMediaQuery, useTheme, Typography
 } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import tableTheme from '../../../../theme/dashboard_themes/tableTheme'
 import RunningAPI from '../../../../utilities/apiClient'
-import { formatDurationSecondsMinutes, formatDate } from '../../../../utilities/timeUtil'
 import DesktopNoteView from './DesktopNoteView'
 import MobileNoteView from './MobileNoteView'
 import TabletNoteView from './TabletNoteView'
-
+import RouteNameTruncated from './RouteNameTrunc'
 
 const MainTable = () => {
     const [recentRuns, setRecentRuns] = useState([])
@@ -19,11 +18,23 @@ const MainTable = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'))
    
-
     const getFontSize = () => {
         if (isMobile) return '0.85rem'
         if (isTablet) return '0.875rem'
         return '1rem'
+    }
+
+    const getCellWidth = (header) => {
+        if (isMobile) {
+            switch (header) {
+                case 'Date': return '25%'
+                case 'Route': return '30%'
+                case 'Time': return '15%'
+                case 'Notes': return '25%'
+                default: return '25%'
+            }
+        }
+        return '20%'
     }
 
     useEffect(() => {
@@ -52,6 +63,8 @@ const MainTable = () => {
         return <div>{'Error loading runs'}</div>
     }
 
+    const headers = isMobile ? ['Date', 'Route', 'Time', 'Notes'] : ['Date', 'Distance', 'Route', 'Time', 'Notes']
+
     return (
         <ThemeProvider theme={tableTheme}>
             <Box sx={{ 
@@ -70,9 +83,9 @@ const MainTable = () => {
                     <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="recent runs table">
                         <TableHead>
                             <TableRow>
-                                {['Date', 'Distance', 'Route', 'Time', 'Notes'].map((header) => (
+                                {headers.map((header) => (
                                     <TableCell key={header} align='center' sx={{ 
-                                        width: '20%', 
+                                        width: getCellWidth(header), 
                                         padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' },
                                         '&:last-child': { paddingRight: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }
                                     }}>
@@ -84,33 +97,20 @@ const MainTable = () => {
                         <TableBody>
                             {recentRuns.map((run) => (
                                 <TableRow key={run.id}>
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }}>
-                                        <Typography sx={{ fontSize: getFontSize() }}>{formatDate(run.finished)}</Typography>
+                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Date') }}>
+                                        <Typography sx={{ fontSize: getFontSize() }}>{run.date_formatted}</Typography>
                                     </TableCell>
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }}>
-                                        <Typography sx={{ fontSize: getFontSize() }}>{run.route.distance} km</Typography>
-                                    </TableCell>
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }}>
-                                        {isMobile ? (
-                                            <Typography sx={{ fontSize: getFontSize() }}>{run.route.name}</Typography>
-                                        ) : (
-                                            <Tooltip title={run.route.name}>
-                                                <Typography sx={{ 
-                                                    fontSize: getFontSize(),
-                                                    whiteSpace: 'nowrap',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis'
-                                                }}>
-                                                    {run.route.name}
-                                                </Typography>
-                                            </Tooltip>
-                                        )}
-                                    </TableCell>
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }}>
-                                        <Typography sx={{ fontSize: getFontSize() }}>{formatDurationSecondsMinutes(run.duration)}</Typography>
+                                    {!isMobile && (
+                                        <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: '20%' }}>
+                                            <Typography sx={{ fontSize: getFontSize() }}>{run.route.distance} km</Typography>
+                                        </TableCell>
+                                    )}
+                                    <RouteNameTruncated routeName={run.route.name} isMobile={isMobile} fontSize={getFontSize()} />
+                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Time') }}>
+                                        <Typography sx={{ fontSize: getFontSize() }}>{run.duration_formatted}</Typography>
                                     </TableCell>
                                     {isMobile ? (
-                                        <MobileNoteView note={run.notes} />
+                                        <MobileNoteView note={run.notes} width={getCellWidth('Notes')} />
                                     ) : isTablet ? (
                                         <TabletNoteView note={run.notes} />
                                     ) : (
