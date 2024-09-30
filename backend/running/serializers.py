@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Route, RunActivity
 
-from .utils import format_ordinal_suffix, format_seconds
+from .utils import format_ordinal_suffix, format_seconds, get_duration_formatted, get_date_formatted
 
 
 class GetRouteSerializer(ModelSerializer):
@@ -28,22 +28,10 @@ class GetRunningSerializer(ModelSerializer):
         return GetRouteSerializer(obj.route).data
 
     def get_duration_formatted(self, obj):
-        total_seconds = int(obj.duration)
-        minutes = total_seconds // 60
-        seconds = total_seconds % 60
-        return f"{int(minutes):02d}:{int(seconds):02d}"
+        return get_duration_formatted(self, obj)
 
     def get_date_formatted(self, obj):
-        date = obj.finished
-        day = date.day
-        month = date.strftime('%b')
-        
-        if 4 <= day <= 20 or 24 <= day <= 30:
-            suffix = "th"
-        else:
-            suffix = ["st", "nd", "rd"][day % 10 - 1]
-        
-        return f"{day}{suffix} {month}"
+        return get_date_formatted(self, obj)
 
     class Meta:
         model = RunActivity
