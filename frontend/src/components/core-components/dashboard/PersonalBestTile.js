@@ -34,8 +34,8 @@ const PersonalBestTile = ({theme, gridBoxStyle, tileBaseStyle}) => {
                 ) : recentRun ? (
                     <>
                     <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Personal Best</Typography>
-                    <Typography sx={tileBaseStyle} variant={isMobile ? 'h4' : 'h2'} color={blueGrey[50]}>{recentRun.date}</Typography>
-                    <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>{recentRun.duration}</Typography>
+                    <Typography sx={tileBaseStyle} variant={isMobile ? 'h4' : 'h2'} color={blueGrey[50]}>{recentRun.duration}</Typography>
+                    <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>{recentRun.date}</Typography>
                     <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>{recentRun.route}</Typography>
                     </>
                 ) : (

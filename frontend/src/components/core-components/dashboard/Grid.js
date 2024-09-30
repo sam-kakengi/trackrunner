@@ -5,9 +5,8 @@ import RecentRunTile from './RecentRunTile'
 import PersonalBestTile from './PersonalBestTile'
 import ActiveRunTile from './startRunComponents/activeRunTile'
 import { useActiveRun } from '../context/ActiveRun'
+import MainTable from './table_components/mainTable'
 import MultiSeriesLineChart from './chart_components/LineChart'
-
-
 /**
  * DashboardGrid component handles the layout of cards and the table in the dashboard.
  * @returns {JSX.Element} The grid layout component
@@ -45,11 +44,11 @@ const DashboardGrid = () => {
                         <RecentRunTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
                     )}
                 </Box>
-
+                
                 {/* Large Table container underneath */}
                 <Box sx={{ marginTop: '2rem', backgroundColor: '#f5f5f5', height: { xs: '18.75rem', md: '25rem', lg: '25rem' }, 
                 width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
-                    
+                    <MainTable />
                 </Box>
             </Grid>
 
