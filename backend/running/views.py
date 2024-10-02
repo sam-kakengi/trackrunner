@@ -5,10 +5,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, GetRouteSerializer, CreateUpdateRouteSerializer, PersonalBestSerializer,
-                                 GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
+                                 GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer, RunDataPointSerializer, ChartDataSerializer)
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from collections import defaultdict
 
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
@@ -168,3 +170,86 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
             return UpdateRunSerializer
         else:
             return GetRunningSerializer
+
+
+class ChartView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    serializer_class = ChartDataSerializer
+    http_method_names = ['get']
+
+    
+    def get_queryset(self):
+        """Return the default queryset for the last 3 months"""
+        end_date = timezone.now().date()
+        start_date = end_date - relativedelta(months=3)
+        return RunActivity.objects.filter(
+            user=self.request.user,
+            finished__gte=start_date,
+            finished__lte=end_date
+        ).select_related('route')
+    
+
+    # def get(self, request, *args, **kwargs):
+    #     """Return the chart data for the current user"""
+    #     queryset = self.get_queryset()
+    #     serializer = self.get_serializer(queryset) #TODO: Create a serializer for the chart request, include start and end date
+    #     #TODO: Format data to match the expected response; the one in slack
+    #     return Response(serializer.data) # TODO: Grab the start and end date from the reques
+    
+
+    def get(self, request, *args, **kwargs):
+        """Return the chart data for the current user"""
+        end_date = request.query_params.get('end')
+        start_date = request.query_params.get('start')
+
+        if end_date or start_date:
+            queryset = self.filter_by_date_range(start_date, end_date)
+        else:
+            queryset = self.get_queryset()
+            start_date = queryset.first().finished.strftime('%d-%m-%Y') if queryset.exists() else None
+            end_date = queryset.last().finished.strftime('%d-%m-%Y') if queryset.exists() else None
+
+        data_by_route = defaultdict(list)
+        for run in queryset:
+            data_by_route[run.route.name].append({
+                "date": run.finished.strftime('%d-%m-%Y'),
+                "duration": int(run.duration) if run.duration is not None else None
+            })
+
+        chart_data = {
+            'start_date': start_date,
+            'end_date': end_date,
+            'chart_data': dict(data_by_route) if data_by_route else {"detail": "No routes found"}
+        }
+
+        serializer = self.get_serializer(chart_data)
+        return Response(serializer.data)
+    
+
+    def filter_by_date_range(self, start_date, end_date):
+        """Filter queryset by custom date range"""
+        if end_date:
+            try:
+                end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').date()
+            except ValueError:
+                raise Response({"detail": "Invalid end date format. Use DD-MM-YYYY."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            end_date = timezone.now().date()
+
+        if start_date:
+            try:
+                start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').date()
+            except ValueError:
+                raise Response({"detail": "Invalid start date format. Use DD-MM-YYYY."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            start_date = end_date - relativedelta(months=3)
+
+        return RunActivity.objects.filter(
+            user=self.request.user,
+            finished__gte=start_date,
+            finished__lte=end_date
+        ).select_related('route').order_by('finished')
+    
+    
+

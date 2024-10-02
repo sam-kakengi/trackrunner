@@ -21,3 +21,10 @@ def format_seconds(seconds: float) -> str:
     else:
         return f"{minutes:02d}:{seconds:02d}"
 
+def format_duration(duration):
+    if duration is None:
+        return "00:00" 
+    total_seconds = int(duration)
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    return f"{minutes:02d}:{seconds:02d}"

@@ -146,6 +146,19 @@ class RunningAPI {
         return this.sendPatchRequest('PATCH', endpoint, data)
     }
 
+    /**
+     * getData fetches data from the API
+     * @param {string} endpoint The endpoint to fetch data from
+     * @param {boolean} isDjangoEndpoint Whether the endpoint is a Django endpoint (default: true)
+     * @returns {JSON} The data from the API
+     */
+    async getDjangoData(endpoint, isDjangoEndpoint = true) {
+        if (isDjangoEndpoint) {
+            return this.sendDjangoRequest('GET', endpoint)
+        } else {
+            return this.sendRequest('GET', endpoint)
+        }
+    }
 
 
 
