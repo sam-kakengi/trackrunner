@@ -11,8 +11,10 @@ from .utils import format_seconds
 from django.utils import timezone
 from django.conf import settings
 from dateutil.relativedelta import relativedelta
+from datetime import date
 from collections import defaultdict
 import pytz
+from django.db.models.functions import TruncDate
 
 
 class RouteView(viewsets.ModelViewSet):
@@ -188,34 +190,34 @@ class ChartView(generics.ListAPIView):
         ).select_related('route').order_by('finished')
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        # queryset = self.get_queryset()
+        # user_timezone = pytz.timezone(settings.TIME_ZONE)
+        # latest_run = queryset.last()
+        if Route.objects.filter(user=request.user).count() == 0:
+            return Response({"detail": "No routes found for the current user."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         
-        
-        user_timezone = pytz.timezone(settings.TIME_ZONE)
-        
-        latest_run = queryset.last()
-        
-        end_date = request.query_params.get('end')
-        start_date = request.query_params.get('start')
+        custom_end_date = request.query_params.get('end')
+        custom_start_date = request.query_params.get('start')
 
-        if end_date or start_date:
-            filtered_queryset = self.filter_by_date_range(start_date, end_date)
+        # if end_date or start_date:
+        #     filtered_queryset = self.filter_by_date_range(start_date, end_date)
+        if custom_end_date and custom_start_date:
+            start_date = datetime.strptime(custom_start_date, "%m-%d-%Y").date()
+            end_date = datetime.strptime(custom_end_date, "%m-%d-%Y").date()
         else:
-            
-            end_date = timezone.now().astimezone(user_timezone)
+            end_date = date.today() + relativedelta(days=1)
             start_date = end_date - relativedelta(months=3)
-            filtered_queryset = queryset.filter(finished__gte=start_date, finished__lte=end_date)
+            # filtered_queryset = queryset.filter(finished__gte=start_date, finished__lte=end_date)
+        
+        
+        filtered_queryset = list(RunActivity.objects.select_related('route').filter(user=2, finished__gte=start_date, finished__lte=end_date)
+                .annotate(date=TruncDate('finished'), route_name=F('route__name'))
+                .values('date', 'route_name').distinct())
 
-       
-        if latest_run and latest_run not in filtered_queryset:
-            filtered_queryset = (filtered_queryset | RunActivity.objects.filter(id=latest_run.id)).distinct()
-
-        if not filtered_queryset.exists():
-            return Response({"detail": "No runs found for the specified date range."}, status=status.HTTP_404_NOT_FOUND)
-
-        start_date = filtered_queryset.first().finished.astimezone(user_timezone)
-        end_date = max(filtered_queryset.last().finished, latest_run.finished if latest_run else filtered_queryset.last().finished).astimezone(user_timezone)
-
+        # if not filtered_queryset.count() > 0:
+        #     return Response({"detail": "No runs found for the specified date range."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        
+        # TODO: Format the data to match the expected response
         data_by_route = defaultdict(list)
         for run in filtered_queryset:
             local_finished = run.finished.astimezone(user_timezone)
@@ -237,27 +239,27 @@ class ChartView(generics.ListAPIView):
         serializer = self.get_serializer(chart_data)
         return Response(serializer.data)
 
-    def filter_by_date_range(self, start_date, end_date):
-        """Filter queryset by custom date range"""
-        user_timezone = pytz.timezone(settings.TIME_ZONE)
+    # def filter_by_date_range(self, start_date, end_date):
+    #     """Filter queryset by custom date range"""
+    #     user_timezone = pytz.timezone(settings.TIME_ZONE)
         
-        if end_date:
-            try:
-                end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
-            except ValueError:
-                raise Response({"detail": "Invalid end date format. Use DD-MM-YYYY."})
-        else:
-            end_date = timezone.now().astimezone(user_timezone)
+    #     if end_date:
+    #         try:
+    #             end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
+    #         except ValueError:
+    #             raise Response({"detail": "Invalid end date format. Use DD-MM-YYYY."})
+    #     else:
+    #         end_date = timezone.now().astimezone(user_timezone)
 
-        if start_date:
-            try:
-                start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
-            except ValueError:
-                raise Response({"detail": "Invalid start date format. Use DD-MM-YYYY."})
-        else:
-            start_date = end_date - relativedelta(months=3)
+    #     if start_date:
+    #         try:
+    #             start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
+    #         except ValueError:
+    #             raise Response({"detail": "Invalid start date format. Use DD-MM-YYYY."})
+    #     else:
+    #         start_date = end_date - relativedelta(months=3)
 
-        return self.get_queryset().filter(finished__gte=start_date, finished__lte=end_date)
+    #     return self.get_queryset().filter(finished__gte=start_date, finished__lte=end_date)
 
     # def get(self, request, *args, **kwargs):
     #     """Return the chart data for the current user"""
