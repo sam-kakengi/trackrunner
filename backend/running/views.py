@@ -190,80 +190,59 @@ class ChartView(generics.ListAPIView):
         ).select_related('route').order_by('finished')
 
     def get(self, request, *args, **kwargs):
-        # queryset = self.get_queryset()
-        # user_timezone = pytz.timezone(settings.TIME_ZONE)
-        # latest_run = queryset.last()
+        """Retrieve and process chart data for user's running activities, 
+        handling custom date ranges, calculating average durations per route per day, 
+        and returning formatted JSON response."""
         if Route.objects.filter(user=request.user).count() == 0:
             return Response({"detail": "No routes found for the current user."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         
         custom_end_date = request.query_params.get('end')
         custom_start_date = request.query_params.get('start')
 
-        # if end_date or start_date:
-        #     filtered_queryset = self.filter_by_date_range(start_date, end_date)
+        
         if custom_end_date and custom_start_date:
             start_date = datetime.strptime(custom_start_date, "%m-%d-%Y").date()
             end_date = datetime.strptime(custom_end_date, "%m-%d-%Y").date()
         else:
             end_date = date.today() + relativedelta(days=1)
             start_date = end_date - relativedelta(months=3)
-            # filtered_queryset = queryset.filter(finished__gte=start_date, finished__lte=end_date)
+            
         
         
-        filtered_queryset = list(RunActivity.objects.select_related('route').filter(user=2, finished__gte=start_date, finished__lte=end_date)
-                .annotate(date=TruncDate('finished'), route_name=F('route__name'))
-                .values('date', 'route_name').distinct())
-
-        # if not filtered_queryset.count() > 0:
-        #     return Response({"detail": "No runs found for the specified date range."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        filtered_queryset = list(RunActivity.objects.select_related('route').filter(user=request.user, finished__gte=start_date, finished__lte=end_date)
+                .annotate(date=TruncDate('finished'), route_name=F('route__name'), duration_seconds=F('duration'))
+                .values('date', 'route_name', 'duration_seconds').distinct())
         
-        # TODO: Format the data to match the expected response
-        data_by_route = defaultdict(list)
+        data_by_route = defaultdict(lambda: defaultdict(list))
         for run in filtered_queryset:
-            local_finished = run.finished.astimezone(user_timezone)
-            data_by_route[run.route.name].append({
-                "date": local_finished.strftime('%d-%m-%Y'),
-                "duration": int(run.duration) if run.duration is not None else None
-            })
-
-        chart_data = {
+            route_name = run['route_name']
+            date_str = run['date'].strftime('%d-%m-%Y')
+            duration = run['duration_seconds']  
+            
+            data_by_route[route_name][date_str].append(duration)
+        
+        
+        chart_data = {}
+        for route, dates in data_by_route.items():
+            chart_data[route] = [
+                {
+                    "date": date,
+                    "duration": sum(durations) / len(durations) if durations else None
+                }
+                for date, durations in dates.items()
+            ]
+        
+        response_data = {
             'start_date': start_date.strftime('%d-%m-%Y'),
             'end_date': end_date.strftime('%d-%m-%Y'),
-            'chart_data': dict(data_by_route)
+            'chart_data': chart_data
         }
-
+        
         print(f"Current time (UTC): {timezone.now()}")
-        print(f"Current time (User timezone): {timezone.now().astimezone(user_timezone)}")
+        print(f"Current time (User timezone): {timezone.now().astimezone(pytz.timezone(settings.TIME_ZONE))}")
         print(f"Date range: {start_date} to {end_date}")
-
-        serializer = self.get_serializer(chart_data)
+        
+        serializer = self.get_serializer(response_data)
         return Response(serializer.data)
 
-    # def filter_by_date_range(self, start_date, end_date):
-    #     """Filter queryset by custom date range"""
-    #     user_timezone = pytz.timezone(settings.TIME_ZONE)
-        
-    #     if end_date:
-    #         try:
-    #             end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
-    #         except ValueError:
-    #             raise Response({"detail": "Invalid end date format. Use DD-MM-YYYY."})
-    #     else:
-    #         end_date = timezone.now().astimezone(user_timezone)
-
-    #     if start_date:
-    #         try:
-    #             start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
-    #         except ValueError:
-    #             raise Response({"detail": "Invalid start date format. Use DD-MM-YYYY."})
-    #     else:
-    #         start_date = end_date - relativedelta(months=3)
-
-    #     return self.get_queryset().filter(finished__gte=start_date, finished__lte=end_date)
-
-    # def get(self, request, *args, **kwargs):
-    #     """Return the chart data for the current user"""
-    #     queryset = self.get_queryset()
-    #     serializer = self.get_serializer(queryset) #TODO: Create a serializer for the chart request, include start and end date
-    #     #TODO: Format data to match the expected response; the one in slack
-    #     return Response(serializer.data) # TODO: Grab the start and end date from the reques
+   
