@@ -54,17 +54,17 @@ const modalTheme = createTheme({
         },
       },
 
-      MuiMenuItem: {
-        styleOverrides: {
-          root: {
-            color: 'white',
-            '&.Mui-selected': {
-              backgroundColor: '#FFD54F',
-              color: 'black', 
-            },
-          },
-        },
-      },
+      // MuiMenuItem: {
+      //   styleOverrides: {
+      //     root: {
+      //       color: 'black',
+      //       '&.Mui-selected': {
+      //         backgroundColor: '#FFD54F',
+      //         color: 'black', 
+      //       },
+      //     },
+      //   },
+      // },
 
       MuiList: {
         styleOverrides: {

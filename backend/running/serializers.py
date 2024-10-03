@@ -30,6 +30,8 @@ class GetRunningSerializer(ModelSerializer):
         return format_duration(obj.duration)
 
     def get_date_formatted(self, obj):
+        if obj.finished is None:
+            return None
         return format_ordinal_suffix(obj.finished)
 
     class Meta:

@@ -9,8 +9,11 @@ from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, Get
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
 from django.utils import timezone
+from django.conf import settings
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
+import pytz
+
 
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
@@ -178,17 +181,83 @@ class ChartView(generics.ListAPIView):
     serializer_class = ChartDataSerializer
     http_method_names = ['get']
 
-    
     def get_queryset(self):
-        """Return the default queryset for the last 3 months"""
-        end_date = timezone.now().date()
-        start_date = end_date - relativedelta(months=3)
+        """Return all runs for the current user"""
         return RunActivity.objects.filter(
-            user=self.request.user,
-            finished__gte=start_date,
-            finished__lte=end_date
-        ).select_related('route')
-    
+            user=self.request.user
+        ).select_related('route').order_by('finished')
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        
+        user_timezone = pytz.timezone(settings.TIME_ZONE)
+        
+        latest_run = queryset.last()
+        
+        end_date = request.query_params.get('end')
+        start_date = request.query_params.get('start')
+
+        if end_date or start_date:
+            filtered_queryset = self.filter_by_date_range(start_date, end_date)
+        else:
+            
+            end_date = timezone.now().astimezone(user_timezone)
+            start_date = end_date - relativedelta(months=3)
+            filtered_queryset = queryset.filter(finished__gte=start_date, finished__lte=end_date)
+
+       
+        if latest_run and latest_run not in filtered_queryset:
+            filtered_queryset = (filtered_queryset | RunActivity.objects.filter(id=latest_run.id)).distinct()
+
+        if not filtered_queryset.exists():
+            return Response({"detail": "No runs found for the specified date range."}, status=status.HTTP_404_NOT_FOUND)
+
+        start_date = filtered_queryset.first().finished.astimezone(user_timezone)
+        end_date = max(filtered_queryset.last().finished, latest_run.finished if latest_run else filtered_queryset.last().finished).astimezone(user_timezone)
+
+        data_by_route = defaultdict(list)
+        for run in filtered_queryset:
+            local_finished = run.finished.astimezone(user_timezone)
+            data_by_route[run.route.name].append({
+                "date": local_finished.strftime('%d-%m-%Y'),
+                "duration": int(run.duration) if run.duration is not None else None
+            })
+
+        chart_data = {
+            'start_date': start_date.strftime('%d-%m-%Y'),
+            'end_date': end_date.strftime('%d-%m-%Y'),
+            'chart_data': dict(data_by_route)
+        }
+
+        print(f"Current time (UTC): {timezone.now()}")
+        print(f"Current time (User timezone): {timezone.now().astimezone(user_timezone)}")
+        print(f"Date range: {start_date} to {end_date}")
+
+        serializer = self.get_serializer(chart_data)
+        return Response(serializer.data)
+
+    def filter_by_date_range(self, start_date, end_date):
+        """Filter queryset by custom date range"""
+        user_timezone = pytz.timezone(settings.TIME_ZONE)
+        
+        if end_date:
+            try:
+                end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
+            except ValueError:
+                raise Response({"detail": "Invalid end date format. Use DD-MM-YYYY."})
+        else:
+            end_date = timezone.now().astimezone(user_timezone)
+
+        if start_date:
+            try:
+                start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').replace(tzinfo=user_timezone)
+            except ValueError:
+                raise Response({"detail": "Invalid start date format. Use DD-MM-YYYY."})
+        else:
+            start_date = end_date - relativedelta(months=3)
+
+        return self.get_queryset().filter(finished__gte=start_date, finished__lte=end_date)
 
     # def get(self, request, *args, **kwargs):
     #     """Return the chart data for the current user"""
@@ -196,60 +265,3 @@ class ChartView(generics.ListAPIView):
     #     serializer = self.get_serializer(queryset) #TODO: Create a serializer for the chart request, include start and end date
     #     #TODO: Format data to match the expected response; the one in slack
     #     return Response(serializer.data) # TODO: Grab the start and end date from the reques
-    
-
-    def get(self, request, *args, **kwargs):
-        """Return the chart data for the current user"""
-        end_date = request.query_params.get('end')
-        start_date = request.query_params.get('start')
-
-        if end_date or start_date:
-            queryset = self.filter_by_date_range(start_date, end_date)
-        else:
-            queryset = self.get_queryset()
-            start_date = queryset.first().finished.strftime('%d-%m-%Y') if queryset.exists() else None
-            end_date = queryset.last().finished.strftime('%d-%m-%Y') if queryset.exists() else None
-
-        data_by_route = defaultdict(list)
-        for run in queryset:
-            data_by_route[run.route.name].append({
-                "date": run.finished.strftime('%d-%m-%Y'),
-                "duration": int(run.duration) if run.duration is not None else None
-            })
-
-        chart_data = {
-            'start_date': start_date,
-            'end_date': end_date,
-            'chart_data': dict(data_by_route) if data_by_route else {"detail": "No routes found"}
-        }
-
-        serializer = self.get_serializer(chart_data)
-        return Response(serializer.data)
-    
-
-    def filter_by_date_range(self, start_date, end_date):
-        """Filter queryset by custom date range"""
-        if end_date:
-            try:
-                end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').date()
-            except ValueError:
-                raise Response({"detail": "Invalid end date format. Use DD-MM-YYYY."}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            end_date = timezone.now().date()
-
-        if start_date:
-            try:
-                start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').date()
-            except ValueError:
-                raise Response({"detail": "Invalid start date format. Use DD-MM-YYYY."}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            start_date = end_date - relativedelta(months=3)
-
-        return RunActivity.objects.filter(
-            user=self.request.user,
-            finished__gte=start_date,
-            finished__lte=end_date
-        ).select_related('route').order_by('finished')
-    
-    
-
