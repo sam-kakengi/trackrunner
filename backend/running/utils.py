@@ -13,6 +13,8 @@ def format_ordinal_suffix(value: datetime, include_year: bool = False) -> str:
 
 def format_seconds(seconds: float) -> str:
     """Converts a float representing seconds into the format HH:MM:SS or MM:SS."""
+    if seconds is None:
+        return "00:00:00"
     hours = int(seconds // 3600)
     minutes = int((seconds % 3600) // 60)
     seconds = int(seconds % 60)
