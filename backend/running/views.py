@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from running.models import RunActivity, Route
 from rest_framework import viewsets, status, generics
@@ -9,11 +10,9 @@ from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, Get
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
 from django.utils import timezone
-from django.conf import settings
 from dateutil.relativedelta import relativedelta
 from datetime import date
-from collections import defaultdict
-import pytz
+from itertools import groupby
 from django.db.models.functions import TruncDate
 
 
@@ -190,51 +189,79 @@ class ChartView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         """Retrieve and process chart data for user's running activities, 
-        handling custom date ranges, calculating average durations per route per day, 
-        and returning formatted JSON response."""
+        handling custom date ranges and returning formatted JSON response."""
         if Route.objects.filter(user=request.user).count() == 0:
             return Response({"detail": "No routes found for the current user."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         
         custom_end_date = request.query_params.get('end')
         custom_start_date = request.query_params.get('start')
 
-        
         if custom_end_date and custom_start_date:
             start_date = datetime.strptime(custom_start_date, "%m-%d-%Y").date()
             end_date = datetime.strptime(custom_end_date, "%m-%d-%Y").date()
         else:
             end_date = date.today() + relativedelta(days=1)
             start_date = end_date - relativedelta(months=3)
+
+        runs = list(RunActivity.objects.select_related('route').filter(user=2, finished__gte=start_date, finished__lte=end_date)
+                  .annotate(date=TruncDate('finished'), route_name=F('route__name'))
+                  .values('date', 'route_name', 'duration').distinct().order_by('date'))
+        
+        # Richard's code, response time 23ms
+
+        # chart = {}
+        # existing_run = lambda route_run: [r['date'] for r in route_run]
+        # for run in runs:
+        #     if run['route_name'] not in chart:
+        #         chart[run['route_name']] = []
+        #     run['time'] = format_seconds(run['duration'])
+        #     run['date'] = run['date'].strftime('%d-%m-%Y')
+        #     route = run['route_name']
+        #     existing_run_dates = existing_run(chart[route])
+        #     if run['date'] not in existing_run_dates:
+        #         item = run.copy()
+        #         item.pop('route_name')
+        #         chart[route].append(item)
+        
+        
+        
+        # Copilot optimised code, time response time 21ms
+        chart = defaultdict(list)
+        for run in runs:
+            route = run['route_name']
+            run['time'] = format_seconds(run['duration'])
+            run['date'] = run['date'].strftime('%d-%m-%Y')
             
+            if not any(r['date'] == run['date'] for r in chart[route]):
+                chart[route].append({
+                    'date': run['date'],
+                    'duration': run['duration'],
+                    'time': run['time']
+            })
         
-        
-        filtered_queryset = list(RunActivity.objects.select_related('route').filter(user=request.user, finished__gte=start_date, finished__lte=end_date)
-                .annotate(date=TruncDate('finished'), route_name=F('route__name'), duration_seconds=F('duration'))
-                .values('date', 'route_name', 'duration_seconds').distinct())
-        
-        chart_data = defaultdict(lambda: defaultdict(list))
+        chart['start'] = start_date.strftime('%d-%m-%Y')
+        chart['end'] = end_date.strftime('%d-%m-%Y')
+        # chart_data = defaultdict(lambda: defaultdict(list))
 
-        for run in filtered_queryset:
-            route_name = run['route_name']
-            date_str = run['date'].strftime('%d-%m-%Y')
-            duration = run['duration_seconds']
-            chart_data[route_name][date_str].append(duration)
+        # for run in filtered_queryset:
+        #     route_name = run['route_name']
+        #     date_str = run['date'].strftime('%d-%m-%Y')
+        #     duration = run['duration_seconds']
+        #     chart_data[route_name][date_str].append(duration)
 
-        response_data = {
-            'start_date': start_date.strftime('%d-%m-%Y'),
-            'end_date': end_date.strftime('%d-%m-%Y'),
-            'chart_data': {
-                route: [
-                    {
-                        "date": date,
-                        "duration": sum(durations) / len(durations) if durations else None
-                    }
-                    for date, durations in dates.items()
-                ]
-                for route, dates in chart_data.items()
-            }
-        }
-
-        
-        return Response(response_data, status=status.HTTP_200_OK)
+        # response_data = {
+        #     'start_date': start_date.strftime('%d-%m-%Y'),
+        #     'end_date': end_date.strftime('%d-%m-%Y'),
+        #     'chart_data': {
+        #         route: [
+        #             {
+        #                 "date": date,
+        #                 "duration": sum(durations) / len(durations) if durations else None
+        #             }
+        #             for date, durations in dates.items()
+        #         ]
+        #         for route, dates in chart_data.items()
+        #     }
+        # }
+        return Response(chart, status=status.HTTP_200_OK)
    
