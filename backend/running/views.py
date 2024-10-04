@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, GetRouteSerializer, CreateUpdateRouteSerializer, PersonalBestSerializer,
-                                 GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer, RunDataPointSerializer, ChartDataSerializer)
+                                 GetRunningSerializer, CreateUpdateRunningSerializer, MostRecentSerializer)
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
 from django.utils import timezone
@@ -180,7 +180,6 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
 class ChartView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
-    serializer_class = ChartDataSerializer
     http_method_names = ['get']
 
     def get_queryset(self):
@@ -236,7 +235,6 @@ class ChartView(generics.ListAPIView):
             }
         }
 
-        serializer = self.get_serializer(response_data)
-        return Response(serializer.data)
-
+        
+        return Response(response_data, status=status.HTTP_200_OK)
    

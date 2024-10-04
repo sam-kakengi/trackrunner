@@ -105,8 +105,3 @@ class UpdateRunSerializer(ModelSerializer):
 class RunDataPointSerializer(serializers.Serializer):
     date = serializers.DateTimeField(format='%d-%m-%Y')
     duration = serializers.IntegerField()
-
-class ChartDataSerializer(serializers.Serializer):
-    start_date = serializers.DateField(format='%d-%m-%Y')
-    end_date = serializers.DateField(format='%d-%m-%Y')
-    chart_data = serializers.DictField(child=RunDataPointSerializer(many=True))
