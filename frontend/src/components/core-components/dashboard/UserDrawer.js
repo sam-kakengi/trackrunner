@@ -9,6 +9,7 @@ import drawerTheme from '../../../theme/dashboard_themes/drawerTheme'
 import { ThemeProvider } from '@mui/material/styles'
 
 const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
+
     return (
     <ThemeProvider theme={drawerTheme}>
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -75,7 +76,7 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
                     />
                         
                         {/* Logout */}
-                    <ListItem onClick={() => console.log('Logout clicked')}>
+                    <ListItem onClick={() => console.log("Logout")}>
                         <ListItemIcon>
                             <ExitToAppOutlinedIcon />
                         </ListItemIcon>

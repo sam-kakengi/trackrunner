@@ -1,32 +1,70 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ResponsiveChartContainer, ChartsXAxis, ChartsYAxis, LinePlot, MarkPlot, ChartsTooltip, ChartsLegend } from '@mui/x-charts'
 import { Box, Typography, CircularProgress, useTheme, useMediaQuery } from '@mui/material'
 import { yellow, lightBlue, pink, purple, orange, lime } from '@mui/material/colors'
 import RunningAPI from '../../../../utilities/apiClient'
-import { formatDuration } from '../../../../utilities/timeUtil'
+import { formatMinutesToMMSS } from '../../../../utilities/timeUtil'
+
+/**
+ * MultiSeriesLineChart Component
+ * 
+ * This component is responsible for rendering a multi-series line chart using `mui/x-charts`.
+ * It fetches run activity data for different routes from an API, processes the data, and visualizes it.
+ * The Y-axis and X-axis labels are formatted appropriately, with the Y-axis displaying run durations
+ * in `mm:ss` format.
+ * 
+ * Features:
+ * - Handles responsive sizing for mobile, tablet, laptop, and desktop views.
+ * - Fetches data from an external API endpoint (`run/chart`) using an asynchronous function.
+ * - Converts run activity data into chart-friendly format, including converting dates and durations.
+ * - Displays chart legend, tooltips, and responsive adjustments based on screen size.
+ * 
+ * Main Libraries Used:
+ * - React for component state and lifecycle.
+ * - Material UI for theming and responsive utilities.
+ * - `@mui/x-charts` for creating a line chart visualization.
+ * 
+ * @returns {JSX.Element} The rendered MultiSeriesLineChart component
+ */
+
 
 const colors = [yellow[400], lightBlue[400], pink[400], purple[400], orange[400], lime[400]]
 
 const processData = (chartData) => {
-    if (!chartData) return { datasets: [], allDates: [] }
-    
-    const allDates = [...new Set(Object.values(chartData).flatMap(route => route.map(run => run.date)))]
-      .map(dateStr => new Date(dateStr.split('-').reverse().join('-')))
-      .sort((a, b) => a - b)
-      .map(date => date.toISOString().split('T')[0].split('-').reverse().join('-'))
-    
-    const datasets = Object.entries(chartData).map(([routeName, runs]) => {
-      return {
-        label: routeName,
-        data: allDates.map(date => {
-          const run = runs.find(r => r.date === date)
-          return run ? run.duration / 60 : null
-        })
-      }
-    })
+  if (!chartData) return { datasets: [], allDates: [] }
+
   
-    return { datasets, allDates }
-  }
+  const allDates = [
+    ...new Set(Object.values(chartData).flatMap((route) =>
+      route.map((run) => {
+        if (typeof run.date === 'string') {
+          
+          return new Date(run.date.split('-').reverse().join('-'))
+        } else if (run.date instanceof Date) {
+          return run.date
+        } else {
+          throw new Error('Unexpected date format in run data.')
+        }
+      })
+    )),
+  ].sort((a, b) => a - b) 
+
+  
+  const datasets = Object.entries(chartData).map(([routeName, runs]) => {
+    return {
+      label: routeName,
+      data: allDates.map((date) => {
+        const run = runs.find((r) => {
+          const runDate = new Date(r.date.split('-').reverse().join('-'))
+          return runDate.getTime() === date.getTime()
+        })
+        return run ? run.duration / 60 : null
+      }),
+    }
+  })
+
+  return { datasets, allDates }
+}
 
 const MultiSeriesLineChart = () => {
   const [chartData, setChartData] = useState({ datasets: [], allDates: [] })
@@ -78,6 +116,8 @@ const MultiSeriesLineChart = () => {
   
   const chartConfig = getChartConfig()
 
+  console.log(chartData.datasets)
+
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1000px', height: '100%', maxHeight: '600px' }}>
@@ -88,22 +128,22 @@ const MultiSeriesLineChart = () => {
               label: dataset.label,
               type: 'line',
               color: colors[index % colors.length],
-              valueFormatter: (value) => value !== null ? `${value.toFixed(2)} min` : 'N/A',
+              valueFormatter: (value) => (value !== null ? formatMinutesToMMSS(value) + ' min' : 'N/A'),
             }))}
             xAxis={[
               {
                 data: chartData.allDates,
-                scaleType: 'band',
-                domain: [0, 'auto'],
-                valueFormatter: (value) => new Date(value.split('-').reverse().join('-')).toLocaleDateString(),
+                scaleType: 'time', 
+                valueFormatter: (value) => value instanceof Date ? value.toLocaleDateString('en-GB') : value,
                 id: 'x-axis-id',
               },
             ]}
             yAxis={[
               {
-                scaleType: 'linear',
-                valueFormatter: (value) => `${value.toFixed(0)} min`,
                 id: 'y-axis-id',
+                scaleType: 'linear',
+                min: 0,
+                valueFormatter: (value) => formatMinutesToMMSS(value),
               }
             ]}
             height={chartConfig.height}
@@ -127,7 +167,7 @@ const MultiSeriesLineChart = () => {
             />
             <LinePlot />
             <ChartsXAxis position="bottom" axisId="x-axis-id" />
-            <ChartsYAxis position="left" axisId="y-axis-id" />
+            <ChartsYAxis position="left" axisId="y-axis-id" min={0} />
             <MarkPlot />
             <ChartsTooltip />
           </ResponsiveChartContainer>
