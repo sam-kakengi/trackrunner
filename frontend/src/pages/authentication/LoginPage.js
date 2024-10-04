@@ -94,4 +94,4 @@ const LoginPage = ({ setIsAuthenticated }) => {
   )
 }
 
-export default LoginPage;
+export default LoginPage

@@ -6,24 +6,8 @@ import RunningAPI from '../../../../utilities/apiClient'
 import { formatMinutesToMMSS } from '../../../../utilities/timeUtil'
 
 /**
- * MultiSeriesLineChart Component
- * 
- * This component is responsible for rendering a multi-series line chart using `mui/x-charts`.
- * It fetches run activity data for different routes from an API, processes the data, and visualizes it.
- * The Y-axis and X-axis labels are formatted appropriately, with the Y-axis displaying run durations
- * in `mm:ss` format.
- * 
- * Features:
- * - Handles responsive sizing for mobile, tablet, laptop, and desktop views.
- * - Fetches data from an external API endpoint (`run/chart`) using an asynchronous function.
- * - Converts run activity data into chart-friendly format, including converting dates and durations.
- * - Displays chart legend, tooltips, and responsive adjustments based on screen size.
- * 
- * Main Libraries Used:
- * - React for component state and lifecycle.
- * - Material UI for theming and responsive utilities.
- * - `@mui/x-charts` for creating a line chart visualization.
- * 
+ * Renders a multi-series line chart of run activities, fetching data from API and formatting axes appropriately.
+ *
  * @returns {JSX.Element} The rendered MultiSeriesLineChart component
  */
 

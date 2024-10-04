@@ -22,10 +22,10 @@ const RegistrationPage = () => {
     const handleRegister = async (registrationData) => {
         try {
             const response = await axios.post('http://localhost:8000/api/auth/registration/', registrationData)
-            setMessage("Registration successful! Sending you to the login page...");
+            setMessage("Registration successful! Sending you to the login page...")
             setTimeout(() => {
                 navigate('/')
-            }, 2000);
+            }, 2000)
 
         } catch (error) {
             setMessage("Registration failed. Please check your inputs.")
@@ -34,7 +34,7 @@ const RegistrationPage = () => {
                 console.error("Response data:", error.response.data)
             }
         }
-    };
+    }
 
     return (
         <Container 
@@ -58,4 +58,4 @@ const RegistrationPage = () => {
     )
 }
 
-export default RegistrationPage;
+export default RegistrationPage

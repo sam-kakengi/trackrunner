@@ -20,15 +20,6 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
                     color: 'white',
                     paddingTop: '2rem',
                 }}>
-                
-                {/* Greeting Text */}
-                {/* <Box sx={{ padding: '1rem', backgroundColor: '#37474F' }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'normal' }}>Hi,</Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 'normal'}}>
-                        {userInfo.username}
-                    </Typography>
-                </Box> */}
-                {/* -- Commented out as it is not needed temporarily */}
 
                 {/* List of Buttons */}
                 <List>

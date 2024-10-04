@@ -213,35 +213,29 @@ class ChartView(generics.ListAPIView):
                 .annotate(date=TruncDate('finished'), route_name=F('route__name'), duration_seconds=F('duration'))
                 .values('date', 'route_name', 'duration_seconds').distinct())
         
-        data_by_route = defaultdict(lambda: defaultdict(list))
+        chart_data = defaultdict(lambda: defaultdict(list))
+
         for run in filtered_queryset:
             route_name = run['route_name']
             date_str = run['date'].strftime('%d-%m-%Y')
-            duration = run['duration_seconds']  
-            
-            data_by_route[route_name][date_str].append(duration)
-        
-        
-        chart_data = {}
-        for route, dates in data_by_route.items():
-            chart_data[route] = [
-                {
-                    "date": date,
-                    "duration": sum(durations) / len(durations) if durations else None
-                }
-                for date, durations in dates.items()
-            ]
-        
+            duration = run['duration_seconds']
+            chart_data[route_name][date_str].append(duration)
+
         response_data = {
             'start_date': start_date.strftime('%d-%m-%Y'),
             'end_date': end_date.strftime('%d-%m-%Y'),
-            'chart_data': chart_data
+            'chart_data': {
+                route: [
+                    {
+                        "date": date,
+                        "duration": sum(durations) / len(durations) if durations else None
+                    }
+                    for date, durations in dates.items()
+                ]
+                for route, dates in chart_data.items()
+            }
         }
-        
-        print(f"Current time (UTC): {timezone.now()}")
-        print(f"Current time (User timezone): {timezone.now().astimezone(pytz.timezone(settings.TIME_ZONE))}")
-        print(f"Date range: {start_date} to {end_date}")
-        
+
         serializer = self.get_serializer(response_data)
         return Response(serializer.data)
 
