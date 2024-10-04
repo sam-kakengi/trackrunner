@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Drawer, Box, List, ListItem, ListItemText, ListItemIcon, Divider } from '@mui/material'
 import DirectionsWalkOutlinedIcon from '@mui/icons-material/DirectionsWalkOutlined' 
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
@@ -8,7 +9,15 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import drawerTheme from '../../../theme/dashboard_themes/drawerTheme'
 import { ThemeProvider } from '@mui/material/styles'
 
+
 const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
+
+    const navigate = useNavigate()
+
+    const signOut = () => {
+        navigate('/logout')
+    }
+
     return (
     <ThemeProvider theme={drawerTheme}>
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -75,7 +84,7 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
                     />
                         
                         {/* Logout */}
-                    <ListItem onClick={() => console.log('Logout clicked')}>
+                    <ListItem onClick={signOut}>
                         <ListItemIcon>
                             <ExitToAppOutlinedIcon />
                         </ListItemIcon>
