@@ -61,12 +61,11 @@ const MultiSeriesLineChart = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const api = new RunningAPI()
       try {
-        const api = new RunningAPI()
         const response = await api.getData('run/chart')
-        if (response && response.chart_data) {
-          const processedData = processData(response.chart_data)
-          console.log(response, processedData)
+        if (response) {
+          const processedData = processData(response.data)
           setChartData(processedData)
         } else {
           setError('No data available')
@@ -95,12 +94,8 @@ const MultiSeriesLineChart = () => {
     }
     return { height: 600, fontSize: '1rem', markerSize: 20, direction: 'column'}
   }
-
-  console.log(chartData)
   
   const chartConfig = getChartConfig()
-
-  console.log(chartData.datasets)
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

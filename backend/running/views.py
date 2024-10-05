@@ -207,61 +207,23 @@ class ChartView(generics.ListAPIView):
                   .annotate(date=TruncDate('finished'), route_name=F('route__name'))
                   .values('date', 'route_name', 'duration').distinct().order_by('date'))
         
-        # Richard's code, response time 23ms
-
-        # chart = {}
-        # existing_run = lambda route_run: [r['date'] for r in route_run]
-        # for run in runs:
-        #     if run['route_name'] not in chart:
-        #         chart[run['route_name']] = []
-        #     run['time'] = format_seconds(run['duration'])
-        #     run['date'] = run['date'].strftime('%d-%m-%Y')
-        #     route = run['route_name']
-        #     existing_run_dates = existing_run(chart[route])
-        #     if run['date'] not in existing_run_dates:
-        #         item = run.copy()
-        #         item.pop('route_name')
-        #         chart[route].append(item)
-        
-        
-        
         # Copilot optimised code, time response time 21ms
-        chart = defaultdict(list)
+        chart = {}
+        data = defaultdict(list)
         for run in runs:
             route = run['route_name']
             run['time'] = format_seconds(run['duration'])
             run['date'] = run['date'].strftime('%d-%m-%Y')
             
-            if not any(r['date'] == run['date'] for r in chart[route]):
-                chart[route].append({
+            if not any(r['date'] == run['date'] for r in data[route]):
+                data[route].append({
                     'date': run['date'],
                     'duration': run['duration'],
                     'time': run['time']
             })
-        
-        chart['start'] = start_date.strftime('%d-%m-%Y')
-        chart['end'] = end_date.strftime('%d-%m-%Y')
-        # chart_data = defaultdict(lambda: defaultdict(list))
+            chart['start'] = start_date.strftime('%d-%m-%Y')
+            chart['end'] = end_date.strftime('%d-%m-%Y')
+            chart["data"] = data
 
-        # for run in filtered_queryset:
-        #     route_name = run['route_name']
-        #     date_str = run['date'].strftime('%d-%m-%Y')
-        #     duration = run['duration_seconds']
-        #     chart_data[route_name][date_str].append(duration)
-
-        # response_data = {
-        #     'start_date': start_date.strftime('%d-%m-%Y'),
-        #     'end_date': end_date.strftime('%d-%m-%Y'),
-        #     'chart_data': {
-        #         route: [
-        #             {
-        #                 "date": date,
-        #                 "duration": sum(durations) / len(durations) if durations else None
-        #             }
-        #             for date, durations in dates.items()
-        #         ]
-        #         for route, dates in chart_data.items()
-        #     }
-        # }
         return Response(chart, status=status.HTTP_200_OK)
    
