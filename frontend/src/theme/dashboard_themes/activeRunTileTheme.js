@@ -1,5 +1,5 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { blueGrey, yellow } from "@mui/material/colors";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles"
+import { blueGrey, yellow } from "@mui/material/colors"
 
 let activeRunTileTheme = createTheme({
     typography:{
@@ -41,6 +41,6 @@ let activeRunTileTheme = createTheme({
             main: '#37474F'
         }
     }
-});
+})
 activeRunTileTheme = responsiveFontSizes(activeRunTileTheme)
 export default activeRunTileTheme

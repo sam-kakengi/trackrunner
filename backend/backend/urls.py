@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from running.views import RouteView, RunningView, MostRecentRunView, PersonalBestView, ActiveRunView
+from running.views import RouteView, RunningView, MostRecentRunView, PersonalBestView, ActiveRunView, ChartView
 
 router = DefaultRouter()
 router.register(r'routes', RouteView, basename='route')
@@ -33,4 +33,5 @@ urlpatterns = [
     path('api/run/recent', MostRecentRunView.as_view(), name='recent'),
     path('api/run/best', PersonalBestView.as_view(), name='best'),
     path('api/run/active', ActiveRunView.as_view(), name='active'),
+    path('api/run/chart', ChartView.as_view(), name='chart'),
 ]

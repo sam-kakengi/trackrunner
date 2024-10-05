@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Paper, Box, Grid, Typography, Select, CardActions, Button, Dialog, DialogContent, MenuItem, TextField, useMediaQuery, FormControl, InputLabel, Divider } from '@mui/material'
-import { TimePicker, DatePicker } from '@mui/x-date-pickers'
+import { DesktopTimePicker, MobileTimePicker, TimePicker, DatePicker } from '@mui/x-date-pickers'
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import AddIcon from '@mui/icons-material/Add'
@@ -96,6 +97,7 @@ const LogRunModal = ({ open, handleClose }) => {
                     </Typography>
                   </Grid>
 
+                  
                   <Grid item xs={12} sm={6}>
                     <TimePicker
                       label="Start"
@@ -106,11 +108,26 @@ const LogRunModal = ({ open, handleClose }) => {
                         const duration = newEnd && newStart ? newEnd.diff(newStart, 'minutes') : null;
                         setRunData({ ...runData, start: newStart, duration });
                       }}
+                      slotProps={{
+                        popper: {
+                          disablePortal: true,
+                          modifiers: [
+                            {
+                              name: 'flip',
+                              options: {
+                                fallbackPlacements: ['bottom'],
+                              },
+                            },
+                          ],
+                        },
+                      }}
                       slots={{
                         textField: (params) => (
-                          <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth />
+                          <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth 
+                           />
                         ),
                       }}
+                      
                     />
                   </Grid>
 
@@ -124,13 +141,28 @@ const LogRunModal = ({ open, handleClose }) => {
                         const duration = newStart && newFinish ? newFinish.diff(newStart, 'minutes') : null;
                         setRunData({ ...runData, end: newFinish, duration });
                       }}
+                      slotProps={{
+                        popper: {
+                          disablePortal: true, 
+                          modifiers: [
+                            {
+                              name: 'flip',
+                              options: {
+                                fallbackPlacements: ['bottom'],
+                              },
+                            },
+                          ],
+                        },
+                      }}
                       slots={{
                         textField: (params) => (
-                          <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth />
+                          <TextField {...params} variant="outlined" size={isMobile ? 'small' : 'medium'} fullWidth 
+                           />
                         ),
                       }}
                     />
                   </Grid>
+                  
 
                   <Grid item xs={12} sm={6}>
                     <DatePicker

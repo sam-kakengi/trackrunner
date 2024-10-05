@@ -36,6 +36,8 @@ ALLOWED_HOSTS = []
 
 APPEND_SLASH = True
 
+USE_TZ = True
+TIME_ZONE = 'Europe/London'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost',

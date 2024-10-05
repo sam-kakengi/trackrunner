@@ -15,6 +15,7 @@ Run the following commands in your terminal to install the core Material-UI pack
 ```bash
 npm install @mui/material @emotion/react @emotion/styled
 npm install @mui/x-date-pickers
+npm install @mui/x-charts
 npm install dayjs
 
 ```

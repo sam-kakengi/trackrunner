@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from running.models import RunActivity, Route
 from rest_framework import viewsets, status, generics
@@ -9,6 +10,11 @@ from running.serializers import (ActivateRunSerializer, UpdateRunSerializer, Get
 from django.db.models import F, ExpressionWrapper, FloatField
 from .utils import format_seconds
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from datetime import date
+from itertools import groupby
+from django.db.models.functions import TruncDate
+
 
 class RouteView(viewsets.ModelViewSet):
     queryset = Route.objects.all()
@@ -168,3 +174,56 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
             return UpdateRunSerializer
         else:
             return GetRunningSerializer
+
+
+class ChartView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        """Return all runs for the current user"""
+        return RunActivity.objects.filter(
+            user=self.request.user
+        ).select_related('route').order_by('finished')
+
+    def get(self, request, *args, **kwargs):
+        """Retrieve and process chart data for user's running activities, 
+        handling custom date ranges and returning formatted JSON response."""
+        if Route.objects.filter(user=request.user).count() == 0:
+            return Response({"detail": "No routes found for the current user."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        
+        custom_end_date = request.query_params.get('end')
+        custom_start_date = request.query_params.get('start')
+
+        if custom_end_date and custom_start_date:
+            start_date = datetime.strptime(custom_start_date, "%m-%d-%Y").date()
+            end_date = datetime.strptime(custom_end_date, "%m-%d-%Y").date()
+        else:
+            end_date = date.today() + relativedelta(days=1)
+            start_date = end_date - relativedelta(months=3)
+
+        runs = list(RunActivity.objects.select_related('route').filter(user=request.user, finished__gte=start_date, finished__lte=end_date)
+                  .annotate(date=TruncDate('finished'), route_name=F('route__name'))
+                  .values('date', 'route_name', 'duration').distinct().order_by('date'))
+        
+        # Copilot optimised code, time response time 21ms
+        chart = {}
+        data = defaultdict(list)
+        for run in runs:
+            route = run['route_name']
+            run['time'] = format_seconds(run['duration'])
+            run['date'] = run['date'].strftime('%d-%m-%Y')
+            
+            if not any(r['date'] == run['date'] for r in data[route]):
+                data[route].append({
+                    'date': run['date'],
+                    'duration': run['duration'],
+                    'time': run['time']
+            })
+            chart['start'] = start_date.strftime('%d-%m-%Y')
+            chart['end'] = end_date.strftime('%d-%m-%Y')
+            chart["data"] = data
+
+        return Response(chart, status=status.HTTP_200_OK)
+   

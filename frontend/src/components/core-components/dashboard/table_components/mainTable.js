@@ -29,7 +29,7 @@ const MainTable = () => {
             switch (header) {
                 case 'Date': return '25%'
                 case 'Route': return '30%'
-                case 'Time': return '15%'
+                case 'Time': return '25%'
                 case 'Notes': return '25%'
                 default: return '25%'
             }
@@ -63,7 +63,7 @@ const MainTable = () => {
         return <div>{'Error loading runs'}</div>
     }
 
-    const headers = isMobile ? ['Date', 'Route', 'Time', 'Notes'] : ['Date', 'Distance', 'Route', 'Time', 'Notes']
+    const headers = isMobile ? ['Date', 'Distance', 'Time', 'Notes'] : ['Date', 'Route', 'Distance', 'Time', 'Notes']
 
     return (
         <ThemeProvider theme={tableTheme}>
@@ -101,11 +101,12 @@ const MainTable = () => {
                                         <Typography sx={{ fontSize: getFontSize() }}>{run.date_formatted}</Typography>
                                     </TableCell>
                                     {!isMobile && (
-                                        <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: '20%' }}>
-                                            <Typography sx={{ fontSize: getFontSize() }}>{run.route.distance} km</Typography>
-                                        </TableCell>
+                                        <RouteNameTruncated routeName={run.route.name} isMobile={isMobile} fontSize={getFontSize()} />
                                     )}
-                                    <RouteNameTruncated routeName={run.route.name} isMobile={isMobile} fontSize={getFontSize()} />
+                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: '20%' }}>
+                                            <Typography sx={{ fontSize: getFontSize() }}>{run.route.distance} km</Typography>
+                                    </TableCell>
+                                    
                                     <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Time') }}>
                                         <Typography sx={{ fontSize: getFontSize() }}>{run.duration_formatted}</Typography>
                                     </TableCell>

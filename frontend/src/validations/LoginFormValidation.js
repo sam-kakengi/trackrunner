@@ -24,7 +24,7 @@ const validatePassword = (password) => {
         return "Password is required"
     }
     return ''
-};
+}
 
 /**
  * Validates the login form.

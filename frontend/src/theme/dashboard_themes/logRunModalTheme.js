@@ -54,18 +54,6 @@ const modalTheme = createTheme({
         },
       },
 
-      MuiMenuItem: {
-        styleOverrides: {
-          root: {
-            color: 'white',
-            '&.Mui-selected': {
-              backgroundColor: '#FFD54F',
-              color: 'black', 
-            },
-          },
-        },
-      },
-
       MuiList: {
         styleOverrides: {
           root: {
@@ -86,6 +74,6 @@ const modalTheme = createTheme({
       
 
     },
-  });
+  })
 
 export default modalTheme
