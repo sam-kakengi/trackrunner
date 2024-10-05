@@ -100,8 +100,3 @@ class UpdateRunSerializer(ModelSerializer):
     class Meta:
         model = RunActivity
         fields = ['notes', 'paused']
-
-
-class RunDataPointSerializer(serializers.Serializer):
-    date = serializers.DateTimeField(format='%d-%m-%Y')
-    duration = serializers.IntegerField()

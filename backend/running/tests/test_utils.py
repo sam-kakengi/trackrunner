@@ -4,7 +4,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 from django.test import TestCase
 from datetime import datetime
-from running.utils import format_ordinal_suffix, format_seconds
+from running.utils import format_ordinal_suffix, format_seconds, format_duration
 
 def test_format_ordinal_suffix():
     # Test case 1: Day with "st" suffix
@@ -46,3 +46,13 @@ def test_format_seconds():
     assert format_seconds(7200) == "02:00:00"
     assert format_seconds(3660) == "01:01:00"
     assert format_seconds(3601) == "01:00:01"
+
+def test_format_duration():
+    assert format_duration(0) == "00:00"
+    assert format_duration(59) == "00:59"
+    assert format_duration(60) == "01:00"
+    assert format_duration(3661) == "61:01"
+    assert format_duration(3600) == "60:00"
+    assert format_duration(7200) == "120:00"
+    assert format_duration(3660) == "61:00"
+    assert format_duration(3601) == "60:01"
