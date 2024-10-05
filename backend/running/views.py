@@ -203,7 +203,7 @@ class ChartView(generics.ListAPIView):
             end_date = date.today() + relativedelta(days=1)
             start_date = end_date - relativedelta(months=3)
 
-        runs = list(RunActivity.objects.select_related('route').filter(user=2, finished__gte=start_date, finished__lte=end_date)
+        runs = list(RunActivity.objects.select_related('route').filter(user=request.user, finished__gte=start_date, finished__lte=end_date)
                   .annotate(date=TruncDate('finished'), route_name=F('route__name'))
                   .values('date', 'route_name', 'duration').distinct().order_by('date'))
         

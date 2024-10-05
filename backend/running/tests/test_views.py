@@ -7,12 +7,13 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 from running.models import RunActivity, Route
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from typing import Tuple
-from running.utils import format_ordinal_suffix
+from running.utils import format_ordinal_suffix, format_duration
+from dateutil.relativedelta import relativedelta
 
 @pytest.fixture
-def api_client():
+def api_client() -> APIClient:
     return APIClient()
 
 @pytest.fixture
@@ -20,7 +21,7 @@ def user(django_user_model):
     return django_user_model.objects.create_user(username='testuser', password='password')
 
 @pytest.fixture
-def auth_client(api_client, user):
+def auth_client(api_client, user) -> APIClient:
     api_client.force_authenticate(user=user)
     return api_client
 
@@ -218,3 +219,35 @@ def test_end_active_run(auth_client, start_active_run, route: Route):
     assert response.status_code == status.HTTP_200_OK
     response = auth_client.get(url)
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+@pytest.mark.django_db
+def test_chart_data(auth_client, user, route: Route):
+    url = reverse('chart')
+    
+    run_date = lambda delta, string_format:  ((datetime.now() - timedelta(days=delta) ).strftime("%Y-%m-%dT%H:%M:%S") if string_format 
+                                              else (datetime.now() - timedelta(days=delta)))
+    run_1: RunActivity = RunActivity.objects.create(user=user, route=route, duration=1200, notes='Test notes', finished=run_date(0, True))
+    run_1.save()
+    response = auth_client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+    today = date.today()
+    expected_data = { route.name : [{"date": run_date(0, False).strftime("%d-%m-%Y"), "duration": run_1.duration, "time": format_duration(run_1.duration)}] }
+    assert response.data['start'] == (today- relativedelta(months=3, days=-1)).strftime("%d-%m-%Y")
+    assert response.data['end'] == (today + relativedelta(days=1)).strftime("%d-%m-%Y")
+    assert response.data['data'] == expected_data
+    run_2: RunActivity = RunActivity.objects.create(user=user, route=route, duration=1200, notes='Test notes', finished=run_date(10, True))
+    run_2.save()
+    expected_data[route.name].append({"date": run_date(10, False).strftime("%d-%m-%Y"), "duration": run_2.duration, "time": format_duration(run_2.duration)})
+    expected_data[route.name] = sorted(expected_data[route.name], key=lambda x: datetime.strptime(x['date'], "%d-%m-%Y"))
+    response = auth_client.get(url)
+    assert dict(response.data['data']) == expected_data
+    new_route = Route.objects.create(name='New Route', distance=5.0, user=user)
+    run_3: RunActivity = RunActivity.objects.create(user=user, route=new_route, duration=1200, notes='Test notes', finished=run_date(4, True))
+    run_3.save()
+    expected_data[new_route.name] = [{"date": run_date(4, False).strftime("%d-%m-%Y"), "duration": run_3.duration, "time": format_duration(run_3.duration)}]
+    response = auth_client.get(url)
+    actual_data = dict(response.data['data'])
+    assert actual_data == expected_data
+
+    
+    
