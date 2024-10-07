@@ -8,9 +8,11 @@ import AddIcon from '@mui/icons-material/Add'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import RunningAPI from '../../../../utilities/apiClient'
-import RunDataSummary from './RunDataSummary'
 import { formatDuration } from '../../../../utilities/timeUtil'
+
+dayjs.extend(customParseFormat)
 
 const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
@@ -18,23 +20,56 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
   const [newRouteOpen, setNewRouteOpen] = useState(false)
 
   const [runData, setRunData] = useState({
-    id: run?.id || '',
-    routeId: run?.route_id || '',
-    routeName: run?.route || '',
-    notes: run?.notes || '',
-    duration: run?.duration ? dayjs().startOf('day').add(run.duration, 'second') : dayjs().startOf('day'),
-    date: run?.finished ? dayjs(run.finished) : dayjs(),
+    id: '',
+    routeId: '',
+    routeName: '',
+    notes: '',
+    duration: dayjs().startOf('day'),
+    date: dayjs(),
   })
 
   useEffect(() => {
-    if (open) {
-      const getRoutes = async () => {
-        const retrievedRoutes = await fetchRoutes()
-        setRoutesArray(retrievedRoutes)
+    if (open && run) {
+      let parsedDuration = dayjs().startOf('day')
+  
+      if (run.duration) {
+        const [minutes, seconds] = run.duration.split(':').map(Number)
+        parsedDuration = parsedDuration.set('minute', minutes).set('second', seconds)
       }
-      getRoutes()
+  
+      const parsedDate = dayjs(run.date, 'Do MMM')
+  
+      setRunData({
+        id: run.id || '',
+        routeId: run.routeId || '',
+        routeName: run.route || '',
+        notes: run.notes || '',
+        duration: parsedDuration,
+        date: parsedDate.isValid() ? parsedDate : dayjs(),
+      })
     }
-  }, [open])
+  
+    const getRoutes = async () => {
+      const retrievedRoutes = await fetchRoutes()
+      setRoutesArray(retrievedRoutes)
+    }
+  
+    getRoutes()
+  }, [open, run])
+
+  useEffect(() => {
+    if (routesArray.length > 0 && run?.route) {
+      const matchingRoute = routesArray.find(route => route.name === run.route)
+      if (matchingRoute) {
+        setRunData(prevRunData => ({
+          ...prevRunData,
+          routeId: matchingRoute.id,
+          routeName: matchingRoute.name
+        }))
+        
+      }
+    }
+  }, [routesArray, run])
 
   const formChange = (field) => (event) => {
     setRunData({ ...runData, [field]: event.target.value || '' })
@@ -46,15 +81,14 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
 
   const handleDurationChange = (newDuration) => {
     if (newDuration === null || newDuration.isSame(dayjs().startOf('day'))) {
-      
-      setRunData(prevData => ({
+      setRunData((prevData) => ({
         ...prevData,
-        duration: dayjs().startOf('day').add(1, 'second')
+        duration: dayjs().startOf('day').add(1, 'second'),
       }))
     } else {
-      setRunData(prevData => ({
+      setRunData((prevData) => ({
         ...prevData,
-        duration: newDuration
+        duration: newDuration,
       }))
     }
   }
@@ -64,10 +98,10 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
 
     if (!runData.duration || runData.duration.isSame(dayjs().startOf('day'))) {
       console.error('Invalid duration')
-      return("Invalid duration")
+      return 'Invalid duration'
     }
     const api = new RunningAPI()
-    
+
     const durationInSeconds = runData.duration.hour() * 3600 + runData.duration.minute() * 60 + runData.duration.second()
     const formattedDate = runData.date.format('YYYY-MM-DDTHH:mm:ss')
 
@@ -85,7 +119,7 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
         const updatedRun = {
           ...response,
           duration: formatDuration(response.duration),
-          date: dayjs(response.finished).format('DD/MM/YYYY')
+          date: dayjs(response.finished).format('DD/MM/YYYY'),
         }
         onRunUpdated(updatedRun)
         handleClose()
@@ -93,7 +127,7 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
         console.error('Failed to update run')
       }
     } catch (error) {
-      console.error('Error updating run:', error)
+      console.error('Error updating run')
     }
   }
 
@@ -101,8 +135,8 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
   const newRouteModalClose = () => setNewRouteOpen(false)
 
   const addNewRoute = (newRoute) => {
-    setRoutesArray(prevRoutes => [...prevRoutes, newRoute])
-    setRunData(prevRunData => ({ ...prevRunData, routeId: newRoute.id, routeName: newRoute.name }))
+    setRoutesArray((prevRoutes) => [...prevRoutes, newRoute])
+    setRunData((prevRunData) => ({ ...prevRunData, routeId: newRoute.id, routeName: newRoute.name }))
     newRouteModalClose()
   }
 
@@ -112,9 +146,8 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
           <DialogContent sx={{ backgroundColor: modalTheme.palette.secondary.main }}>
             <Paper elevation={0} sx={{ padding: { xs: 2, sm: 3, md: 4 }, margin: 'auto', backgroundColor: modalTheme.palette.secondary.main }}>
-              <RunDataSummary run={run} />
               <form onSubmit={handleSaveRun}>
-                <Grid container spacing={isMobile ? 2 : 3}>
+                <Grid container spacing={isMobile ? 2 : 8}>
                   <Grid item xs={12}>
                     <Typography variant={isMobile ? 'h6' : 'h5'} sx={{ color: modalTheme.palette.primary.main }} gutterBottom>
                       Edit your run
@@ -122,6 +155,7 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
+                    {console.log(runData.duration)}
                     <TimePicker
                       label="Duration"
                       value={runData.duration}
@@ -134,8 +168,8 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
                           error: false,
                         },
                       }}
-                      minTime={dayjs().startOf('day').add(1, 'second')}
                       disableFuture
+                      sx={{width: '100%'}}
                     />
                   </Grid>
 
@@ -145,88 +179,90 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
                       value={runData.date}
                       onChange={handleDateChange}
                       renderInput={(params) => <TextField {...params} fullWidth size={isMobile ? 'small' : 'medium'} />}
+                      sx={{width: '100%'}}
                     />
                   </Grid>
 
-                <Grid item xs={12}>
-                  <FormControl fullWidth size={isMobile ? 'small' : 'medium'}>
-                    <InputLabel id="route-label">Route</InputLabel>
-                    <Select
-                      labelId="route-label"
-                      value={runData.routeId || ''}
-                      onChange={(e) => {
-                        if (e.target.value === 'add_new_route') {
-                          newRouteModalOpen()
-                        } else {
-                          const selectedRoute = routesArray.find(route => route.id === e.target.value)
-                          if (selectedRoute) {
-                            setRunData({ ...runData, routeId: selectedRoute.id, routeName: selectedRoute.name })
+                  <Grid item xs={12} sm={6}>
+                    <FormControl size={isMobile ? 'small' : 'medium'} fullWidth>
+                      <InputLabel id="route-label">Route</InputLabel>
+                      <Select
+                        labelId="route-label"
+                        value={runData.routeId || ''}
+                        onChange={(e) => {
+                          if (e.target.value === 'add_new_route') {
+                            newRouteModalOpen()
+                          } else {
+                            const selectedRoute = routesArray.find((route) => route.id === e.target.value)
+                            if (selectedRoute) {
+                              setRunData({ ...runData, routeId: selectedRoute.id, routeName: selectedRoute.name })
+                            }
                           }
-                        }
-                      }}
-                      label="Route"
-                    >
-                      {routesArray.map((route) => (
-                        <MenuItem key={route.id} value={route.id}>
-                          {route.name}
-                        </MenuItem>
-                      ))}
-                      
-                      <MenuItem
-                        value="add_new_route"
-                        sx={{
-                          position: 'sticky',
-                          bottom: 0,
-                          backgroundColor: modalTheme.palette.tertiary.main,
-                          borderTop: '1px solid white',
-                          zIndex: 1,
                         }}
+                        label="Route"
                       >
-                        <AddIcon sx={{ mr: 1 }} />
-                        Add New Route
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+                        {routesArray.map((route) => (
+                          <MenuItem key={route.id} value={route.id} sx={{color: modalTheme.palette.quaternary.main}}>
+                            {route.name}
+                          </MenuItem>
+                        ))}
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Notes"
-                    multiline
-                    rows={isMobile ? 3 : 5}
-                    value={runData.notes}
-                    onChange={formChange('notes')}
-                    size={isMobile ? 'small' : 'medium'}
-                    fullWidth
-                  />
-                </Grid>
+                        <MenuItem
+                          value="add_new_route"
+                          sx={{
+                            position: 'sticky',
+                            bottom: 0,
+                            backgroundColor: modalTheme.palette.tertiary.main,
+                            borderTop: '1px solid white',
+                            zIndex: 1,
+                            color: modalTheme.palette.quaternary.main
+                          }}
 
-                <Grid item xs={12}>
-                  <CardActions
-                    sx={{
-                      display: 'flex',
-                      justifyContent: isMobile ? 'center' : 'flex-start',
-                      flexDirection: isMobile ? 'column' : 'row',
-                      gap: isMobile ? 2 : 1,
-                      width: '100%',
-                    }}
-                  >
-                    <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
-                      Save
-                    </Button>
-                    <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleClose}>
-                      Cancel
-                    </Button>
-                  </CardActions>
+                        >
+                          <AddIcon sx={{ mr: 1 }} />
+                          Add New Route
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Notes"
+                      multiline
+                      rows={isMobile ? 3 : 5}
+                      value={runData.notes}
+                      onChange={formChange('notes')}
+                      size={isMobile ? 'small' : 'medium'}
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <CardActions
+                      sx={{
+                        display: 'flex',
+                        justifyContent: isMobile ? 'center' : 'flex-start',
+                        flexDirection: isMobile ? 'column' : 'row',
+                        gap: isMobile ? 2 : 1,
+                        width: '100%',
+                      }}
+                    >
+                      <Button size={isMobile ? 'small' : 'medium'} type="submit" variant="contained" fullWidth={isMobile}>
+                        Save
+                      </Button>
+                      <Button size={isMobile ? 'small' : 'medium'} fullWidth={isMobile} onClick={handleClose}>
+                        Cancel
+                      </Button>
+                    </CardActions>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-          </Paper>
-        </DialogContent>
-      </Dialog>
-      <NewRouteModal postNewRoute={addNewRoute} newRouteOpen={newRouteOpen} newRouteClose={newRouteModalClose} />
-     </LocalizationProvider>
-     <NewRouteModal postNewRoute={addNewRoute} newRouteOpen={newRouteOpen} newRouteClose={newRouteModalClose} />
+              </form>
+            </Paper>
+          </DialogContent>
+        </Dialog>
+        <NewRouteModal postNewRoute={addNewRoute} newRouteOpen={newRouteOpen} newRouteClose={newRouteModalClose} />
+      </LocalizationProvider>
     </ThemeProvider>
   )
 }
