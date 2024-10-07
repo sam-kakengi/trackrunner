@@ -84,9 +84,10 @@ const StartRunModal = ({ open, handleClose }) => {
                         }
                       }}
                       label="Route"
+                      
                     >
                       {routesArray.map((route) => (
-                        <MenuItem key={route.id} value={route.id}>
+                        <MenuItem key={route.id} value={route.id} sx={{color: 'white'}}>
                           {route.name}
                         </MenuItem>
                       ))}
@@ -99,6 +100,7 @@ const StartRunModal = ({ open, handleClose }) => {
                           backgroundColor: modalTheme.palette.tertiary.main,
                           borderTop: '1px solid white',
                           zIndex: 1,
+                          color: 'white',
                         }}
                       >
                         <AddIcon sx={{ mr: 1 }} />

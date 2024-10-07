@@ -1,5 +1,5 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { blueGrey } from "@mui/material/colors";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles"
+import { blueGrey } from "@mui/material/colors"
 
 let tileTheme = createTheme({
     typography:{
@@ -25,6 +25,6 @@ let tileTheme = createTheme({
         
     },
     
-});
-tileTheme = responsiveFontSizes(tileTheme);
-export default tileTheme;
+})
+tileTheme = responsiveFontSizes(tileTheme)
+export default tileTheme
