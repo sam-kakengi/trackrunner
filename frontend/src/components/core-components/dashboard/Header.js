@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Box, Typography, IconButton, Button, CircularProgress } from '@mui/material'
+import { Box, Typography, IconButton, Button, CircularProgress, useMediaQuery, useTheme } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import DropdownBtn from './DropdownBtn'
 import UserDrawer from './UserDrawer'
@@ -15,7 +15,11 @@ import PreEndRunModal from './PreEndRunModal'
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   const [logRunModalOpen, setLogRunModalOpen] = useState(false)
   const [startRunModalOpen, setStartRunModalOpen] = useState(false)
-  
+  const theme = useTheme()
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'))
+
+  const imageWidth = isTablet ? '3rem' : '4rem'
+
   const { 
     activeRun, 
     startRun,  
@@ -129,7 +133,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
             </Typography>
           )}
           <Typography>
-            <img src={Runner} alt="Man Running" style={{ width: '4rem', height: 'auto' }} />
+            <img src={Runner} alt="Man Running" style={{ width: imageWidth, height: 'auto' }} />
           </Typography>
         </Box>
 
