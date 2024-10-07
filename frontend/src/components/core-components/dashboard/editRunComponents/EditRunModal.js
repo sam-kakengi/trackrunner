@@ -155,7 +155,6 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
-                    {console.log(runData.duration)}
                     <TimePicker
                       label="Run Time"
                       value={runData.duration}
