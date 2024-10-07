@@ -115,7 +115,6 @@ const EditRunModal = ({ open, handleClose, run, onRunUpdated }) => {
     try {
       const response = await api.patchDjangoData(`run/${runData.id}/`, formattedData)
       if (response) {
-        console.log('Run updated successfully:', response)
         const updatedRun = {
           ...response,
           duration: formatDuration(response.duration),
