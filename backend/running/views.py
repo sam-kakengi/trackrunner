@@ -116,7 +116,7 @@ class PersonalBestView(generics.RetrieveAPIView):
 class ActiveRunView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
-    http_method_names = ['get', 'post', 'patch']
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_object(self):
         """Returns an active (start has begun, but not complete) run for the current user"""
@@ -175,6 +175,13 @@ class ActiveRunView(generics.RetrieveUpdateAPIView):
         else:
             return GetRunningSerializer
 
+    def delete(self, request, *args, **kwargs):
+        """Delete the active run if it exists"""
+        instance = self.get_object()
+        if not instance:
+            return Response({"detail": "No active run currently."},status=status.HTTP_404_NOT_FOUND)
+        instance.delete()
+        return Response({"detail": "Active run has been removed."}, status=status.HTTP_204_NO_CONTENT)
 
 class ChartView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]

@@ -221,6 +221,14 @@ def test_end_active_run(auth_client, start_active_run, route: Route):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 @pytest.mark.django_db
+def test_reset_active_run(auth_client, start_active_run):
+    response, data, url = start_active_run
+    response = auth_client.delete(url)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    response = auth_client.get(url)
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+@pytest.mark.django_db
 def test_chart_data(auth_client, user, route: Route):
     url = reverse('chart')
     
