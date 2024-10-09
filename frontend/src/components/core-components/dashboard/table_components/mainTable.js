@@ -17,13 +17,17 @@ const MainTable = () => {
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'))
-   
+    const isLaptop = useMediaQuery(theme.breakpoints.between('md', 'lg'))
+    const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'))
+
     const getFontSize = () => {
         if (isMobile) return '0.85rem'
         if (isTablet) return '0.875rem'
+        if (isLaptop) return '1rem'
+        if (isLargeScreen) return '1rem' 
         return '1rem'
     }
-
+   
     const getCellWidth = (header) => {
         if (isMobile) {
             switch (header) {
@@ -78,7 +82,7 @@ const MainTable = () => {
                     backgroundColor: tableTheme.palette.background.main, 
                     boxShadow: 'none', 
                     height: '100%',
-                    paddingTop: { xs: '1rem', sm: '1.25rem', md: '1.75rem', lg: '2rem' }
+                    paddingTop: { xs: '1rem', sm: '1.25rem', md: '1.75rem', lg: '1.5rem'}
                 }}>
                     <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="recent runs table">
                         <TableHead>

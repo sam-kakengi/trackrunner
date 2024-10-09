@@ -33,7 +33,7 @@ const DesktopNoteView = ({ note }) => {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '1rem' }}>
             {truncatedNote}
           </Typography>
           {note && <InfoIcon sx={{ marginLeft: '0.25rem', flexShrink: 0 }} />}

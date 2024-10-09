@@ -29,7 +29,26 @@ const DashboardComponent = ({setIsAuthenticated}) => {
         {/* Drawer Theme */},
         <ThemeProvider theme={DrawerTheme}>
             {/* Main Container */}
-            <Container maxWidth={false} sx={{ height: '100vh', minHeight:'100vh', overflow:'auto', backgroundColor: '#263238', width: '100%' }}>
+            <Container maxWidth={false} disableGutters sx={{ height: '100%', overflow:'auto', backgroundColor: '#263238', width: '100%',
+                paddingLeft: {
+                    xs: '1rem', 
+                    sm: '2rem',  
+                    md: '3rem',  
+                    lg: '3rem', 
+                  },
+                  paddingRight: {
+                    xs: '1rem',
+                    sm: '2rem',
+                    md: '3rem',
+                    lg: '4rem',
+                  },
+                  paddingBottom: {
+                    xs: '1rem',
+                    sm: '2rem',
+                    md: '3rem',
+                    lg: '4rem',
+                  }, paddingTop: '0', margin: '0'
+             }}>
 
                 {/* Header Component */}
                 <Header isMobile={isMobile} userInfo={userInfo} toggleDrawer={toggleDrawer} drawerOpen={drawerOpen} />

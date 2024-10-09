@@ -125,7 +125,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   return (
     <ThemeProvider theme={buttonTheme}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: { xs: 'row', sm: 'column', md: 'column', lg: 'row' }, 
-      width: '100%', marginTop: '1rem' }}>
+      width: '100%'}}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'center' }}>
           {!isMobile && (
             <Typography sx={{ fontSize: { xs: '2rem', sm: '3rem', md: '4rem' }, fontStyle: 'italic', color: '#FFD54F' }}>
