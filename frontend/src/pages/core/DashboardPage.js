@@ -10,7 +10,7 @@ import DashboardComponent from '../../components/core-components/dashboard/Dashb
 
 const DashboardPage = ({setIsAuthenticated}) => {
     return (
-        <Container maxWidth={false} disableGutters sx={{ maxWidth: '100%', height: '100vh', backgroundColor: '#263238', padding: '0', margin: '0'}}>
+        <Container maxWidth={false} disableGutters sx={{ maxWidth: '100%', paddingLeft: '0', paddingRight: '0' }}>
             <DashboardComponent setIsAuthenticated={setIsAuthenticated}/>
         </Container>
     )
