@@ -43,8 +43,6 @@ const PersonalBestTile = ({theme, gridBoxStyle, tileBaseStyle}) => {
         setBestRun(updatedData)
     }
 
-    
-
     return (
         <>
             <Box 
@@ -56,10 +54,10 @@ const PersonalBestTile = ({theme, gridBoxStyle, tileBaseStyle}) => {
                         <Skeleton variant="square" width='100%' height='100%'/>
                     ) : bestRun ? (
                         <>
-                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'body1' : 'h6'}>Personal Best</Typography>
+                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Personal Best</Typography>
                         <Typography sx={tileBaseStyle} variant={isMobile ? 'h4' : 'h2'} color={blueGrey[50]}>{bestRun.duration}</Typography>
-                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'h5' : 'h4'}>{bestRun.date}</Typography>
-                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'body1' : 'h6'}>{bestRun.route}</Typography>
+                        <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>{bestRun.date}</Typography>
+                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>{bestRun.route}</Typography>
                         </>
                     ) : (
                         <>
