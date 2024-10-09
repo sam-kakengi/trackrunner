@@ -54,10 +54,10 @@ const RecentRunTile = ({theme, gridBoxStyle, tileBaseStyle}) => {
                         <Skeleton variant="square" width='100%' height='100%'/>
                     ) : recentRun ? (
                         <>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Previous Run</Typography>
+                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'body1' : 'h6'}>Previous Run</Typography>
                         <Typography sx={tileBaseStyle} variant={isMobile ? 'h4' : 'h2'} color={blueGrey[50]}>{recentRun.date}</Typography>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>{recentRun.duration}</Typography>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>{recentRun.route}</Typography>
+                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'h5' : 'h4'}>{recentRun.duration}</Typography>
+                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'body1' : 'h6'}>{recentRun.route}</Typography>
                         </>
                     ) : (
                         <>

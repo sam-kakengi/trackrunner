@@ -83,23 +83,24 @@ const MultiSeriesLineChart = () => {
   if (error) return <Typography color="error">{error}</Typography>
 
   const getChartConfig = () => {
+    
     if (isMobile) {
-      return { height: 250, fontSize: '0.6rem', markerSize: 6, direction: 'column', margin: { top: 5, right: 5, bottom: 30, left: 20 } }
+      return { height: 200, fontSize: '0.6rem', markerSize: 6, direction: 'column', margin: { top: 5, right: 5, bottom: 30, left: 20 } }
     }
     if (isTablet) {
-      return { height: 250, fontSize: '0.75rem', markerSize: 10, direction: 'column' }
+      return { fontSize: '0.75rem', markerSize: 10, direction: 'column' }
     }
     if (isLaptop) {
-      return { height: 350, fontSize: '0.875rem', markerSize: 14, direction: 'row' }
+      return { fontSize: '0.875rem', markerSize: 14, direction: 'row' }
     }
-    return { height: 600, fontSize: '1rem', markerSize: 20, direction: 'column'}
+    return { fontSize: '1.25rem', markerSize: 20, direction: 'column'}
   }
   
   const chartConfig = getChartConfig()
 
   return (
-    <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ width: '100%', maxWidth: '1000px', height: '100%', maxHeight: '600px' }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{ width: '100%', height: '75%', }}>
         {chartData.datasets.length > 0 ? (
           <ResponsiveChartContainer
             series={chartData.datasets.map((dataset, index) => ({
@@ -125,8 +126,8 @@ const MultiSeriesLineChart = () => {
                 valueFormatter: (value) => formatMinutesToMMSS(value),
               }
             ]}
-            height={chartConfig.height}
             margin={{ top: 15, right: 0, bottom: 20, left: 55 }}
+            height={550}
           >
             <ChartsLegend 
               position={{ vertical: 'top', horizontal: 'right' }}
