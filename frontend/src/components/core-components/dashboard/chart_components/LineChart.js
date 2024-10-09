@@ -83,17 +83,16 @@ const MultiSeriesLineChart = () => {
   if (error) return <Typography color="error">{error}</Typography>
 
   const getChartConfig = () => {
-    
     if (isMobile) {
-      return { height: 200, fontSize: '0.6rem', markerSize: 6, direction: 'column', margin: { top: 5, right: 5, bottom: 30, left: 20 } }
+      return { height: 250, fontSize: '0.6rem', markerSize: 6, direction: 'column', margin: { top: 5, right: 5, bottom: 30, left: 20 } }
     }
     if (isTablet) {
-      return { fontSize: '0.75rem', markerSize: 10, direction: 'column' }
+      return { height: 250, fontSize: '0.75rem', markerSize: 10, direction: 'column' }
     }
     if (isLaptop) {
-      return { fontSize: '0.875rem', markerSize: 14, direction: 'row' }
+      return { height: 350, fontSize: '0.875rem', markerSize: 14, direction: 'row' }
     }
-    return { fontSize: '1.25rem', markerSize: 20, direction: 'column'}
+    return { height: 600, fontSize: '1rem', markerSize: 20, direction: 'column'}
   }
   
   const chartConfig = getChartConfig()
@@ -126,6 +125,7 @@ const MultiSeriesLineChart = () => {
                 valueFormatter: (value) => formatMinutesToMMSS(value),
               }
             ]}
+            height={chartConfig.height}
             margin={{ top: 15, right: 0, bottom: 20, left: 55 }}
           >
             <ChartsLegend 

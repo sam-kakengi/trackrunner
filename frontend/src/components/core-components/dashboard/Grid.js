@@ -12,13 +12,13 @@ import MultiSeriesLineChart from './chart_components/LineChart'
  * @returns {JSX.Element} The grid layout component
  */
 const DashboardGrid = () => {
-    const theme = useTheme()
+    const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const tileBaseStyle = { textAlign: 'center', padding: isMobile ? '0.3rem' : 'inherit' }
+    const tileBaseStyle = { textAlign: 'center', padding: isMobile ? '0.3rem' : 'inherit' };
     const gridBoxStyle = {
         flex: 1,
-        height: { lg: '85%', sm: '85%', xs: '85%', md: '85%' },
+        height: { lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem' },
         width: { xs: '14rem' },
         borderRadius: '2rem',
         backgroundColor: theme.secondary.main,
@@ -46,8 +46,9 @@ const DashboardGrid = () => {
                 </Box>
                 
                 {/* Large Table container underneath */}
+
                 <Box sx={{ backgroundColor: '#f5f5f5', height: { xs: '50%', md: '50%', lg: '50%' }, 
-                width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
+                  width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
                     <MainTable />
                 </Box>
             </Grid>

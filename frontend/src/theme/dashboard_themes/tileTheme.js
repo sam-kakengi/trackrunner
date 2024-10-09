@@ -4,7 +4,7 @@ import { blueGrey } from "@mui/material/colors"
 let tileTheme = createTheme({
     typography:{
         h6: {
-            color: blueGrey[900],
+            color: blueGrey[900]
         },
         h5:{
             color: blueGrey[200]
@@ -21,7 +21,9 @@ let tileTheme = createTheme({
         body1:{
             color: blueGrey[900]
         },
-    }
+
+        
+    },
     
 })
 tileTheme = responsiveFontSizes(tileTheme)
