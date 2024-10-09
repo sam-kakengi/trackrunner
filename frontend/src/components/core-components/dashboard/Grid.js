@@ -31,12 +31,12 @@ const DashboardGrid = () => {
     const { activeRun } = useActiveRun()
 
     return (
-        <Grid container spacing={2} sx={{ marginBottom: '1rem' }}>
+        <Grid container spacing={2} sx={{ height: {lg: '85%', xs: '75%', sm: '50%', md: '85%'}, paddingTop: '1rem' }}>
             {/* Left Section */}
-            <Grid item xs={12} md={12} lg={6} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Grid item xs={12} md={12} lg={6} sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginBottom: {md: '2rem', sm: '1.5rem', xs: '2rem'} }}>
                 {/* Two medium containers side by side */}
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'row' }, 
-                gap: { lg: '2rem', xs: '0.5rem' }, width: { md: '100%' }, marginTop: '1.5rem' }}>
+                gap: { lg: '2rem', xs: '2rem' }, width: { md: '100%' }, height: { lg: '50%', xs: '50%'}, marginBottom: {sm: '1rem', xs: '1rem', md: '2rem', lg: '1rem'} }}>
                     <PersonalBestTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
                     {activeRun?.isRunning ? (
                         <ActiveRunTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
@@ -46,16 +46,18 @@ const DashboardGrid = () => {
                 </Box>
                 
                 {/* Large Table container underneath */}
-                <Box sx={{ marginTop: '2rem', backgroundColor: '#f5f5f5', height: { xs: '18.75rem', md: '25rem', lg: '25rem' }, 
-                width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
+
+                <Box sx={{ backgroundColor: '#f5f5f5', height: { xs: '50%', md: '50%', lg: '50%' }, 
+                  width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
                     <MainTable />
                 </Box>
             </Grid>
 
             {/* Right Section - Large Chart */}
-            <Grid item xs={12} md={12} lg={6}>
-                <Box sx={{ height: { lg: '97%', md: '25rem', sm: '20rem', xs: '18.75rem', marginTop: '1.5rem' }, 
-                width: { xs: '21.9375' }, backgroundColor: theme.secondary.main, padding: '1rem', borderRadius: '2rem' }}>
+            <Grid item xs={12} md={12} lg={6} sx={{height: '100%', paddingBottom: {lg: '0', md: '1rem', sm:'1rem', xs: '1rem'}, marginTop: {lg: '0', md: '1rem', sm:'1rem',}}}>
+                <Box sx={{ height: { lg: '100%', md: '100%', sm: '70%', xs: '70%'}, 
+                width: { xs: '21.9375' }, backgroundColor: theme.secondary.main, padding: '1rem', borderRadius: '2rem',
+                 }}>
                     <MultiSeriesLineChart />
                 </Box>
             </Grid>

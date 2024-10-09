@@ -98,8 +98,8 @@ const MultiSeriesLineChart = () => {
   const chartConfig = getChartConfig()
 
   return (
-    <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ width: '100%', maxWidth: '1000px', height: '100%', maxHeight: '600px' }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem'}}>
+      <div style={{ width: '100%', height: '100%', paddingTop: '2rem' }}>
         {chartData.datasets.length > 0 ? (
           <ResponsiveChartContainer
             series={chartData.datasets.map((dataset, index) => ({
