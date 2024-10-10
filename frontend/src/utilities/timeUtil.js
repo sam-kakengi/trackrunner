@@ -25,3 +25,10 @@ export const formatMinutesToMMSS = (minutes) => {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
   }
   
+
+const convertRunTimeToSeconds = (timeString) => {
+    const [hours, minutes, seconds] = timeString.split(':').map(Number)
+    return (hours * 3600) + (minutes * 60) + seconds
+  }
+
+export default convertRunTimeToSeconds
