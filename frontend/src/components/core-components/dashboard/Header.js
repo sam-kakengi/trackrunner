@@ -161,7 +161,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
               <CircularProgress />
             ) : activeRun?.isRunning ? (
               <>
-                <Button variant="contained" color="secondary" onClick={handleEndRunClick}>
+                <Button variant="contained" onClick={handleEndRunClick} sx={{backgroundColor: theme.palette.primary.main}}>
                   End Run
                 </Button>
                 <Button variant="outlined" onClick={togglePauseResume}>

@@ -3,7 +3,7 @@ import { Box, Typography, useMediaQuery } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import activeRunTileTheme from '../../../../theme/dashboard_themes/activeRunTileTheme'
 import { useActiveRun } from '../../context/ActiveRun'
-import { blueGrey } from '@mui/material/colors'
+import { blueGrey, red } from '@mui/material/colors'
 import { formatDuration } from '../../../../utilities/timeUtil'
 
 const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
@@ -46,11 +46,11 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
                                 {endRunModalOpen || preEndRunModalOpen ? 'Ending...' : 'Paused'}
                             </Typography>
                         ) : (
-                            <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'}>
+                            <Typography sx={{...tileBaseStyle, paddingBottom: '0'}} variant={isMobile ? 'h5' : 'h4'}>
                                 In Progress
                             </Typography>
                         )}
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>
+                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'body1' : 'h6'}>
                             {activeRun.routeName || 'No route'}
                         </Typography>
                     </>

@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 import paletteTheme from '../paletteTheme'
+import { red } from '@mui/material/colors'
 
 const buttonTheme = createTheme({
   components: {
@@ -61,6 +62,17 @@ const buttonTheme = createTheme({
       },
     },
   },
+  palette: {
+    primary: {
+        main: red[400], 
+    },
+    secondary: {
+        main: '#546E7A',
+    },
+    tertiary: {
+        main: '#37474F'
+    }
+  }
 })
 
 export default buttonTheme
