@@ -10,10 +10,7 @@ import MobileNoteView from './MobileNoteView'
 import TabletNoteView from './TabletNoteView'
 import RouteNameTruncated from './RouteNameTrunc'
 
-const MainTable = () => {
-    const [recentRuns, setRecentRuns] = useState([])
-    const [awaitingRunData, setAwaitingRunData] = useState(true)
-    const [error, setError] = useState(null)
+const MainTable = ({ recentRuns, awaitingRunData, error }) => {
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'))
@@ -37,31 +34,6 @@ const MainTable = () => {
         return '20%'
     }
 
-    useEffect(() => {
-        const fetchRecentRuns = async () => {
-            const api = new RunningAPI()
-            const allRuns = await api.getData('run')
-            
-            if (allRuns === null) {
-                setError('Failed to load recent runs. Please try again later.')
-            } else {
-                const sortedRuns = allRuns.sort((a, b) => new Date(b.finished) - new Date(a.finished))
-                const recentRuns = sortedRuns.slice(0, 5)
-                setRecentRuns(recentRuns)
-            }
-            setAwaitingRunData(false)
-        }
-    
-        fetchRecentRuns()
-    }, [])
-
-    if (awaitingRunData) {
-        return <CircularProgress />
-    }
-
-    if (error) {
-        return <div>{'Error loading runs'}</div>
-    }
 
     const headers = isMobile ? ['Date', 'Distance', 'Time', 'Notes'] : ['Date', 'Route', 'Distance', 'Time', 'Notes']
 
@@ -74,54 +46,61 @@ const MainTable = () => {
                 boxShadow: '0 0.25rem 0.375rem rgba(0, 0, 0, 0.1)',
                 height: '100%',
             }}>
-                <TableContainer component={Paper} sx={{ 
-                    backgroundColor: tableTheme.palette.background.main, 
-                    boxShadow: 'none', 
-                    height: '100%',
-                    paddingTop: { xs: '1rem', sm: '1.25rem', md: '1.75rem', lg: '2rem' }
-                }}>
-                    <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="recent runs table">
-                        <TableHead>
-                            <TableRow>
-                                {headers.map((header) => (
-                                    <TableCell key={header} align='center' sx={{ 
-                                        width: getCellWidth(header), 
-                                        padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' },
-                                        '&:last-child': { paddingRight: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }
-                                    }}>
-                                        <Typography sx={{ fontSize: getFontSize() }}>{header}</Typography>
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {recentRuns.map((run) => (
-                                <TableRow key={run.id}>
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Date') }}>
-                                        <Typography sx={{ fontSize: getFontSize() }}>{run.date_formatted}</Typography>
-                                    </TableCell>
-                                    {!isMobile && (
-                                        <RouteNameTruncated routeName={run.route.name} isMobile={isMobile} fontSize={getFontSize()} />
-                                    )}
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: '20%' }}>
-                                            <Typography sx={{ fontSize: getFontSize() }}>{run.route.distance} km</Typography>
-                                    </TableCell>
-                                    
-                                    <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Time') }}>
-                                        <Typography sx={{ fontSize: getFontSize() }}>{run.duration_formatted}</Typography>
-                                    </TableCell>
-                                    {isMobile ? (
-                                        <MobileNoteView note={run.notes} width={getCellWidth('Notes')} />
-                                    ) : isTablet ? (
-                                        <TabletNoteView note={run.notes} />
-                                    ) : (
-                                        <DesktopNoteView note={run.notes} />
-                                    )}
+                {awaitingRunData ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <CircularProgress sx={{ color: 'white' }} />
+                    </Box>
+                ) : error ? (
+                    <div>{'Error loading runs'}</div>
+                ) : (
+                    <TableContainer component={Paper} sx={{ 
+                        backgroundColor: tableTheme.palette.background.main, 
+                        boxShadow: 'none', 
+                        height: '100%',
+                        paddingTop: { xs: '1rem', sm: '1.25rem', md: '1.75rem', lg: '2rem' }
+                    }}>
+                        <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="recent runs table">
+                            <TableHead>
+                                <TableRow>
+                                    {headers.map((header) => (
+                                        <TableCell key={header} align='center' sx={{ 
+                                            width: getCellWidth(header), 
+                                            padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' },
+                                            '&:last-child': { paddingRight: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' } }
+                                        }}>
+                                            <Typography sx={{ fontSize: getFontSize() }}>{header}</Typography>
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {recentRuns.map((run) => (
+                                    <TableRow key={run.id}>
+                                        <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Date') }}>
+                                            <Typography sx={{ fontSize: getFontSize() }}>{run.date_formatted}</Typography>
+                                        </TableCell>
+                                        {!isMobile && (
+                                            <RouteNameTruncated routeName={run.route.name} isMobile={isMobile} fontSize={getFontSize()} />
+                                        )}
+                                        <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: '20%' }}>
+                                            <Typography sx={{ fontSize: getFontSize() }}>{run.route.distance} km</Typography>
+                                        </TableCell>
+                                        <TableCell align='center' sx={{ padding: { xs: '0.25rem', sm: '0.5rem', md: '0.75rem' }, width: getCellWidth('Time') }}>
+                                            <Typography sx={{ fontSize: getFontSize() }}>{run.duration_formatted}</Typography>
+                                        </TableCell>
+                                        {isMobile ? (
+                                            <MobileNoteView note={run.notes} width={getCellWidth('Notes')} />
+                                        ) : isTablet ? (
+                                            <TabletNoteView note={run.notes} />
+                                        ) : (
+                                            <DesktopNoteView note={run.notes} />
+                                        )}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
             </Box>
         </ThemeProvider>
     )

@@ -31,4 +31,18 @@ const convertRunTimeToSeconds = (timeString) => {
     return (hours * 3600) + (minutes * 60) + seconds
   }
 
+export const handleTimeChange = (e, runData, setRunData) => {
+    let value = e.target.value
+
+    value = value.replace(/[^0-9:]/g, "")
+
+    if (value.length === 2 || value.length === 5) {
+      value += value.endsWith(":") ? "" : ":"
+    }
+
+    value = value.slice(0, 8)
+
+    setRunData({ ...runData, runTime: value })
+  }
+
 export default convertRunTimeToSeconds

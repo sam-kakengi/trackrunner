@@ -14,7 +14,7 @@ import { formatMinutesToMMSS } from '../../../../utilities/timeUtil'
 
 const colors = [yellow[400], lightBlue[400], pink[400], purple[400], orange[400], lime[400]]
 
-const processData = (chartData) => {
+export const processData = (chartData) => {
   if (!chartData) return { datasets: [], allDates: [] }
 
   
@@ -34,7 +34,7 @@ const processData = (chartData) => {
   ].sort((a, b) => a - b) 
 
   
-  const datasets = Object.entries(chartData).map(([routeName, runs]) => {
+const datasets = Object.entries(chartData).map(([routeName, runs]) => {
     return {
       label: routeName,
       data: allDates.map((date) => {
@@ -50,37 +50,14 @@ const processData = (chartData) => {
   return { datasets, allDates }
 }
 
-const MultiSeriesLineChart = () => {
-  const [chartData, setChartData] = useState({ datasets: [], allDates: [] })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+const MultiSeriesLineChart = ({chartData, loading, chartError}) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'))
   const isLaptop = useMediaQuery(theme.breakpoints.between('md', 'lg'))
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const api = new RunningAPI()
-      try {
-        const response = await api.getData('run/chart')
-        if (response) {
-          const processedData = processData(response.data)
-          setChartData(processedData)
-        } else {
-          setError('No data available')
-        }
-      } catch (err) {
-        setError('Failed to fetch data')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
-
-  if (loading) return <CircularProgress />
-  if (error) return <Typography color="error">{error}</Typography>
+  if (loading) return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}><CircularProgress /></Box>
+  if (chartError) return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}><Typography color="error">{chartError}</Typography></Box>
 
   const getChartConfig = () => {
     if (isMobile) {
