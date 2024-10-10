@@ -11,6 +11,7 @@ import StartRunModal from './startRunComponents/startRunModal'
 import { useActiveRun } from '../context/ActiveRun'
 import EndRunModal from './EndRunModal'
 import PreEndRunModal from './PreEndRunModal'
+import { red, green, grey, yellow } from '@mui/material/colors'
 
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   const [logRunModalOpen, setLogRunModalOpen] = useState(false)
@@ -161,10 +162,17 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
               <CircularProgress />
             ) : activeRun?.isRunning ? (
               <>
-                <Button variant="contained" onClick={handleEndRunClick} sx={{backgroundColor: theme.palette.primary.main}}>
+                <Button variant="contained" onClick={handleEndRunClick} sx={{backgroundColor: red[400], color: 'white', 
+                  '&:hover': {
+                  backgroundColor: red[400], 
+                  
+                },
+                }}>
                   End Run
                 </Button>
-                <Button variant="outlined" onClick={togglePauseResume}>
+                <Button variant="contained" onClick={togglePauseResume} sx={{backgroundColor: pausedRun.isPaused ? `${green[700]} !important` : `${grey[200]} !important`,
+                  color: pausedRun.isPaused ? 'white' : '#37474F',
+                }}>
                   {pausedRun.isPaused ? 'Resume' : 'Pause'}
                 </Button>
               </>
@@ -174,7 +182,7 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
                 <Button variant="contained" color="secondary" onClick={handleLogRunOpen}>Log Run</Button>
               </>
             )}
-            <Button variant="outlined" onClick={toggleDrawer(true)}>{userInfo.username}</Button>
+            <Button variant="outlined" sx={{ color: yellow[600], border: '1px solid #FFD54F !important'}} onClick={toggleDrawer(true)}>{userInfo.username}</Button>
             <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} userInfo={userInfo} />
           </Box>
         )}

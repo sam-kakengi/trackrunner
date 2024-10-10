@@ -3,7 +3,7 @@ import { Box, Typography, useMediaQuery } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import activeRunTileTheme from '../../../../theme/dashboard_themes/activeRunTileTheme'
 import { useActiveRun } from '../../context/ActiveRun'
-import { blueGrey, red } from '@mui/material/colors'
+import { yellow, blueGrey, blue } from '@mui/material/colors'
 import { formatDuration } from '../../../../utilities/timeUtil'
 
 const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
@@ -34,15 +34,15 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
 
     return (
         <ThemeProvider theme={activeRunTileTheme}>
-            <Box sx={{ ...gridBoxStyle, backgroundColor: activeRunTileTheme.palette.primary.main }}>
+            <Box sx={{ ...gridBoxStyle, backgroundColor: pausedRun.isPaused ? '#546E7A' : activeRunTileTheme.palette.primary.main }}>
                 {activeRun?.isRunning ? (
                     <>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'body1' : 'h6'}>Active</Typography>
-                        <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h2'}>
+                        <Typography sx={{...tileBaseStyle, color: pausedRun.isPaused ? yellow[700] : '#455a64'}} variant={isMobile ? 'body1' : 'h6'}>Active</Typography>
+                        <Typography sx={{...tileBaseStyle, color: pausedRun.isPaused ? yellow[400] : '#37474f'}} variant={isMobile ? 'h5' : 'h2'}>
                             {formatDuration(elapsedTime)}
                         </Typography>
                         {pausedRun.isPaused || endRunModalOpen || preEndRunModalOpen ? ( 
-                            <Typography sx={tileBaseStyle} variant={isMobile ? 'h5' : 'h4'} color={blueGrey[500]}>
+                            <Typography sx={{...tileBaseStyle, paddingBottom: '0', color: pausedRun.isPaused ? yellow[700] : '#b0bec5'}} variant={isMobile ? 'h5' : 'h4'}>
                                 {endRunModalOpen || preEndRunModalOpen ? 'Ending...' : 'Paused'}
                             </Typography>
                         ) : (
@@ -50,7 +50,7 @@ const ActiveRunTile = ({ theme, gridBoxStyle, tileBaseStyle }) => {
                                 In Progress
                             </Typography>
                         )}
-                        <Typography sx={{...tileBaseStyle, padding: '0'}} variant={isMobile ? 'body1' : 'h6'}>
+                        <Typography sx={{...tileBaseStyle, padding: '0', color: pausedRun.isPaused ? blueGrey['A200'] : '#455a64'}} variant={isMobile ? 'body1' : 'h6'}>
                             {activeRun.routeName || 'No route'}
                         </Typography>
                     </>
