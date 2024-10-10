@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles'
+import { red } from '@mui/material/colors'
 
 const modalTheme = createTheme({
     palette: {
@@ -42,6 +43,9 @@ const modalTheme = createTheme({
             '&.Mui-focused': {
               color: '#FFC107', 
             },
+          },
+          asterisk: {
+            color: red[500],
           },
         },
       },

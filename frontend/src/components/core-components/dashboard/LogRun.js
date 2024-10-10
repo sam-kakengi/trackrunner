@@ -10,7 +10,7 @@ import fetchRoutes from './api_calls/getRoutes'
 import NewRouteModal from './AddNewRoute'
 import postRunData from './api_calls/postRun'
 import convertRunTimeToSeconds from '../../../utilities/timeUtil'
-
+import { toast } from 'react-toastify'
 
 const LogRunModal = ({ open, handleClose }) => {
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
@@ -93,7 +93,7 @@ const LogRunModal = ({ open, handleClose }) => {
   
       
       handleClose()
-  
+      toast.success('Run added successfully!')
       
     } catch (error) {
       console.error('Error submitting run data')
