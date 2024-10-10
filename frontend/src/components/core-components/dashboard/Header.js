@@ -9,8 +9,8 @@ import { ThemeProvider } from '@mui/material/styles'
 import LogRunModal from './LogRun'
 import StartRunModal from './startRunComponents/startRunModal'
 import { useActiveRun } from '../context/ActiveRun'
-import EndRunModal from './EndRunModal'
-import PreEndRunModal from './PreEndRunModal'
+import EndRunModal from './end_run_components/EndRunModal'
+import PreEndRunModal from './end_run_components/PreEndRunModal'
 
 const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
   const [logRunModalOpen, setLogRunModalOpen] = useState(false)
