@@ -10,13 +10,6 @@ const buttonTheme = createTheme({
           height: '4.3125rem',
           fontSize: '1.5rem',
 
-          
-          backgroundColor: paletteTheme.palette.primary.main,
-          color: paletteTheme.palette.text.primary,
-
-          '&:hover': {
-            backgroundColor: paletteTheme.palette.action.hover,
-          },
 
           
           '@media (max-width:600px)': {
@@ -33,31 +26,6 @@ const buttonTheme = createTheme({
           },
         },
         
-        containedPrimary: {
-          backgroundColor: paletteTheme.palette.primary.main,
-          color: paletteTheme.palette.text.secondary,
-          '&:hover': {
-            backgroundColor: paletteTheme.palette.secondary.main,
-          },
-        },
-        
-        containedSecondary: {
-          backgroundColor: paletteTheme.palette.secondButton.main,
-          color: paletteTheme.palette.text.secondary,
-          '&:hover': {
-            backgroundColor: paletteTheme.palette.action.hover,
-          },
-        },
-        
-        outlined: {
-          backgroundColor: 'transparent',
-          border: `0.1rem solid ${paletteTheme.palette.primary.main}`,
-          color: paletteTheme.palette.primary.main,
-          '&:hover': {
-            backgroundColor: paletteTheme.palette.action.hover,
-            color: paletteTheme.palette.text.secondary,
-          },
-        },
       },
     },
   },
