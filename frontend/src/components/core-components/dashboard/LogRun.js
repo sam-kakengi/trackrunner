@@ -104,6 +104,13 @@ const LogRunModal = ({ reloadDashboard, open, handleClose, reloadChart }) => {
 
       const response = await postRunData(formattedData)
       console.log('Run data submitted successfully')
+      
+      setRunData({
+        runTime: '',
+        date: dayjs(),
+        route: '',
+        notes: '',
+      })
 
       handleClose()
       toast.success('Run added successfully!')
