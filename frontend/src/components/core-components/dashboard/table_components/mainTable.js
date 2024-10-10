@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress,
     Box, useMediaQuery, useTheme, Typography
 } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import tableTheme from '../../../../theme/dashboard_themes/tableTheme'
-import RunningAPI from '../../../../utilities/apiClient'
 import DesktopNoteView from './DesktopNoteView'
 import MobileNoteView from './MobileNoteView'
 import TabletNoteView from './TabletNoteView'

@@ -64,7 +64,6 @@ const DashboardComponent = ({setIsAuthenticated}) => {
           setChartError('Failed to fetch data')
         } finally {
           setLoading(false)
-          console.log(chartData)
         }
       }
     
