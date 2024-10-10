@@ -178,8 +178,8 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
               </>
             ) : (
               <>
-                <Button variant="contained" color="primary" onClick={handleStartRunOpen}>Start Timer</Button>
-                <Button variant="contained" color="secondary" onClick={handleLogRunOpen}>Log Run</Button>
+                <Button variant="contained" sx={{backgroundColor: '#FFD54F', color: '#263238'}}onClick={handleStartRunOpen}>Start Timer</Button>
+                <Button variant="contained" sx={{backgroundColor: grey['A200'], color: '#263238'}} onClick={handleLogRunOpen}>Log Run</Button>
               </>
             )}
             <Button variant="outlined" sx={{ color: yellow[600], border: '1px solid #FFD54F !important'}} onClick={toggleDrawer(true)}>{userInfo.username}</Button>
