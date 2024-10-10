@@ -7,6 +7,8 @@ import ProtectedRoute from './components/auth/ProtectedRouteComp'
 import HandleLogout from './components/auth/Logout'
 import PublicRoute from './components/auth/PublicRouteComp'
 import { ActiveRunProvider } from './components/core-components/context/ActiveRun'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -47,6 +49,17 @@ function App() {
           <Route path="*" element={isAuthenticated ? <Navigate to="/" /> : <Navigate to="/login" />} />
         </Routes>
       </Router>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={3000} 
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </ActiveRunProvider>
   )
 }

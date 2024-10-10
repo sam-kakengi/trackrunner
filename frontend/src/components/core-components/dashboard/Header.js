@@ -12,7 +12,7 @@ import { useActiveRun } from '../context/ActiveRun'
 import EndRunModal from './EndRunModal'
 import PreEndRunModal from './PreEndRunModal'
 
-const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
+const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen, reloadDashboard, reloadChart }) => {
   const [logRunModalOpen, setLogRunModalOpen] = useState(false)
   const [startRunModalOpen, setStartRunModalOpen] = useState(false)
   const theme = useTheme()
@@ -189,7 +189,9 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
       />
       <LogRunModal 
         open={logRunModalOpen} 
-        handleClose={handleLogRunClose} 
+        handleClose={handleLogRunClose}
+        reloadDashboard={reloadDashboard}
+        reloadChart={reloadChart}
       />
       <StartRunModal 
         open={startRunModalOpen} 
