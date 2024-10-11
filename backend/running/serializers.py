@@ -27,7 +27,7 @@ class GetRunningSerializer(ModelSerializer):
         return GetRouteSerializer(obj.route).data
 
     def get_duration_formatted(self, obj):
-        return format_duration(obj.duration)
+        return format_seconds(obj.duration)
 
     def get_date_formatted(self, obj):
         if obj.finished is None:
