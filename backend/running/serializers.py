@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Route, RunActivity
 
-from .utils import format_ordinal_suffix, format_seconds, format_duration
+from .utils import format_ordinal_suffix, format_seconds
 
 class GetRouteSerializer(ModelSerializer):
     class Meta:
