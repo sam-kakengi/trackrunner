@@ -1,0 +1,54 @@
+Last updated: 6th October 2024
+
+
+Welcome to TrackRunner (the "Web App"). These terms and conditions outline the rules and regulations for the use of Farusoft's Web App, located at https://trackrunner.run.
+By accessing this Web App, we assume you accept these terms and conditions in full. Do not continue to use TrackRunner if you do not agree to all the terms and conditions stated on this page.
+
+
+1. Definitions
+"We," "Our," "Us" refer to Farusoft.
+"User," "You" refers to the person accessing or using the Web App.
+"Web App" refers to the services, features, and content provided through TrackRunner.
+
+
+2. Use of the Web App
+    2.1 Eligibility:You must be at least 18 years old or have the consent of a parent or legal guardian to use this Web App.
+    2.2 Account Creation:To access certain features of TrackRunner, you may be required to register an account. You agree to provide accurate, current, and complete information during the registration process and update such information to keep it accurate and complete.
+    2.3 User Responsibility:You are responsible for maintaining the confidentiality of your account and password and for restricting access to your device. You agree to accept responsibility for all activities that occur under your account.
+    2.4 Prohibited Activities:You agree not to:
+        Use TrackRunner for unlawful purposes or in violation of any applicable law.
+        Submit false or misleading information.
+        Interfere with or disrupt the functionality of TrackRunner.
+        Engage in any behaviour that violates the privacy of other users.
+
+
+3. Intellectual Property
+The content, features, and functionality of TrackRunner are and will remain the exclusive property of Farusoft and its licensors. TrackRunner is protected by copyright, trademark, and other laws. You are not permitted to use any of our trademarks, logos, or other proprietary information without our prior written consent.
+
+
+4. Termination
+We reserve the right to terminate or suspend your access to TrackRunner, without notice or liability, for any reason, including if you breach these terms.
+
+
+5. Limitation of Liability
+To the fullest extent permitted by applicable law, Farusoft shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of or in connection with your use of or inability to use TrackRunner.
+
+
+6. Disclaimer
+TrackRunner is provided on an "AS IS" and "AS AVAILABLE" basis. We make no warranties, whether express or implied, regarding the operation of TrackRunner, its content, or the information provided through it.
+
+
+7. Indemnification
+You agree to indemnify and hold Farusoft harmless from any claims, liabilities, damages, losses, and expenses, including legal fees, arising from your use of TrackRunner or your violation of these terms.
+
+
+8. Governing Law
+These terms and conditions are governed by and construed in accordance with the laws of England and Wales. Any disputes related to these terms will be subject to the exclusive jurisdiction of the courts of England and Wales.
+
+
+9. Changes to Terms
+We reserve the right, at our sole discretion, to modify or replace these terms at any time. If a revision is material, we will provide at least [30] days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+
+
+10. Contact Us
+If you have any questions about these Terms and Conditions, please contact us at richard.kakengi@farusoft.com.
