@@ -33,10 +33,10 @@ const DashboardGrid = ({recentRuns, awaitingRunData, error, chartData, loading, 
     return (
         <Grid container spacing={2} sx={{ height: {lg: '85%', xs: '75%', sm: '50%', md: '85%'}, paddingTop: '1rem' }}>
             {/* Left Section */}
-            <Grid item xs={12} md={12} lg={6} sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginBottom: {md: '2rem', sm: '1.5rem', xs: '2rem'} }}>
+            <Grid item xs={12} md={12} lg={6} sx={{ display: 'flex', flexDirection: 'column', height: {lg: '100%'}, marginBottom: {md: '2rem', sm: '1.5rem'} }}>
                 {/* Two medium containers side by side */}
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'row' }, 
-                gap: { lg: '2rem', xs: '2rem' }, width: { md: '100%' }, height: { lg: '50%', xs: '50%'}, marginBottom: {sm: '1rem', xs: '1rem', md: '2rem', lg: '1rem'} }}>
+                gap: { lg: '2rem', xs: '2rem' }, width: { md: '100%' }, height: { lg: '50%'}, marginBottom: {sm: '2.5rem', xs: '1rem', md: '2rem', lg: '1rem'} }}>
                     <PersonalBestTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
                     {activeRun?.isRunning ? (
                         <ActiveRunTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
@@ -47,7 +47,7 @@ const DashboardGrid = ({recentRuns, awaitingRunData, error, chartData, loading, 
                 
                 {/* Large Table container underneath */}
 
-                <Box sx={{ backgroundColor: '#f5f5f5', height: { xs: '50%', md: '50%', lg: '50%' }, 
+                <Box sx={{ backgroundColor: '#f5f5f5', height: { md: '50%', lg: '50%' }, 
                   width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
                     <MainTable recentRuns={recentRuns} awaitingRunData={awaitingRunData} error={error}/>
                 </Box>
