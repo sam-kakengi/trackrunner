@@ -9,7 +9,7 @@ import PublicRoute from './components/auth/PublicRouteComp'
 import { ActiveRunProvider } from './components/core-components/context/ActiveRun'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
+import PrivacyPolicy from './pages/core/PrivacyPolicy'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
