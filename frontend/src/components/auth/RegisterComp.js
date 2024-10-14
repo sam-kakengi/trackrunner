@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TextField, Button, Box, Typography, InputAdornment, Link, Container, Checkbox, FormControlLabel } from '@mui/material'
+import { TextField, Button, Box, Typography, InputAdornment, Link, Container, Checkbox, FormControlLabel  } from '@mui/material'
 import { Email, Person, Lock } from '@mui/icons-material'
 import validateEmail from '../../validations/EmailValidation'
 import validatePassword from '../../validations/PasswordValidation'
@@ -208,7 +208,15 @@ const RegisterPage = ({ onRegister, formMessage }) => {
                                     }
                                 }}
                             >
-                                I accept the Terms and Conditions
+                                I accept the{' '}
+                                <Link
+                                    href="/terms"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{ textDecoration: 'underline', color: 'primary.main', cursor: 'pointer' }}
+                                >
+                                    Terms and Conditions
+                                </Link>
                             </Typography>
                         }
                         />

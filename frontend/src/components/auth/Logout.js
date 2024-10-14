@@ -16,8 +16,7 @@ const HandleLogout = ({ setIsAuthenticated }) => {
   
     useEffect(() => {
       const performLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('userInfo')
+        localStorage.clear()
         localStorage.setItem('logoutAlert', 'true')
         if (typeof setIsAuthenticated === 'function') {
           setIsAuthenticated(false)
