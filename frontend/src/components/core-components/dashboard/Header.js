@@ -9,10 +9,12 @@ import { ThemeProvider } from '@mui/material/styles'
 import LogRunModal from './LogRun'
 import StartRunModal from './startRunComponents/startRunModal'
 import { useActiveRun } from '../context/ActiveRun'
+
+import { red, green, grey, yellow } from '@mui/material/colors'
 import EndRunModal from './end_run_components/EndRunModal'
 import PreEndRunModal from './end_run_components/PreEndRunModal'
 
-const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
+const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen, reloadDashboard, reloadChart }) => {
   const [logRunModalOpen, setLogRunModalOpen] = useState(false)
   const [startRunModalOpen, setStartRunModalOpen] = useState(false)
   const theme = useTheme()
@@ -161,20 +163,33 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
               <CircularProgress />
             ) : activeRun?.isRunning ? (
               <>
-                <Button variant="contained" color="secondary" onClick={handleEndRunClick}>
+                <Button variant="contained" onClick={handleEndRunClick} sx={{backgroundColor: red[400], color: 'white', 
+                  '&:hover': {
+                  backgroundColor: red[500], 
+                  
+                },
+                }}>
                   End Run
                 </Button>
-                <Button variant="outlined" onClick={togglePauseResume}>
+                <Button variant="contained" onClick={togglePauseResume} sx={{backgroundColor: pausedRun.isPaused ? `${green[700]} !important` : `${grey[200]} !important`,
+                  color: pausedRun.isPaused ? 'white' : '#37474F', 
+                  '&:hover': {
+                  backgroundColor: pausedRun.isPaused
+                    ? `${green[800]} !important`
+                    : `${grey[700]} !important`, 
+                  color: pausedRun.isPaused ? 'white' : 'white', 
+                },
+                }}>
                   {pausedRun.isPaused ? 'Resume' : 'Pause'}
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="contained" color="primary" onClick={handleStartRunOpen}>Start Timer</Button>
-                <Button variant="contained" color="secondary" onClick={handleLogRunOpen}>Log Run</Button>
+                <Button variant="contained" sx={{backgroundColor: '#FFD54F', color: '#263238'}}onClick={handleStartRunOpen}>Start Timer</Button>
+                <Button variant="contained" sx={{backgroundColor: grey['A200'], color: '#263238'}} onClick={handleLogRunOpen}>Log Run</Button>
               </>
             )}
-            <Button variant="outlined" onClick={toggleDrawer(true)}>{userInfo.username}</Button>
+            <Button variant="outlined" sx={{ color: yellow[600], border: '1px solid #FFD54F !important'}} onClick={toggleDrawer(true)}>{userInfo.username}</Button>
             <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} userInfo={userInfo} />
           </Box>
         )}
@@ -189,7 +204,9 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
       />
       <LogRunModal 
         open={logRunModalOpen} 
-        handleClose={handleLogRunClose} 
+        handleClose={handleLogRunClose}
+        reloadDashboard={reloadDashboard}
+        reloadChart={reloadChart}
       />
       <StartRunModal 
         open={startRunModalOpen} 

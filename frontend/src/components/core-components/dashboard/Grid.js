@@ -11,7 +11,7 @@ import MultiSeriesLineChart from './chart_components/LineChart'
  * DashboardGrid component handles the layout of cards and the table in the dashboard.
  * @returns {JSX.Element} The grid layout component
  */
-const DashboardGrid = () => {
+const DashboardGrid = ({recentRuns, awaitingRunData, error, chartData, loading, chartError }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -49,7 +49,7 @@ const DashboardGrid = () => {
 
                 <Box sx={{ backgroundColor: '#f5f5f5', height: { xs: '50%', md: '50%', lg: '50%' }, 
                   width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
-                    <MainTable />
+                    <MainTable recentRuns={recentRuns} awaitingRunData={awaitingRunData} error={error}/>
                 </Box>
             </Grid>
 
@@ -58,7 +58,7 @@ const DashboardGrid = () => {
                 <Box sx={{ height: { lg: '100%', md: '100%', sm: '70%', xs: '70%'}, 
                 width: { xs: '21.9375' }, backgroundColor: theme.secondary.main, padding: '1rem', borderRadius: '2rem',
                  }}>
-                    <MultiSeriesLineChart />
+                    <MultiSeriesLineChart chartData={chartData} loading={loading} chartError={chartError}/>
                 </Box>
             </Grid>
         </Grid>
