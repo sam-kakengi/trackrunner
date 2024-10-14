@@ -100,6 +100,34 @@ class RunningAPI {
                 throw new Error('Failed to complete the request. Please try again later.')
             }
     }
+
+    /**
+     * sendDeleteRequest sends a DELETE request to the API
+     * @param {string} endpoint The endpoint to delete data from
+     * @returns {JSON} The data from the API or null if the request failed
+     **/
+    async sendDeleteRequest(endpoint, raw = false) {
+        endpoint = removePrefixSlash(endpoint)
+        endpoint = removeSuffixSlash(endpoint)
+        try {
+            const response = await axios({
+                method: 'DELETE',
+                url: `${this.base_url}/${endpoint}`,
+                headers: { 'Authorization': `Token ${this.token}` }
+            })
+            if (raw) {
+                return response
+            }
+            if (response.status >= 200 && response.status < 300) {
+                return response.data
+            } else {
+                return null
+            }
+        } catch (error) {
+            console.error('Error during DELETE request')
+            return null
+        }
+    }
     
     
     /**
@@ -170,6 +198,21 @@ class RunningAPI {
      */
     async patchData(endpoint, data) {
         return this.sendRequest('PATCH', endpoint, data)
+    }
+
+    /**
+     * deleteDjangoData sends a DELETE request to a Django-style API endpoint.
+     * This method ensures that the endpoint has a trailing slash, as is required
+     * by Django's routing conventions, and then calls the sendDeleteRequest method
+     * to perform the DELETE request.
+     *
+     * @param {string} endpoint The endpoint to delete data from
+     * @returns {Promise<object|null>} The response from the API if successful, or null if the request fails
+     */
+
+    async deleteDjangoData(endpoint) {
+        endpoint = this.ensureSuffixSlash(endpoint)
+        return this.sendDeleteRequest(endpoint)
     }
 
 }

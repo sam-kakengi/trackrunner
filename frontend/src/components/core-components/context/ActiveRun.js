@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import RunningAPI from '../../../utilities/apiClient'
+import { amber } from '@mui/material/colors'
+import { toast } from 'react-toastify'
 
 const ActiveRunContext = createContext()
 
@@ -20,7 +22,8 @@ export const ActiveRunProvider = ({ children }) => {
 
     const [endRunModalOpen, setEndRunModalOpen] = useState(false)
     const [preEndRunModalOpen, setPreEndRunModalOpen] = useState(false)
-
+    const [resetRunModalOpen, setResetRunModalOpen] = useState(false)
+    
     const getActiveRunData = async () => {
         return await api.getData('run/active')
     }
@@ -115,6 +118,31 @@ export const ActiveRunProvider = ({ children }) => {
         }
     }
 
+    const handleConfirmReset = async () => {
+        try {
+          const api = new RunningAPI()
+          await api.deleteDjangoData('run/active/') 
+      
+         
+          localStorage.setItem('elapsedTime', '0')
+          setActiveRun({ isRunning: false }) 
+          setPausedRun({ isPaused: false, pausedDuration: 0 }) 
+      
+          
+          localStorage.removeItem('runStartTime')
+          localStorage.removeItem('pausedDuration')
+          localStorage.removeItem('pausedRun')
+
+          setResetRunModalOpen(false)
+          setPreEndRunModalOpen(false)
+        
+          toast.warning('Your run has been reset', { backgroundColor: amber[400] })
+      
+        } catch (error) {
+          console.error('There was an error resetting your run')
+        }
+      }
+
     const endRunPatch = async () => {
         try {
             return await api.patchData('run/active', {})
@@ -162,6 +190,7 @@ export const ActiveRunProvider = ({ children }) => {
     return (
         <ActiveRunContext.Provider value={{ activeRun, startRun, endRun, pausedRun, setPausedRun, resumeRun,
             endRunPatch, endRunModalOpen, setEndRunModalOpen, preEndRunModalOpen, setPreEndRunModalOpen, isLoading,
+            handleConfirmReset, resetRunModalOpen, setResetRunModalOpen
          }}>
             {children}
         </ActiveRunContext.Provider>

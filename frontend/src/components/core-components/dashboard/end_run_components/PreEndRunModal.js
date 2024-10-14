@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogActions, Button, Typography, Paper, Grid } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import modalTheme from '../../../../theme/dashboard_themes/logRunModalTheme'
 import { useActiveRun } from '../../context/ActiveRun'
 import { useMediaQuery } from '@mui/material'
-import { grey } from '@mui/material/colors'
+import { grey } from '@mui/material/colors' 
+import PreResetRunModal from './RestartRunConfirmation' 
 
 const PreEndRunModal = ({ open, onCancel }) => {
-  const { endRunPatch, setEndRunModalOpen, setPreEndRunModalOpen, resumeRun, pausedRun } = useActiveRun()
+  const { endRunPatch, setEndRunModalOpen, setPreEndRunModalOpen, resumeRun, pausedRun, 
+    handleConfirmReset, resetRunModalOpen, setResetRunModalOpen } = useActiveRun()
+    
   const isMobile = useMediaQuery(modalTheme.breakpoints.down('sm'))
 
   const handleConfirm = async () => {
@@ -21,6 +24,10 @@ const PreEndRunModal = ({ open, onCancel }) => {
     } catch (error) {
       console.error('There was an error ending your run')
     }
+  }
+
+  const handleResetRun = () => {
+    setResetRunModalOpen(true)
   }
 
   return (
@@ -45,7 +52,7 @@ const PreEndRunModal = ({ open, onCancel }) => {
                      End Run
                   </Button>
 
-                  <Button variant="contained" sx={{backgroundColor: grey[200]}} size={isMobile ? 'small' : 'medium'} fullWidth={isMobile}>
+                  <Button onClick={handleResetRun} variant="contained" sx={{ backgroundColor: grey[200] }} size={isMobile ? 'small' : 'medium'} fullWidth={isMobile}>
                     Reset Run
                   </Button>
 
@@ -58,6 +65,13 @@ const PreEndRunModal = ({ open, onCancel }) => {
           </Paper>
         </DialogContent>
       </Dialog>
+      
+      {/* Reset Run Confirmation Modal */}
+      <PreResetRunModal
+        open={resetRunModalOpen}
+        onCancel={() => setResetRunModalOpen(false)}
+        onConfirm={handleConfirmReset}
+      />
     </ThemeProvider>
   )
 }
