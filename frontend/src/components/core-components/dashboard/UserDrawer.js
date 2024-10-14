@@ -77,7 +77,7 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
                         }}/>
                     
                     {/* Privacy Policy */}
-                    <ListItem onClick={() => console.log('Privacy Policy clicked')}>
+                    <ListItem onClick={() => window.open('/privacy-policy', '_blank', 'noopener,noreferrer')}>
                         <ListItemIcon>
                            <PolicyIcon />
                         </ListItemIcon>

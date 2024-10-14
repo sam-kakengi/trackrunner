@@ -38,6 +38,9 @@ function App() {
           {/* Terms and conditions */}
           <Route path="/terms" element={<TermsAndConditions setIsAuthenticated={setIsAuthenticated} />} />
 
+
+          {/* Privacy Policy */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy setIsAuthenticated={setIsAuthenticated} />} />
           
           {/* Register page */}
           <Route path="/register" element={
@@ -46,10 +49,6 @@ function App() {
             </PublicRoute>
           } />
 
-
-          
-          {/* Privacy Policy */}
-          <Route path="/privacy-policy" element={<PrivacyPolicy setIsAuthenticated={setIsAuthenticated} />} />
 
           {/* Logout route */}
           <Route path="/logout" element={<HandleLogout setIsAuthenticated={setIsAuthenticated} />} />
