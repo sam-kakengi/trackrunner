@@ -121,7 +121,7 @@ export const ActiveRunProvider = ({ children }) => {
     const handleConfirmReset = async () => {
         try {
           const api = new RunningAPI()
-          await api.deleteDjangoData('run/active/') 
+          await api.sendRequest('DELETE', 'run/active/') 
       
          
           localStorage.setItem('elapsedTime', '0')
