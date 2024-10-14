@@ -8,7 +8,8 @@ import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import drawerTheme from '../../../theme/dashboard_themes/drawerTheme'
 import { ThemeProvider } from '@mui/material/styles'
-
+import PolicyIcon from '@mui/icons-material/Policy'
+import ListIcon from '@mui/icons-material/List'
 
 const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
 
@@ -18,6 +19,9 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
     const signOut = () => {
         navigate('/logout')
     }
+
+
+
     return (
     <ThemeProvider theme={drawerTheme}>
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -65,6 +69,29 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
                         </ListItemIcon>
                         <ListItemText primary="Manage Account" />
                     </ListItem>
+
+                    <Divider sx={{
+                        borderColor: 'white',  
+                        width: '85%',           
+                        margin: '1rem auto'
+                        }}/>
+                    
+                    {/* Privacy Policy */}
+                    <ListItem onClick={() => console.log('Privacy Policy clicked')}>
+                        <ListItemIcon>
+                           <PolicyIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Privacy Policy" />
+                    </ListItem>
+
+                    {/* Terms and conditions */}
+                    <ListItem onClick={() => navigate("/terms")}>
+                        <ListItemIcon>
+                            <ListIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Terms" />
+                    </ListItem>
+                    
 
                     <Divider 
                         sx={{ 

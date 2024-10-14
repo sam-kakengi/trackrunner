@@ -35,10 +35,8 @@ function App() {
           } />
 
           {/* Terms and conditions */}
-          <Route path="/terms" element={
-            <PublicRoute isAuthenticated={isAuthenticated}>
-              <TermsAndConditions setIsAuthenticated={setIsAuthenticated} />
-            </PublicRoute>} />
+          <Route path="/terms" element={<TermsAndConditions setIsAuthenticated={setIsAuthenticated} />} />
+
           
           {/* Register page */}
           <Route path="/register" element={

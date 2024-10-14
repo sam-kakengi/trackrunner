@@ -11,14 +11,20 @@ const TermsAndConditions = () => {
   const theme = useTheme()
 
   const handleLogoClick = () => {
-    navigate('/login')
+    const token = localStorage.getItem('token')
+  
+    if (token) {
+        navigate('/dashboard')
+    } else {
+        navigate('/register')
+    }
   }
 
   return (
     <Box sx={{ paddingTop: '5rem', paddingBottom: '3rem', height: '100%', backgroundColor: theme.background.default, overflow: 'auto', color: 'white' }}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem', }}>
                 <Typography sx={{ fontSize: { xs: '2rem', sm: '3rem', md: '4rem' }, fontStyle: 'italic', color: '#FFD54F' }}>TrackRunner</Typography>
-                <Typography><img src={RunningMan} alt="Man Running" style={{ width: '100%', maxWidth: '9.375rem' }} onClick={handleLogoClick}></img></Typography>
+                <Typography sx={{cursor: 'pointer'}}><img src={RunningMan} alt="Man Running" style={{ width: '100%', maxWidth: '9.375rem' }} onClick={handleLogoClick}></img></Typography>
         </Box> 
 
         <Box
@@ -125,7 +131,7 @@ const TermsAndConditions = () => {
         backgroundColor: grey[700],
         color: 'white' 
         }, }}>
-          Return to Registration
+          Return
         </Button>
       </Box>
     </Box>
