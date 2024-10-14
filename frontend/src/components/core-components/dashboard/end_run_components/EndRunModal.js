@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Paper, Grid, Typography, Select, CardActions, Button, Dialog, DialogContent, MenuItem, TextField, useMediaQuery, FormControl, InputLabel } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import modalTheme from '../../../theme/dashboard_themes/logRunModalTheme'
-import fetchRoutes from './api_calls/getRoutes'
-import NewRouteModal from './AddNewRoute'
+import modalTheme from '../../../../theme/dashboard_themes/logRunModalTheme'
+import fetchRoutes from '../api_calls/getRoutes'
+import NewRouteModal from '../AddNewRoute'
 import AddIcon from '@mui/icons-material/Add'
-import { useActiveRun } from '../context/ActiveRun'
-import RunningAPI from '../../../utilities/apiClient'
+import { useActiveRun } from '../../context/ActiveRun'
+import RunningAPI from '../../../../utilities/apiClient'
 
 const getRecentRun = async () => {
   const api = new RunningAPI()
