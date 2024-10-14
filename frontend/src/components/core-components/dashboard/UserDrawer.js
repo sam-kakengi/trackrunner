@@ -85,7 +85,7 @@ const UserDrawer = ({ drawerOpen, toggleDrawer, userInfo }) => {
                     </ListItem>
 
                     {/* Terms and conditions */}
-                    <ListItem onClick={() => navigate("/terms")}>
+                    <ListItem onClick={() => window.open('/terms', '_blank', 'noopener,noreferrer')}>
                         <ListItemIcon>
                             <ListIcon />
                         </ListItemIcon>
