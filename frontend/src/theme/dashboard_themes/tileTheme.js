@@ -16,6 +16,7 @@ let tileTheme = createTheme({
             color: blueGrey[50]
         },
         h2:{
+            fontSize:'2.5rem',
             color: blueGrey[50]
         },
         body1:{
