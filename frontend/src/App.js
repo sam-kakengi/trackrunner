@@ -6,6 +6,7 @@ import DashboardPage from './pages/core/DashboardPage'
 import ProtectedRoute from './components/auth/ProtectedRouteComp'
 import HandleLogout from './components/auth/Logout'
 import PublicRoute from './components/auth/PublicRouteComp'
+import TermsAndConditions from './pages/core/TermsAndConditions'
 import { ActiveRunProvider } from './components/core-components/context/ActiveRun'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -25,11 +26,19 @@ function App() {
       <Router>
         <Routes>
           {/* Public routes */}
+
+          {/* Login page*/}
           <Route path="/login" element={
             <PublicRoute isAuthenticated={isAuthenticated}>
               <LoginPage setIsAuthenticated={setIsAuthenticated} />
             </PublicRoute>
           } />
+
+          {/* Terms and conditions */}
+          <Route path="/terms" element={<TermsAndConditions setIsAuthenticated={setIsAuthenticated} />} />
+
+          
+          {/* Register page */}
           <Route path="/register" element={
             <PublicRoute isAuthenticated={isAuthenticated}>
               <RegistrationPage />
