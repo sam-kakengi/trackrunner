@@ -18,6 +18,7 @@ const DashboardGrid = ({recentRuns, awaitingRunData, error, chartData, loading, 
     const tileBaseStyle = { textAlign: 'center', padding: isMobile ? '0.3rem' : 'inherit' };
     const gridBoxStyle = {
         flex: 1,
+        minHeight: '12rem',
         height: { lg: '18.75rem', sm: '14rem', xs: '11rem', md: '18.75rem' },
         width: { xs: '14rem' },
         borderRadius: '2rem',
@@ -31,12 +32,13 @@ const DashboardGrid = ({recentRuns, awaitingRunData, error, chartData, loading, 
     const { activeRun } = useActiveRun()
 
     return (
-        <Grid container spacing={2} sx={{ height: {lg: '85%', xs: '75%', sm: '50%', md: '85%'}, paddingTop: '1rem' }}>
+        <Grid container spacing={2} sx={{ minHeight: '600px' ,height: {lg: '85%', xs: '75%', sm: '50%', md: '85%'}, paddingTop: '1rem' }}>
             {/* Left Section */}
-            <Grid item xs={12} md={12} lg={6} sx={{ display: 'flex', flexDirection: 'column', height: {lg: '100%'}, marginBottom: {md: '2rem', sm: '1.5rem'} }}>
+            <Grid item xs={12} md={12} lg={6} sx={{ minHeight: '50vh', maxHeight: '926px', display: 'flex', flexDirection: 'column', height: {lg: '100%'}, marginBottom: {md: '2rem'} }}>
                 {/* Two medium containers side by side */}
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'row' }, 
-                gap: { lg: '2rem', xs: '2rem' }, width: { md: '100%' }, height: { lg: '50%'}, marginBottom: {sm: '2.5rem', xs: '1rem', md: '2rem', lg: '1rem'} }}>
+                gap: { lg: '2rem', xs: '1rem' }, width: { md: '100%' }, marginBottom: { xs: '1rem', md: '2rem', lg: '1rem'},
+                minHeight: {lg: '322px'} }}>
                     <PersonalBestTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
                     {activeRun?.isRunning ? (
                         <ActiveRunTile theme={theme} gridBoxStyle={gridBoxStyle} tileBaseStyle={tileBaseStyle} />
@@ -47,16 +49,16 @@ const DashboardGrid = ({recentRuns, awaitingRunData, error, chartData, loading, 
                 
                 {/* Large Table container underneath */}
 
-                <Box sx={{ backgroundColor: '#f5f5f5', height: { md: '50%', lg: '50%' }, 
-                  width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main }}>
+                <Box sx={{ backgroundColor: '#f5f5f5', height: { md: '50%', lg: '100%' },
+                  width: { xs: '21.9375' }, borderRadius: '2rem', backgroundColor: theme.secondary.main, minHeight: {lg: '25vh'} }}>
                     <MainTable recentRuns={recentRuns} awaitingRunData={awaitingRunData} error={error}/>
                 </Box>
             </Grid>
 
             {/* Right Section - Large Chart */}
-            <Grid item xs={12} md={12} lg={6} sx={{height: '100%', paddingBottom: {lg: '0', md: '1rem', sm:'1rem', xs: '1rem'}, marginTop: {lg: '0', md: '1rem', sm:'1rem',}}}>
-                <Box sx={{ height: { lg: '100%', md: '100%', sm: '70%', xs: '70%'}, 
-                width: { xs: '21.9375' }, backgroundColor: theme.secondary.main, padding: '1rem', borderRadius: '2rem',
+            <Grid item xs={12} md={12} lg={6} sx={{height: '100%', maxHeight: '926px', paddingBottom: {lg: '0', md: '1rem', sm:'1rem', xs: '1rem'}}}>
+                <Box sx={{ height: { lg: '100%', md: '100%', sm: '70%', xs: '70%'}, maxHeight: '926px', 
+                width: { xs: '21.9375' }, backgroundColor: theme.secondary.main, padding: '1rem', borderRadius: '2rem', minHeight: {lg:'50vh'},
                  }}>
                     <MultiSeriesLineChart chartData={chartData} loading={loading} chartError={chartError}/>
                 </Box>

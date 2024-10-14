@@ -61,15 +61,15 @@ const MultiSeriesLineChart = ({chartData, loading, chartError}) => {
 
   const getChartConfig = () => {
     if (isMobile) {
-      return { height: 250, fontSize: '0.6rem', markerSize: 6, direction: 'column', margin: { top: 5, right: 5, bottom: 30, left: 20 } }
+      return { fontSize: '0.6rem', markerSize: 6, direction: 'column', margin: { top: 5, right: 5, bottom: 30, left: 20 } }
     }
     if (isTablet) {
-      return { height: 250, fontSize: '0.75rem', markerSize: 10, direction: 'column' }
+      return { fontSize: '0.75rem', markerSize: 10, direction: 'column' }
     }
     if (isLaptop) {
-      return { height: 350, fontSize: '0.875rem', markerSize: 14, direction: 'row' }
+      return { fontSize: '0.875rem', markerSize: 14, direction: 'row' }
     }
-    return { height: 600, fontSize: '1rem', markerSize: 20, direction: 'column'}
+    return { fontSize: '1rem', markerSize: 20, direction: 'column'}
   }
   
   const chartConfig = getChartConfig()
