@@ -10,6 +10,7 @@ import { ActiveRunProvider } from './components/core-components/context/ActiveRu
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -35,6 +36,11 @@ function App() {
               <RegistrationPage />
             </PublicRoute>
           } />
+
+
+          
+          {/* Privacy Policy */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy setIsAuthenticated={setIsAuthenticated} />} />
 
           {/* Logout route */}
           <Route path="/logout" element={<HandleLogout setIsAuthenticated={setIsAuthenticated} />} />
