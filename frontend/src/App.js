@@ -10,6 +10,7 @@ import TermsAndConditions from './pages/core/TermsAndConditions'
 import { ActiveRunProvider } from './components/core-components/context/ActiveRun'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import PrivacyPolicy from './pages/core/PrivacyPolicy'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -37,6 +38,9 @@ function App() {
           {/* Terms and conditions */}
           <Route path="/terms" element={<TermsAndConditions setIsAuthenticated={setIsAuthenticated} />} />
 
+
+          {/* Privacy Policy */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy setIsAuthenticated={setIsAuthenticated} />} />
           
           {/* Register page */}
           <Route path="/register" element={
@@ -44,6 +48,7 @@ function App() {
               <RegistrationPage />
             </PublicRoute>
           } />
+
 
           {/* Logout route */}
           <Route path="/logout" element={<HandleLogout setIsAuthenticated={setIsAuthenticated} />} />
