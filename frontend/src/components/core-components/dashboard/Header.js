@@ -164,14 +164,20 @@ const Header = ({ isMobile, userInfo, toggleDrawer, drawerOpen }) => {
               <>
                 <Button variant="contained" onClick={handleEndRunClick} sx={{backgroundColor: red[400], color: 'white', 
                   '&:hover': {
-                  backgroundColor: red[400], 
+                  backgroundColor: red[500], 
                   
                 },
                 }}>
                   End Run
                 </Button>
                 <Button variant="contained" onClick={togglePauseResume} sx={{backgroundColor: pausedRun.isPaused ? `${green[700]} !important` : `${grey[200]} !important`,
-                  color: pausedRun.isPaused ? 'white' : '#37474F',
+                  color: pausedRun.isPaused ? 'white' : '#37474F', 
+                  '&:hover': {
+                  backgroundColor: pausedRun.isPaused
+                    ? `${green[800]} !important`
+                    : `${grey[700]} !important`, 
+                  color: pausedRun.isPaused ? 'white' : 'white', 
+                },
                 }}>
                   {pausedRun.isPaused ? 'Resume' : 'Pause'}
                 </Button>
