@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Button, Menu, MenuItem, Box, ButtonGroup } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { useTheme } from '@mui/material/styles'
+import { green, grey, red, blueGrey } from '@mui/material/colors'
 
 const DropdownBtn = ({ 
   handleStartRunOpen, 
@@ -45,20 +46,43 @@ const DropdownBtn = ({
 
     return (
         <Box>
-            <ButtonGroup variant="contained" sx={{ backgroundColor: theme.primary, color: theme.text.secondary, height: '2.3rem' }}>
+            <ButtonGroup variant="contained" sx={{ backgroundColor: theme.primary, color: theme.text.secondary, height: '2.3rem', width: '10rem' }}>
                 <Button
                     onClick={handleClick}
-                    sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: '8rem', height: '100%' }}
+                    sx={{
+                    backgroundColor: activeRun?.isRunning
+                        ? pausedRun.isPaused
+                        ? `${green[700]} !important`
+                        : `${grey[700]} !important` 
+                        : theme.primary.main, 
+                    color: theme.text.secondary,
+                    width: '10rem',
+                    height: '100%',
+                    fontSize: '0.8rem',
+                    borderRight: `1px solid ${blueGrey['A400']} !important`,
+                    border: 'none',
+                    }}
                     disabled={isLoading}
                 >
                     {activeRun?.isRunning 
-                        ? (pausedRun.isPaused ? 'Resume' : 'Pause') 
-                        : 'Start Timer'}
+                    ? (pausedRun.isPaused ? 'Resume' : 'Pause') 
+                    : 'Start Timer'}
                 </Button>
+
                 <Button
                     size="small"
                     onClick={handleMenuClick}
-                    sx={{ backgroundColor: theme.primary.main, color: theme.text.secondary, width: {xs: '1rem'}, height: '100%' }}
+                    sx={{
+                        backgroundColor: activeRun?.isRunning
+                        ? pausedRun.isPaused
+                          ? `${green[700]} !important`
+                          : `${grey[700]} !important` 
+                        : theme.primary.main,
+                    color: theme.text.secondary,
+                    width: { xs: '1rem' },
+                    height: '100%',
+                    border: 'none',
+                    }}
                     disabled={isLoading}
                 >
                     <ArrowDropDownIcon />
@@ -83,9 +107,9 @@ const DropdownBtn = ({
                 }}
             >
                 {activeRun?.isRunning ? (
-                    <MenuItem onClick={handleEndRunClickWrapper} sx={{width: '11rem'}}>End Run</MenuItem>
+                    <MenuItem onClick={handleEndRunClickWrapper} sx={{width: '10rem', backgroundColor: red[500]}}>End Run</MenuItem>
                 ) : (
-                    <MenuItem onClick={handleLogRunClick} sx={{width: '11rem'}}>Log a Run</MenuItem>
+                    <MenuItem onClick={handleLogRunClick} sx={{width: '10rem'}}>Log a Run</MenuItem>
                 )}
             </Menu>
         </Box>

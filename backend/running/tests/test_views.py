@@ -131,11 +131,21 @@ def test_get_object_url(auth_client, new_run_finished: RunActivity):
     assert response.data['id'] == new_run_finished.pk
 
 @pytest.mark.django_db
-def test_run_get_list(auth_client, user):
+def test_run_get_list(auth_client, user, new_run_quick: RunActivity, new_run_duration_only: RunActivity):
     url = reverse('runs-list')
     response = auth_client.get(url)
     assert response.status_code == status.HTTP_200_OK
-    assert all(run['user'] == user.id for run in response.data)
+    assert len(response.data) == 2
+    for run in response.data:
+        assert run['route'] != None
+        if run['id'] == new_run_quick.pk:
+            assert run['duration'] == 1200
+            assert run['duration_formatted'] == "20:00"
+            assert run['finished'] != None
+        if run['id'] == new_run_duration_only.pk:
+            assert run['duration'] == 3600
+            assert run['duration_formatted'] == "01:00:00"
+            assert run['finished'] == None
 
 @pytest.mark.django_db
 def test_run_create_log(auth_client, route: Route):
