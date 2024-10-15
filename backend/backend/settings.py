@@ -143,13 +143,34 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), ssl_require=True),
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), 
+                                      engine='django.db.backends.postgresql', 
+                                      name='db_trackrunner',
+                                      ssl_require=True)
 }
 if 'test' in sys.argv:
-    DATABASES['default'] = dj_database_url.config(default=os.getenv('TEST_DATABASE_URL'), ssl_require=True)
+    DATABASES['default'] = dj_database_url.config(
+        default=os.getenv('TEST_DATABASE_URL'),
+        engine='django.db.backends.postgresql', 
+        name='test_db_trackrunner',
+        ssl_require=True
+    )
 
-if 'ENGINE' not in DATABASES['default']:
-    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+# if 'ENGINE' not in DATABASES['default']:
+#     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+
+# if 'NAME' not in DATABASES['default']:
+#     DATABASES['default']['NAME'] = 'db_trackrunner'
+
+# Configure the test database settings
+DATABASES['default']['TEST'] = {
+    'NAME': 'test_db_trackrunner',  # You can set this to a different name if needed
+    'ENGINE': 'django.db.backends.postgresql',  # Ensure the engine is set
+    'USER': os.getenv('TEST_DATABASE_USER'),
+    'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+    'HOST': os.getenv('TEST_DATABASE_HOST'),
+    'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
