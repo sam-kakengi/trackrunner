@@ -11,12 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
       TEST_DATABASE_USER: ${{ secrets.TEST_DATABASE_USER }}
       TEST_DATABASE_PASSWORD: ${{ secrets.TEST_DATABASE_PASSWORD }}
       TEST_DATABASE_HOST: ${{ secrets.TEST_DATABASE_HOST }}
-      TEST_DATABASE_PORT: ${{ secrets.TEST_DATABASE_PORT }}
       TEST_DATABASE_NAME: ${{ secrets.TEST_DATABASE_NAME }}
       DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
       DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
@@ -45,4 +42,4 @@ jobs:
     - name: Run tests
       run: |
         cd backend
-        pytest
+        python manage.py test --keepdb
