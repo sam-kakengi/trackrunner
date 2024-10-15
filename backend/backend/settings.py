@@ -144,10 +144,13 @@ DATABASES = {
     'default': {
         'NAME': 'db_trackrunner',
         'ENGINE': 'django.db.backends.postgresql',
-        'USER': os.getenv('TEST_DATABASE_USER'),
-        'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-        'HOST': os.getenv('TEST_DATABASE_HOST', 'localhost'),
-        'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
+        'OPTIONS': {
+                'sslmode': 'require',
+            },
         'TEST': {
             'NAME': 'test_db_trackrunner',
             'ENGINE': 'django.db.backends.postgresql',  # Ensure the engine is set
@@ -155,6 +158,9 @@ DATABASES = {
             'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
             'HOST': os.getenv('TEST_DATABASE_HOST'),
             'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
         }
     }
 }
@@ -166,6 +172,9 @@ if 'test' in sys.argv:
         'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
         'HOST': os.getenv('TEST_DATABASE_HOST'),
         'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
+        'OPTIONS': {
+                'sslmode': 'require',
+            },
     })
 
 # if 'ENGINE' not in DATABASES['default']:
