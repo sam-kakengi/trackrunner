@@ -143,20 +143,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'neondb'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'vqaRU3w5Pbmx',
+        'HOST': 'ep-little-glade-a5r3654h.us-east-2.aws.neon.tech',
         'PORT': os.getenv('DATABASE_PORT', '5432'),
         'OPTIONS': {
                 'sslmode': 'require',
             },
         'TEST': {
             'ENGINE': 'django.db.backends.postgresql', 
-            'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
-            'USER': os.getenv('TEST_DATABASE_USER'),
-            'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-            'HOST': os.getenv('TEST_DATABASE_HOST'),
+            'NAME': 'neondb',
+            'USER': 'neondb_owner',
+            'PASSWORD': 'vqaRU3w5Pbmx',
+            'HOST': 'ep-ancient-snow-a5qgz1rf.us-east-2.aws.neon.tech',
             'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
             'OPTIONS': {
                 'sslmode': 'require',
@@ -164,34 +164,18 @@ DATABASES = {
         }
     }
 }
-if 'test' in sys.argv:
-    DATABASES['default'].update ({
-        'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
-        'ENGINE': 'django.db.backends.postgresql', 
-        'USER': os.getenv('TEST_DATABASE_USER'),
-        'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-        'HOST': os.getenv('TEST_DATABASE_HOST'),
-        'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
-        'OPTIONS': {
-                'sslmode': 'require',
-            },
-    })
-
-# if 'ENGINE' not in DATABASES['default']:
-#     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
-
-# if 'NAME' not in DATABASES['default']:
-#     DATABASES['default']['NAME'] = 'db_trackrunner'
-
-# Configure the test database settings
-# DATABASES['default']['TEST'] = {
-#     'NAME': 'test_db_trackrunner',  # You can set this to a different name if needed
-#     'ENGINE': 'django.db.backends.postgresql',  # Ensure the engine is set
-#     'USER': os.getenv('TEST_DATABASE_USER'),
-#     'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-#     'HOST': os.getenv('TEST_DATABASE_HOST'),
-#     'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
-# }
+# if 'test' in sys.argv:
+#     DATABASES['default'].update ({
+#         'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
+#         'ENGINE': 'django.db.backends.postgresql', 
+#         'USER': os.getenv('TEST_DATABASE_USER'),
+#         'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+#         'HOST': os.getenv('TEST_DATABASE_HOST'),
+#         'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
+#         'OPTIONS': {
+#                 'sslmode': 'require',
+#             },
+#     })
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
