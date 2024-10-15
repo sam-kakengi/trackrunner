@@ -143,20 +143,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'vqaRU3w5Pbmx',
-        'HOST': 'ep-little-glade-a5r3654h.us-east-2.aws.neon.tech',
+        'NAME': os.getenv('DATABASE_NAME', 'neondb'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT', '5432'),
         'OPTIONS': {
                 'sslmode': 'require',
             },
         'TEST': {
             'ENGINE': 'django.db.backends.postgresql', 
-            'NAME': 'neondb',
-            'USER': 'neondb_owner',
-            'PASSWORD': 'vqaRU3w5Pbmx',
-            'HOST': 'ep-ancient-snow-a5qgz1rf.us-east-2.aws.neon.tech',
+            'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
+            'USER': os.getenv('TEST_DATABASE_USER'),
+            'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+            'HOST': os.getenv('TEST_DATABASE_HOST'),
             'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
             'OPTIONS': {
                 'sslmode': 'require',
