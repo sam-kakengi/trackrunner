@@ -148,6 +148,8 @@ DATABASES = {
 if 'test' in sys.argv:
     DATABASES['default'] = dj_database_url.config(default=os.getenv('TEST_DATABASE_URL'), ssl_require=True)
 
+if 'ENGINE' not in DATABASES['default']:
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
