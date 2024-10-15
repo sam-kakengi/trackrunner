@@ -142,8 +142,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'NAME': 'db_trackrunner',
         'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', 'neondb'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST'),
@@ -152,8 +152,8 @@ DATABASES = {
                 'sslmode': 'require',
             },
         'TEST': {
-            'NAME': 'test_db_trackrunner',
-            'ENGINE': 'django.db.backends.postgresql',  # Ensure the engine is set
+            'ENGINE': 'django.db.backends.postgresql', 
+            'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
             'USER': os.getenv('TEST_DATABASE_USER'),
             'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
             'HOST': os.getenv('TEST_DATABASE_HOST'),
@@ -166,8 +166,8 @@ DATABASES = {
 }
 if 'test' in sys.argv:
     DATABASES['default'].update ({
-        'NAME': 'test_db_trackrunner',  # You can set this to a different name if needed
-        'ENGINE': 'django.db.backends.postgresql',  # Ensure the engine is set
+        'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
+        'ENGINE': 'django.db.backends.postgresql', 
         'USER': os.getenv('TEST_DATABASE_USER'),
         'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
         'HOST': os.getenv('TEST_DATABASE_HOST'),

@@ -17,6 +17,11 @@ jobs:
       TEST_DATABASE_PASSWORD: ${{ secrets.TEST_DATABASE_PASSWORD }}
       TEST_DATABASE_HOST: ${{ secrets.TEST_DATABASE_HOST }}
       TEST_DATABASE_PORT: ${{ secrets.TEST_DATABASE_PORT }}
+      TEST_DATABASE_NAME: ${{ secrets.TEST_DATABASE_NAME }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
     steps:
     - name: Checkout code
