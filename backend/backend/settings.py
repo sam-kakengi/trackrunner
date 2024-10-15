@@ -145,14 +145,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), 
                                       engine='django.db.backends.postgresql', 
-                                      name='db_trackrunner',
                                       ssl_require=True)
 }
 if 'test' in sys.argv:
     DATABASES['default'] = dj_database_url.config(
         default=os.getenv('TEST_DATABASE_URL'),
         engine='django.db.backends.postgresql', 
-        name='test_db_trackrunner',
         ssl_require=True
     )
 
