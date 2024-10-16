@@ -27,7 +27,7 @@ jobs:
     env:
       DATABASE_HOST: 127.0.0.1
       DATABASE_USER: tester
-      DATABASE_PASSWORD: psotgres
+      DATABASE_PASSWORD: postgres
       DATABASE_NAME: test_db
       DATABASE_PORT: 5432
 

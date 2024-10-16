@@ -150,18 +150,6 @@ DATABASES = {
         'PORT': os.getenv('DATABASE_PORT', '5432')
     }
 }
-# if 'test' in sys.argv:
-#     DATABASES['default'].update ({
-#         'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
-#         'ENGINE': 'django.db.backends.postgresql', 
-#         'USER': os.getenv('TEST_DATABASE_USER'),
-#         'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
-#         'HOST': os.getenv('TEST_DATABASE_HOST'),
-#         'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
-#         'OPTIONS': {
-#                 'sslmode': 'require',
-#             },
-#     })
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
