@@ -9,16 +9,28 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: tester
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ${POSTGRES_USER}" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
 
     env:
-      TEST_DATABASE_USER: ${{ secrets.TEST_DATABASE_USER }}
-      TEST_DATABASE_PASSWORD: ${{ secrets.TEST_DATABASE_PASSWORD }}
-      TEST_DATABASE_HOST: ${{ secrets.TEST_DATABASE_HOST }}
-      TEST_DATABASE_NAME: ${{ secrets.TEST_DATABASE_NAME }}
-      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-      DATABASE_USER: ${{ secrets.DATABASE_USER }}
-      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_HOST: localhost
+      DATABASE_USER: tester
+      DATABASE_PASSWORD: psotgres
+      DATABASE_NAME: test_db
+
+
 
     steps:
     - name: Checkout code
