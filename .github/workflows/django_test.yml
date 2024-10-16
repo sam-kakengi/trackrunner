@@ -60,4 +60,4 @@ jobs:
     - name: Run tests
       run: |
         cd backend
-        python manage.py test --keepdb
+        pytest -sv
