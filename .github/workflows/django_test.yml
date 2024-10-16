@@ -4,18 +4,43 @@ on:
   pull_request:
     branches:
       - develop
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: tester
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ${POSTGRES_USER}" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_USER: tester
+      DATABASE_PASSWORD: psotgres
+      DATABASE_NAME: test_db
+      DATABASE_PORT: 5432
+
+
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    
+    - name: Check PostgreSQL service status
+      run: |
+        sudo apt-get install -y postgresql-client
+        pg_isready -h 127.0.0.1 -p 5432 -U tester
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -35,4 +60,4 @@ jobs:
     - name: Run tests
       run: |
         cd backend
-        pytest
+        python manage.py test --keepdb
