@@ -134,8 +134,6 @@ TEMPLATES = [
 ]
 
 
-
-
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
@@ -143,11 +141,30 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), ssl_require=True),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', 'neondb'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
+        'OPTIONS': {
+                'sslmode': 'require',
+            }
+    }
 }
-if 'test' in sys.argv:
-    DATABASES['default'] = dj_database_url.config(default=os.getenv('TEST_DATABASE_URL'), ssl_require=True)
-
+# if 'test' in sys.argv:
+#     DATABASES['default'].update ({
+#         'NAME': os.getenv('TEST_DATABASE_NAME', 'neondb'),
+#         'ENGINE': 'django.db.backends.postgresql', 
+#         'USER': os.getenv('TEST_DATABASE_USER'),
+#         'PASSWORD': os.getenv('TEST_DATABASE_PASSWORD'),
+#         'HOST': os.getenv('TEST_DATABASE_HOST'),
+#         'PORT': os.getenv('TEST_DATABASE_PORT', '5432'),
+#         'OPTIONS': {
+#                 'sslmode': 'require',
+#             },
+#     })
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
