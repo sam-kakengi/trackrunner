@@ -1,4 +1,4 @@
-name: Run Backend Unit Tests on PR
+name: Backend Unit Tests
 
 on:
   pull_request:
@@ -32,15 +32,9 @@ jobs:
       DATABASE_PORT: 5432
 
 
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    
-    - name: Check PostgreSQL service status
-      run: |
-        sudo apt-get install -y postgresql-client
-        pg_isready -h 127.0.0.1 -p 5432 -U tester
 
     - name: Set up Python
       uses: actions/setup-python@v2
