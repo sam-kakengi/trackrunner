@@ -30,7 +30,7 @@ jobs:
       DATABASE_PASSWORD: postgres
       DATABASE_NAME: test_db
       DATABASE_PORT: 5432
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SECRET_KEY: ${{ vars.SECRET_KEY }}
 
 
     steps:
