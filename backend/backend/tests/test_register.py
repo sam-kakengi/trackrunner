@@ -5,70 +5,52 @@ django.setup()
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User
+from rest_framework.test import APIClient
 
-@pytest.fixture
-def create_user(db):
-    user = User.objects.create_user(username='testuser', password='windowstream19', email='testuser@test.com')
-    return user
 
 @pytest.mark.django_db
-def test_successful_registration(client):
-    response = client.post(reverse('register'), {
-        'username': 'newuser',
-        'email': 'newuser@test.com',
-        'password1': 'newpassword19',
-        'password2': 'newpassword19',
-        'terms': 'on'  
-    })
-    assert response.status_code == 200
-    assert User.objects.filter(username='newuser').exists()
+def test_successful_registration(registered_user):
+    user_exists = User.objects.filter(username=registered_user['username'], email=registered_user['email']).exists()
+    assert user_exists, "User was not created in the database"
+    
 
 @pytest.mark.django_db
-def test_registration_with_existing_email(client, create_user):
-    response = client.post(reverse('register'), {
-        'username': 'anotheruser',
-        'email': 'testuser@test.com',  
+def test_registration_with_existing_user(client: APIClient, register_url, registered_user):
+    data = {
+        'username': registered_user['username'],
+        'email': registered_user['email'], 
         'password1': 'anotherpassword19',
         'password2': 'anotherpassword19',
-        'terms': 'on'  
-    })
-    assert response.status_code == 200  
-    assert 'Registration failed. Please check your details and try again.' in response.content.decode()
+    }
+    response = client.post(register_url, data)
+    
+    assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+    user_count = User.objects.filter(username=data['username'], email=data['email']).count()
+    assert user_count == 1, "User was created"
 
 @pytest.mark.django_db
-def test_registration_with_missing_fields(client):
-    response = client.post(reverse('register'), {
+def test_registration_with_missing_fields(client, register_url):
+    data = {
         'username': '',
         'email': 'incompleteuser@test.com',
         'password1': 'incompletepassword19',
         'password2': 'incompletepassword19',
-        'terms': 'on'  
-    })
-    assert response.status_code == 200  
-    assert 'Username must be between 4 and 30 characters.' in response.content.decode()
+    }
+    response = client.post(register_url, data)
+    assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+    new_user = User.objects.filter(username=data['username'], email=data['email']).exists()
+    assert not new_user, "User was created unexpectedly"
 
 @pytest.mark.django_db
-def test_registration_with_password_mismatch(client):
-    response = client.post(reverse('register'), {
+def test_registration_with_password_mismatch(client: APIClient, register_url):
+    data = {
         'username': 'mismatchuser',
         'email': 'mismatchuser@test.com',
         'password1': 'password19',
         'password2': 'differentpassword19',
-        'terms': 'on'  
-    })
-    assert response.status_code == 200  
-    assert 'Passwords do not match.' in response.content.decode()
-
-@pytest.mark.django_db
-def test_registration_without_accepting_terms(client):
-    response = client.post(reverse('register'), {
-        'username': 'newuser',
-        'email': 'newuser@test.com',
-        'password1': 'newpassword19',
-        'password2': 'newpassword19',
-        'terms': ''  
-    })
-    assert response.status_code == 200
-    print(response.content.decode())  
-    assert 'You must accept the Terms &amp; Conditions to create an account.' or 'You must accept the Terms and Conditions to create an account.' in response.content.decode()
+    }
+    response = client.post(register_url, data)
+    assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+    new_user = User.objects.filter(username=data['username'], email=data['email']).exists()
+    assert not new_user, "User was created unexpectedly"
     
